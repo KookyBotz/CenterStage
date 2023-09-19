@@ -1,7 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmode.debug;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -12,6 +18,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
+@Config
+@TeleOp(name = "AprilTagTester")
 public class AprilTagTester extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
@@ -19,7 +27,6 @@ public class AprilTagTester extends LinearOpMode {
     private AprilTagProcessor aprilTag;
 
     private VisionPortal visionPortal;
-
 
     private void initAprilTag() {
 
@@ -36,11 +43,17 @@ public class AprilTagTester extends LinearOpMode {
 
                 .build();
 
+//        WebcamName cam = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+//        FtcDashboard.getInstance().startCameraStream(, 60);
+
         VisionPortal.Builder builder = new VisionPortal.Builder();
 
         builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
 
-        // builder.setCameraResolution(new Size(width, height));
+        builder.enableLiveView(true);
+
+        builder.setCameraResolution(new Size(480, 360));
         // builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
 
         builder.addProcessor(aprilTag);
@@ -53,7 +66,6 @@ public class AprilTagTester extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         initAprilTag();
 
-        // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch Play to start OpMode");
         telemetry.update();
@@ -64,22 +76,18 @@ public class AprilTagTester extends LinearOpMode {
 
                 telemetryAprilTag();
 
-                // Push telemetry to the Driver Station.
                 telemetry.update();
 
-                // Save CPU resources; can resume streaming when needed.
                 if (gamepad1.dpad_down) {
                     visionPortal.stopStreaming();
                 } else if (gamepad1.dpad_up) {
                     visionPortal.resumeStreaming();
                 }
 
-                // Share the CPU.
                 sleep(20);
             }
         }
 
-        // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
     }
 
@@ -88,7 +96,6 @@ public class AprilTagTester extends LinearOpMode {
         List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
-        // Step through the list of detections and display info for each one.
         for (AprilTagDetection detection : currentDetections) {
             if (detection.metadata != null) {
                 telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
@@ -99,9 +106,8 @@ public class AprilTagTester extends LinearOpMode {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
             }
-        }   // end for() loop
+        }
 
-        // Add "key" information to telemetry
         telemetry.addLine("\nkey:\nXYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");

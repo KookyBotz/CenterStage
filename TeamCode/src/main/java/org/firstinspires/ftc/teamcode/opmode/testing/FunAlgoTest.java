@@ -1,13 +1,9 @@
-package org.firstinspires.ftc.teamcode.opmode.debug;
+package org.firstinspires.ftc.teamcode.opmode.testing;
 
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -18,9 +14,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
-@Config
-@TeleOp(name = "AprilTagTester")
-public class AprilTagTester extends LinearOpMode {
+public class FunAlgoTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;
 

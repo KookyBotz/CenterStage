@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.util;
+package org.firstinspires.ftc.teamcode.common.hardware;
 
 
 public class Globals {

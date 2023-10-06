@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.core;
+package org.firstinspires.ftc.teamcode.common.hardware;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.AnalogInput;

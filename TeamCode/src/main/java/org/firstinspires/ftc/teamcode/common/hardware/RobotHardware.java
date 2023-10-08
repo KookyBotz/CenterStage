@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -13,29 +15,23 @@ import javax.annotation.Nonnegative;
 
 public class RobotHardware {
 
-    /**
-     * Swerve motors.
-     */
+    public MotorEx extensionMotor;
+    public MotorEx pitchMotor;
+
     public DcMotorEx frontLeftMotor;
     public DcMotorEx frontRightMotor;
     public DcMotorEx backLeftMotor;
     public DcMotorEx backRightMotor;
 
-    /**
-     * Swerve analog encoders.
-     */
-    public AnalogInput frontLeftEncoder;
-    public AnalogInput frontRightEncoder;
-    public AnalogInput backLeftEncoder;
-    public AnalogInput backRightEncoder;
+    public AnalogInput pitchEncoder;
 
-    /**
-     * Swerve CR servos.
-     */
-    public CRServo frontLeftServo;
-    public CRServo frontRightServo;
-    public CRServo backLeftServo;
-    public CRServo backRightServo;
+    public DistanceSensor intakeLeftBottom,  intakeLeftTop,
+                          intakeRightBottom, intakeRightTop;
+
+    //TODO: Add 4x wall distance sensors
+
+
+    //TODO: Add 2x Cameras
 
     /**
      * Odometry pod encoders.

@@ -2,31 +2,41 @@ package org.firstinspires.ftc.teamcode.common.hardware;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.AnalogServo;
 
 import javax.annotation.Nonnegative;
 
 public class RobotHardware {
 
     public MotorEx extensionMotor;
-    public MotorEx pitchMotor;
+    public MotorEx extensionPitchMotor;
 
     public DcMotorEx frontLeftMotor;
     public DcMotorEx frontRightMotor;
     public DcMotorEx backLeftMotor;
     public DcMotorEx backRightMotor;
 
-    public AnalogInput pitchEncoder;
+    public AbsoluteAnalogEncoder extensionPitchEncoder;
 
-    public DistanceSensor intakeLeftBottom,  intakeLeftTop,
-                          intakeRightBottom, intakeRightTop;
+    // TODO: Configure hardwaremap
+    // TODO: Configure invert positions
+    public AnalogServo intakeClawLeftServo;
+    public AnalogServo intakeClawRightServo;
+
+    // TODO: Configure Hardwaremap
+    // TODO: Configure invert positions
+    public AnalogServo intakePivotLeftServo;
+    public Servo intakePivotRightServo;
+
+    public DigitalChannel intakeClawLeftBottom,  intakeClawLeftTop,
+                          intakeClawRightBottom, intakeClawRightTop;
 
     //TODO: Add 4x wall distance sensors
 
@@ -36,7 +46,8 @@ public class RobotHardware {
     /**
      * Odometry pod encoders.
      */
-    public Motor.Encoder parallelPod;
+    public Motor.Encoder parallelPodLeft;
+    public Motor.Encoder parallelPodRight;
     public Motor.Encoder perpindicularPod;
 
     /**
@@ -90,7 +101,9 @@ public class RobotHardware {
         }
     }
 
-    public void reset() {}
+    public void reset() {
+
+    }
 
     @Nonnegative
     public double getVoltage() {

@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.common.hardware;
 
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxModule;
+import com.outoftheboxrobotics.photoncore.hardware.i2c.imu.PhotonBNO055IMUNew;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,6 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.AnalogServo;
+
+import java.util.List;
 
 import javax.annotation.Nonnegative;
 
@@ -25,12 +30,12 @@ public class RobotHardware {
 
     public AbsoluteAnalogEncoder extensionPitchEncoder;
 
-    // TODO: Configure hardwaremap
+    // TODO: Configure hardware map
     // TODO: Configure invert positions
     public AnalogServo intakeClawLeftServo;
     public AnalogServo intakeClawRightServo;
 
-    // TODO: Configure Hardwaremap
+    // TODO: Configure hardware map
     // TODO: Configure invert positions
     public AnalogServo intakePivotLeftServo;
     public Servo intakePivotRightServo;
@@ -39,8 +44,6 @@ public class RobotHardware {
                           intakeClawRightBottom, intakeClawRightTop;
 
     //TODO: Add 4x wall distance sensors
-
-
     //TODO: Add 2x Cameras
 
     /**
@@ -68,6 +71,12 @@ public class RobotHardware {
     private static RobotHardware instance = null;
     public boolean enabled;
 
+    private PhotonBNO055IMUNew imu = hardwareMap.get(PhotonBNO055IMUNew.class, "imu");
+    public List<PhotonLynxModule> modules;
+
+    private double imuAngle;
+    private double imuOffset;
+
     /**
      * Creating the singleton the first time, instantiating.
      */
@@ -88,11 +97,21 @@ public class RobotHardware {
     public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
+
+
+        // photon stuff
+        for (PhotonLynxModule module : modules) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
     }
 
-    public void read() {}
+    public void read() {
 
-    public void write() {}
+    }
+
+    public void write() {
+
+    }
 
     public void loop() {
         if (voltageTimer.seconds() > 5) {
@@ -105,8 +124,19 @@ public class RobotHardware {
 
     }
 
+    public void clearBulkCache() {
+        for (PhotonLynxModule module : modules) {
+            module.clearBulkCache();
+        }
+    }
+
     @Nonnegative
     public double getVoltage() {
         return voltage;
+    }
+
+    @Nonnegative
+    public double getAngle() {
+        return imuAngle - imuOffset;
     }
 }

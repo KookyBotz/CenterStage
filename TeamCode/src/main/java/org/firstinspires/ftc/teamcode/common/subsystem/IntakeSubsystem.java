@@ -2,12 +2,6 @@ package org.firstinspires.ftc.teamcode.common.subsystem;
 
 import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_CLAW_CLOSED;
 import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_CLAW_OPEN;
-import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_PIVOT_FLAT;
-import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_PIVOT_SCORING;
-import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_PIVOT_STORED;
-
-
-import com.arcrobotics.ftclib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
@@ -15,9 +9,13 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 2x Micro+ (left/right)
- * 2x Micro+ (pivot)
- * 4x Digital (left-+/right-+)
+ * Parts List:
+ * <ul>
+ *     <li>2x Micro+ (Left/Right)</li>
+ *     <li>1x Micro+ Pivot</li>
+ *     <li>1x Servo Pivot</li>
+ *     <li>4x Digital Sensor(2 Left, 2 Right)</li>
+ * </ul>
  */
 public class IntakeSubsystem extends KSubsystem {
 
@@ -65,14 +63,6 @@ public class IntakeSubsystem extends KSubsystem {
 
     public void updateState(@NotNull PivotState state) {
         this.pivotState = state;
-//        switch(state) {
-//            case FLAT:
-//                setPivot(INTAKE_PIVOT_FLAT);
-//            case STORED:
-//                setPivot(INTAKE_PIVOT_STORED);
-//            case SCORING:
-//                setPivot(INTAKE_PIVOT_SCORING);
-//        }
     }
 
     @Override
@@ -117,8 +107,7 @@ public class IntakeSubsystem extends KSubsystem {
         updateState(PivotState.STORED);
     }
 
-
-    // TODO: Configure this
+    //TODO: Configure this
     //TODO add implementation for angle writing to servos
     private void setPivot(double angle) {
 //        robot.pivotLeftServo.setPosition(position);

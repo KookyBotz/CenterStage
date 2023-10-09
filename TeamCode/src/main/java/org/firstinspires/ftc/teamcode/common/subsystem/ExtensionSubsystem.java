@@ -5,8 +5,17 @@ import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.AsymmetricMotionProfile;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileState;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
 
-public class ExtensionSubsystem extends SubsystemBase {
+/**
+ * Parts List:
+ * <ul>
+ *     <li>1x Motor Pitch</li>
+ *     <li>1x Motor Extension</li>
+ *     <li>1x Analog Encoder Pitch</li>
+ * </ul>
+ */
+public class ExtensionSubsystem extends KSubsystem {
 
     private final AsymmetricMotionProfile extensionProfile;
     private final AsymmetricMotionProfile pitchProfile;
@@ -28,6 +37,18 @@ public class ExtensionSubsystem extends SubsystemBase {
 
     }
 
+    @Override
+    public void read() {
 
+    }
 
+    @Override
+    public void write() {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
 }

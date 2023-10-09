@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile;
 
+import androidx.annotation.NonNull;
+
 public class AsymmetricMotionProfile {
     public double initialPosition;
     public double finalPosition;
@@ -30,52 +32,28 @@ public class AsymmetricMotionProfile {
 
         t1 = constraints.velo / constraints.accel;
         t3 = constraints.velo / constraints.decel;
-
         t2 = Math.abs(distance) / constraints.velo - (t1 + t3) / 2;
 
         if (t2 < 0) {
-//            System.out.println("Non-Max Velocity Profile");
             this.t2 = 0;
 
-            // this math utilizes a negative deceleration constant. either negate from the passed in value,
-            // or just add a negatation symbol prior to the variable.
             double a = (constraints.accel / 2) * (1 - constraints.accel / -constraints.decel);
-            // System.out.println("a " + a);
             double c = -distance;
-            // System.out.println("c " + c);
 
-            // acceleration phase
             t1 = Math.sqrt(-4 * a * c) / (2 * a);
-            // System.out.println("t1 " + t1);
-
-            // empty phase
-            // System.out.println("t2 " + t2);
-
-            // deceleration phase
             t3 = -(constraints.accel * t1) / -constraints.decel;
-            // System.out.println("t3 " + t3);
-
-            // ending accel position (middle peak)
             t1_stop_position = (constraints.accel * Math.pow(t1, 2)) / 2;
-            // System.out.println("xA " + accelStopPosition);
 
-            // ending accel velocity (middle peak)
             max_velocity = constraints.accel * t1;
-            // System.out.println("vA " + accelStopVelocity);
 
             t2_stop_position = t1_stop_position;
         } else {
-            System.out.println("Max Velocity Profile");
-            // time constants already calculated
-
             max_velocity = constraints.velo;
             t1_stop_position = (constraints.velo * t1) / 2;
             t2_stop_position = t1_stop_position + t2 * max_velocity;
         }
 
         totalTime = t1 + t2 + t3;
-
-        log();
     }
 
     public ProfileState calculate(final double time) {
@@ -101,7 +79,6 @@ public class AsymmetricMotionProfile {
             position = finalPosition;
         }
 
-        // state.x = (finalPosition > initialPosition) ? initialPosition + position : initialPosition - position;
         if (flipped) {
             state.x = originalPos - position;
         } else {
@@ -112,7 +89,9 @@ public class AsymmetricMotionProfile {
         return this.state;
     }
 
-    public void log() {
-
+    @NonNull
+    @Override
+    public String toString() {
+        return String.format("%f, %f, %f", state.x, state.v, state.a);
     }
 }

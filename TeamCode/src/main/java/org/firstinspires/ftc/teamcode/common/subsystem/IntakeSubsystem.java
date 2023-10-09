@@ -24,6 +24,11 @@ public class IntakeSubsystem extends KSubsystem {
     private ClawState clawState;
     private PivotState pivotState;
 
+    private double clawLeftPosition, clawRightPosition;
+
+    private boolean pixelLeftTop,    pixelRightTop,
+                    pixelLeftBottom, pixelRightBottom;
+
     private double pivotAngle = 0.0;
     private double pivotTargetAngle = 0.0;
 
@@ -91,8 +96,15 @@ public class IntakeSubsystem extends KSubsystem {
 
     @Override
     public void read() {
-        // TODO: add the rest of the + servos
-        pivotAngle = robot.intakePivotLeftServo.getPosition();
+        this.pivotAngle = robot.intakePivotLeftServo.getPosition();
+
+        this.clawLeftPosition = robot.intakeClawLeftServo.getPosition();
+        this.clawRightPosition = robot.intakeClawRightServo.getPosition();
+
+        this.pixelLeftTop = robot.intakeClawLeftTop.getState();
+        this.pixelLeftBottom = robot.intakeClawLeftBottom.getState();
+        this.pixelRightTop = robot.intakeClawRightTop.getState();
+        this.pixelRightBottom = robot.intakeClawRightBottom.getState();
     }
 
     @Override

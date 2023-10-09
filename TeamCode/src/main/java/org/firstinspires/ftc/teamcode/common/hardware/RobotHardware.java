@@ -98,7 +98,6 @@ public class RobotHardware {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
-
         // photon stuff
         for (PhotonLynxModule module : modules) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);

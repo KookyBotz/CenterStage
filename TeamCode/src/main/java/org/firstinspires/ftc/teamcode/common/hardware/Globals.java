@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
-
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
 
 public class Globals {
-
-
 
     /**
      * Match constants.

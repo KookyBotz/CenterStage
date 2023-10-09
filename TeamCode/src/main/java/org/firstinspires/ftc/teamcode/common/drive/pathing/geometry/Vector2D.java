@@ -12,6 +12,10 @@ public class Vector2D {
         return new Vector2D(Math.cos(h) * m, Math.sin(h) * m);
     }
 
+    public double angle() {
+        return Math.atan2(y, x);
+    }
+
     public Vector2D mult(double scalar) {
         return new Vector2D(x * scalar, y * scalar);
     }
@@ -44,6 +48,16 @@ public class Vector2D {
 
     public double cross(Vector2D other) {
         return x * other.y - y * other.x;
+    }
+
+    public Vector2D project(Vector2D other) {
+        double magnitude = other.magnitude();
+        double angle = angle();
+        return new Vector2D(magnitude * Math.cos(angle), magnitude * Math.sin(angle));
+    }
+
+    public double magnitudeSquared() {
+        return x * x + y * y;
     }
 
     @Override

@@ -25,4 +25,12 @@ public class Spline {
     public double getHeading(double t) {
         return Math.atan2(y.calculate(t, 1), x.calculate(t, 1));
     }
+
+    public Polynomial getX() {
+        return x;
+    }
+
+    public Polynomial getY() {
+        return y;
+    }
 }

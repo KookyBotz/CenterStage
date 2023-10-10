@@ -1,9 +1,9 @@
 public class Actuator {
-  private Map<String, HardwareDevice> a_devices = new ConcurrentHashMap<>();
-  private double a_position;
-  private AsymmetricalMotionProfile a_profile;
-  private PIDController a_controller;
-  private ElapsedTime a_timer;
+  private Map<String, HardwareDevice> devices = new ConcurrentHashMap<>();
+  private double position;
+  private AsymmetricalMotionProfile profile;
+  private PIDController controller;
+  private ElapsedTime timer;
 
   public Actuator(HardwareDevice... devices) {
     for (HardwareDevice device : devices) {
@@ -13,32 +13,33 @@ public class Actuator {
 
   public void read() {
     for (HardwareDevice device : devices) {
+      // Different checks for different object methods
       if (device instanceOf AnalogServo) {
-        this.a_position = device.getPosition();
+        this.position = device.getPosition();
       } else if (device instanceOf DcMotor) {
-        this.a_position = device.getPosition();
+        this.position = device.getPosition();
       }
     }
   }
 
   public HardwareDevice getDevice(String deviceName) {
-    return this.a_devices.get(deviceName);
+    return this.devices.get(deviceName);
   }
 
   public List<HardwareDevice> getDevices() {
-    return new ArrayList<>(a_devices.values());
+    return new ArrayList<>(devices.values());
   }
 
   public void setMotionProfile(AsymmetricalMotionProfile profile) {
-    this.a_profile = profile;
+    this.profile = profile;
   }
 
   public void setMotionConstraints(ProfileConstraints constraints) {
-    this.a_constraints = constraints;
+    this.constraints = constraints;
   }
 
   public void setPIDController(PIDFController controller) {
-    this.a_controller = controller;
+    this.controller = controller;
   }
 
   public double getPosition() {

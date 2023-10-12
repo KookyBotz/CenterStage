@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class IntakeSubsystem extends KSubsystem {
 
-    private RobotHardware robot;
+    private final RobotHardware robot;
 
     private ClawState clawState;
     private PivotState pivotState;
@@ -105,12 +105,15 @@ public class IntakeSubsystem extends KSubsystem {
         this.pixelLeftBottom = robot.intakeClawLeftBottom.getState();
         this.pixelRightTop = robot.intakeClawRightTop.getState();
         this.pixelRightBottom = robot.intakeClawRightBottom.getState();
+
+        this.pivotAngle = robot.intakePivotActuator.getPosition();
     }
 
     @Override
     public void write() {
         //TODO: write to all servos here
-        setPivot(pivotTargetAngle);
+//        setPivot(pivotTargetAngle);
+        robot.intakePivotActuator.write();
     }
 
     @Override

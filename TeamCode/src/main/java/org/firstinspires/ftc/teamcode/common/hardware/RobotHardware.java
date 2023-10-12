@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxModule;
@@ -12,6 +13,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.AsymmetricMotionProfile;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.Actuator;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.AnalogServo;
 
@@ -40,11 +43,13 @@ public class RobotHardware {
 
     // TODO: Configure hardware map
     // TODO: Configure invert positions
-    public AnalogServo intakePivotLeftServo;
+    public Servo intakePivotLeftServo;
     public Servo intakePivotRightServo;
+    public AbsoluteAnalogEncoder intakePivotEncoder;
+    public Actuator intakePivotActuator;
 
-    public DigitalChannel intakeClawLeftBottom,  intakeClawLeftTop,
-                          intakeClawRightBottom, intakeClawRightTop;
+    public DigitalChannel intakeClawLeftBottom, intakeClawLeftTop,
+            intakeClawRightBottom, intakeClawRightTop;
 
     //TODO: Add 4x wall distance sensors
     //TODO: Add 2x Cameras
@@ -74,7 +79,7 @@ public class RobotHardware {
     private static RobotHardware instance = null;
     public boolean enabled;
 
-    private PhotonBNO055IMUNew imu = hardwareMap.get(PhotonBNO055IMUNew.class, "imu");
+    private final PhotonBNO055IMUNew imu = hardwareMap.get(PhotonBNO055IMUNew.class, "imu");
     public List<PhotonLynxModule> modules;
 
     private double imuAngle;
@@ -106,7 +111,10 @@ public class RobotHardware {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
-        this.actuator = new Actuator(intakePivotRightServo, );
+        this.intakePivotActuator = new Actuator(intakePivotLeftServo, intakePivotRightServo, intakePivotEncoder)
+                .setPIDController(new PIDController(1, 1, 1))
+                .setMotionProfile(new AsymmetricMotionProfile(1, 1, new ProfileConstraints(1, 1, 1)))
+                .setErrorTolerance(0.02);
     }
 
     public void read() {

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.util.wrappers;
 
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
@@ -19,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Actuator {
-    private Map<String, HardwareDevice> devices = new ConcurrentHashMap<>();
+    private final Map<String, HardwareDevice> devices = new ConcurrentHashMap<>();
     private AsymmetricMotionProfile profile;
     private ProfileConstraints constraints;
     private ProfileState state;
@@ -90,22 +89,6 @@ public class Actuator {
         }
     }
 
-    public void setMotionProfile(AsymmetricMotionProfile profile) {
-        this.profile = profile;
-    }
-
-    public void setPIDController(PIDController controller) {
-        this.controller = controller;
-    }
-
-    public void setPID(double p, double i, double d) {
-        this.controller.setPID(p, i, d);
-    }
-
-    public void setErrorTolerance(double tolerance) {
-        this.tolerance = tolerance;
-    }
-
     public double getPosition() {
         return position;
     }
@@ -120,5 +103,30 @@ public class Actuator {
 
     public boolean hasReached() {
         return this.reached;
+    }
+
+    public Actuator setMotionProfile(AsymmetricMotionProfile profile) {
+        this.profile = profile;
+        return this;
+    }
+
+    public Actuator setPIDController(PIDController controller) {
+        this.controller = controller;
+        return this;
+    }
+
+    public Actuator setPID(double p, double i, double d) {
+        if (controller == null) {
+            this.controller = new PIDController(p, i, d);
+        } else {
+            this.controller.setPID(p, i, d);
+        }
+
+        return this;
+    }
+
+    public Actuator setErrorTolerance(double tolerance) {
+        this.tolerance = tolerance;
+        return this;
     }
 }

@@ -26,6 +26,10 @@ public class AnalogServo {
         this.encoder = new AbsoluteAnalogEncoder(encoder);
     }
 
+    public AnalogServo(Servo servo) {
+        this.servo = (PhotonServo) servo;
+    }
+
     public void setPosition(double position) {
         servo.setPosition(position);
     }
@@ -37,6 +41,14 @@ public class AnalogServo {
 
     @Nonnegative
     public double getPosition() {
-        return encoder.getCurrentPosition();
+        if (hasEncoder()) {
+            return encoder.getCurrentPosition();
+        } else {
+            return servo.getPosition();
+        }
+    }
+
+    public boolean hasEncoder() {
+        return encoder != null;
     }
 }

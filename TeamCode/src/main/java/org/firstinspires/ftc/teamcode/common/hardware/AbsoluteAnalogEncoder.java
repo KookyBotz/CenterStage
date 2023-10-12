@@ -3,9 +3,10 @@ package org.firstinspires.ftc.teamcode.common.hardware;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.util.Angle;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 
 @Config
-public class AbsoluteAnalogEncoder {
+public class AbsoluteAnalogEncoder implements HardwareDevice {
     public static double DEFAULT_RANGE = 3.3;
     public static boolean VALUE_REJECTION = false;
     private final AnalogInput encoder;
@@ -48,5 +49,30 @@ public class AbsoluteAnalogEncoder {
 
     public double getVoltage(){
         return encoder.getVoltage();
+    }
+
+    @Override
+    public Manufacturer getManufacturer() {
+        return null;
+    }
+    @Override
+    public String getDeviceName() {
+        return null;
+    }
+    @Override
+    public String getConnectionInfo() {
+        return null;
+    }
+    @Override
+    public int getVersion() {
+        return 0;
+    }
+    @Override
+    public void resetDeviceConfigurationForOpMode() {
+
+    }
+    @Override
+    public void close() {
+
     }
 }

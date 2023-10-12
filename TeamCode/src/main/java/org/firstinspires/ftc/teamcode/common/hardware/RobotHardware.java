@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.Actuator;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.AnalogServo;
 
 import java.util.List;
@@ -29,6 +30,8 @@ public class RobotHardware {
     public DcMotorEx backRightMotor;
 
     public AbsoluteAnalogEncoder extensionPitchEncoder;
+
+    public Actuator actuator;
 
     // TODO: Configure hardware map
     // TODO: Configure invert positions
@@ -102,6 +105,8 @@ public class RobotHardware {
         for (PhotonLynxModule module : modules) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
+
+        this.actuator = new Actuator(intakePivotRightServo, );
     }
 
     public void read() {

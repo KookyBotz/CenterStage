@@ -18,6 +18,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Actuator {
+    public enum FeedforwardMode {
+        NONE,
+        CONSTANT,
+        ANGLE_BASED
+    }
+
     private final Map<String, HardwareDevice> devices = new ConcurrentHashMap<>();
     private AsymmetricMotionProfile profile;
     private ProfileConstraints constraints;
@@ -32,7 +38,8 @@ public class Actuator {
     private double feedforward = 0.0;
 
     private boolean reached = false;
-    private boolean usingFeedforward = false;
+
+    private FeedforwardMode mode = FeedforwardMode.NONE;
 
     /**
      * Actuator constructor with varargs HardwareDevice parameter
@@ -60,8 +67,6 @@ public class Actuator {
                 return;
             }
         }
-
-
     }
 
     /**
@@ -77,6 +82,16 @@ public class Actuator {
 
         if (controller != null) {
             this.power = controller.calculate(position, targetPosition);
+
+            switch (mode) {
+                case CONSTANT:
+                    this.power += feedforward;
+                    break;
+                case ANGLE_BASED:
+                    this.power += Math.cos(position) * feedforward;
+                    break;
+                default:
+            }
         }
 
         this.reached = Math.abs(targetPosition - position) < tolerance;
@@ -105,11 +120,78 @@ public class Actuator {
      */
     public void setTargetPosition(double targetPosition) {
         if (this.profile != null) {
-            this.setMotionProfile(new AsymmetricMotionProfile(position, targetPosition, this.profile.constraints));
+            this.setMotionProfile(new AsymmetricMotionProfile(position, targetPosition, constraints));
             this.timer.reset();
         } else {
             this.targetPosition = targetPosition;
         }
+    }
+
+    /**
+     * Saves the value passed in for the new motion profile.
+     *
+     * @param profile The new asymmetrical motion profile
+     * @return
+     */
+    public Actuator setMotionProfile(AsymmetricMotionProfile profile) {
+        this.profile = profile;
+        return this;
+    }
+
+    /**
+     * Saves the value passed in for the new PID controller.
+     *
+     * @param controller
+     * @return
+     */
+    public Actuator setPIDController(PIDController controller) {
+        this.controller = controller;
+        return this;
+    }
+
+    /**
+     * Creates a new PIDController object based on the coefficients passed in.
+     *
+     * @param p Proportional constant
+     * @param i Integral Constant
+     * @param d Derivative Constant
+     * @return
+     */
+    public Actuator setPID(double p, double i, double d) {
+        if (controller == null) {
+            this.controller = new PIDController(p, i, d);
+        } else {
+            this.controller.setPID(p, i, d);
+        }
+
+        return this;
+    }
+
+    public Actuator setFeedforward(FeedforwardMode mode, double coefficient) {
+        this.mode = mode;
+        this.feedforward = coefficient;
+        return this;
+    }
+
+    /**
+     * Sets the allowed error tolerance for the actuation group to be considered
+     * "close enough" within the target position.
+     *
+     * @param tolerance
+     * @return
+     */
+    public Actuator setErrorTolerance(double tolerance) {
+        this.tolerance = tolerance;
+        return this;
+    }
+
+    public void updateConstraints(ProfileConstraints constraints) {
+        this.constraints = constraints;
+        setMotionProfile(new AsymmetricMotionProfile(position, targetPosition, constraints));
+    }
+
+    public void updatePID(double P, double I, double D) {
+        this.controller.setPID(P, I, D);
     }
 
     /**
@@ -157,57 +239,5 @@ public class Actuator {
      */
     public boolean hasReached() {
         return this.reached;
-    }
-
-    /**
-     * Saves the value passed in for the new motion profile.
-     *
-     * @param profile The new asymmetrical motion profile
-     * @return
-     */
-    public Actuator setMotionProfile(AsymmetricMotionProfile profile) {
-        this.profile = profile;
-        return this;
-    }
-
-    /**
-     * Saves the value passed in for the new PID controller.
-     *
-     * @param controller
-     * @return
-     */
-    public Actuator setPIDController(PIDController controller) {
-        this.controller = controller;
-        return this;
-    }
-
-    /**
-     * Creates a new PIDController object based on the coefficients passed in.
-     *
-     * @param p Proportional constant
-     * @param i Integral Constant
-     * @param d Derivative Constant
-     * @return
-     */
-    public Actuator setPID(double p, double i, double d) {
-        if (controller == null) {
-            this.controller = new PIDController(p, i, d);
-        } else {
-            this.controller.setPID(p, i, d);
-        }
-
-        return this;
-    }
-
-    /**
-     * Sets the allowed error tolerance for the actuation group to be considered
-     * "close enough" within the target position.
-     *
-     * @param tolerance
-     * @return
-     */
-    public Actuator setErrorTolerance(double tolerance) {
-        this.tolerance = tolerance;
-        return this;
     }
 }

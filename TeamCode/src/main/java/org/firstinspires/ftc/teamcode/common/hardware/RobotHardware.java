@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxModule;
 import com.outoftheboxrobotics.photoncore.hardware.i2c.imu.PhotonBNO055IMUNew;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
@@ -31,6 +32,7 @@ public class RobotHardware {
     public MotorEx extensionMotor;
     public MotorEx extensionPitchMotor;
     public AbsoluteAnalogEncoder extensionPitchEncoder;
+    public AnalogInput extensionPitchEnc;
     public Actuator extensionPitchActuator;
 
     public DcMotorEx dtFrontLeftMotor;
@@ -82,7 +84,7 @@ public class RobotHardware {
     private static RobotHardware instance = null;
     public boolean enabled;
 
-    private final PhotonBNO055IMUNew imu = hardwareMap.get(PhotonBNO055IMUNew.class, "imu");
+    private PhotonBNO055IMUNew imu;
     public List<PhotonLynxModule> modules;
 
     private ArrayList<KSubsystem> subsystems;
@@ -115,10 +117,16 @@ public class RobotHardware {
 
 
         // TODO make sure all photon stuff is done
-        for (PhotonLynxModule module : modules) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        }
+//        for (PhotonLynxModule module : modules) {
+//            module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+//        }
 
+        this.extensionPitchEnc = hardwareMap.get(AnalogInput.class, "extensionPitchEncoder");
+        this.extensionPitchEncoder = new AbsoluteAnalogEncoder(extensionPitchEnc);
+
+//        this.imu = hardwareMap.get(PhotonBNO055IMUNew.class, "imu");
+
+        /*
         // TODO
         // Intake Pivot Actuator
         // Motion Profile
@@ -137,6 +145,8 @@ public class RobotHardware {
 //                .setMotionProfile(new AsymmetricMotionProfile(0, 1, new ProfileConstraints(1, 1, 1)))
                 .setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, 0.0)
                 .setErrorTolerance(20);
+                */
+
     }
 
     public void read() {

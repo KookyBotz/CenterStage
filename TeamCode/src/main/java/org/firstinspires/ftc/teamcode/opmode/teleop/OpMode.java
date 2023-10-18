@@ -33,7 +33,7 @@ public class OpMode extends CommandOpMode {
         Globals.IS_USING_IMU = true;
 
         robot.init(hardwareMap, telemetry);
-        drivetrain = new MecanumDrivetrain();
+//        drivetrain = new MecanumDrivetrain();
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
         robot.addSubsystem(drivetrain, extension, intake);

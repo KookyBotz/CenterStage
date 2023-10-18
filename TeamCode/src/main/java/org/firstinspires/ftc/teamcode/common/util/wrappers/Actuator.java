@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.Prof
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +25,7 @@ public class Actuator {
         ANGLE_BASED
     }
 
-    private final Map<String, HardwareDevice> devices = new ConcurrentHashMap<>();
+    private final Map<String, HardwareDevice> devices = new HashMap<>();
     private AsymmetricMotionProfile profile;
     private ProfileConstraints constraints;
     private ProfileState state;
@@ -209,6 +210,10 @@ public class Actuator {
      */
     public double getTargetPosition() {
         return targetPosition;
+    }
+
+    public double getPower() {
+        return power;
     }
 
     /**

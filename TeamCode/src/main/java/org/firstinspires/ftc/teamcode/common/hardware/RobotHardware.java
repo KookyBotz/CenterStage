@@ -114,11 +114,12 @@ public class RobotHardware {
         this.subsystems = new ArrayList<>();
 
 
-        // photon stuff
+        // TODO make sure all photon stuff is done
         for (PhotonLynxModule module : modules) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
+        // TODO
         // Intake Pivot Actuator
         // Motion Profile
         // Error Tolerance
@@ -126,6 +127,7 @@ public class RobotHardware {
                 .setMotionProfile(new AsymmetricMotionProfile(1, 1, new ProfileConstraints(1, 1, 1)))
                 .setErrorTolerance(0.02);
 
+        // TODO
         // Extension Pitch Actuator
         // PID
         // Motion Controller

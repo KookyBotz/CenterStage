@@ -28,7 +28,6 @@ public class ExtensionSubsystem extends KSubsystem {
     public static double D = 0.0;
     public static double F = 0.0;
 
-    public static double targetPosition = 0.0;
 
     public ExtensionSubsystem() {
         this.robot = RobotHardware.getInstance();
@@ -38,7 +37,6 @@ public class ExtensionSubsystem extends KSubsystem {
     public void periodic() {
         robot.extensionPitchActuator.updatePID(P, I, D);
         robot.extensionPitchActuator.setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, F);
-        robot.extensionPitchActuator.setTargetPosition(targetPosition);
 
         robot.extensionPitchActuator.periodic();
     }

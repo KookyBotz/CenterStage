@@ -132,9 +132,9 @@ public class RobotHardware {
         // Error Tolerance
         this.extensionPitchActuator = new Actuator((HardwareDevice) extensionPitchMotor, extensionPitchEncoder)
                 .setPIDController(new PIDController(0, 0, 0))
-                .setMotionProfile(new AsymmetricMotionProfile(0, 1, new ProfileConstraints(1, 1, 1)))
+//                .setMotionProfile(new AsymmetricMotionProfile(0, 1, new ProfileConstraints(1, 1, 1)))
                 .setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, 0.0)
-                .setErrorTolerance(0.01);
+                .setErrorTolerance(20);
     }
 
     public void read() {

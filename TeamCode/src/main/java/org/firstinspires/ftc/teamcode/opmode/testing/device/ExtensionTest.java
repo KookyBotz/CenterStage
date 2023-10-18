@@ -4,6 +4,9 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -23,6 +26,10 @@ public class ExtensionTest extends CommandOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private ExtensionSubsystem extension;
 
+    public static double targetPosition = 0.0;
+
+    private GamepadEx gamepadEx;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -34,16 +41,22 @@ public class ExtensionTest extends CommandOpMode {
         robot.init(hardwareMap, telemetry);
         extension = new ExtensionSubsystem();
         robot.addSubsystem(extension);
+
+        gamepadEx = new GamepadEx(gamepad1);
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(() -> schedule(new InstantCommand(() -> robot.extensionPitchActuator.setTargetPosition(targetPosition))));
     }
 
     @Override
     public void run() {
         robot.read();
-        robot.periodic();
+        super.run();
         robot.write();
 
         telemetry.addData("current position", robot.extensionPitchActuator.getPosition());
         telemetry.addData("target position", robot.extensionPitchActuator.getTargetPosition());
+        telemetry.addData("reached", robot.extensionPitchActuator.hasReached());
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

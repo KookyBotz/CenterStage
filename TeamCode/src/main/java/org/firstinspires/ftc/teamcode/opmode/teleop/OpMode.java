@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.outoftheboxrobotics.photoncore.Photon;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
@@ -37,6 +36,7 @@ public class OpMode extends CommandOpMode {
         drivetrain = new MecanumDrivetrain();
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
+        robot.addSubsystem(drivetrain, extension, intake);
     }
 
     @Override

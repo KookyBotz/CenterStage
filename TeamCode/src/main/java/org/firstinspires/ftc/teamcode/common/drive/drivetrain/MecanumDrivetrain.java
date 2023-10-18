@@ -63,10 +63,10 @@ public class MecanumDrivetrain extends KSubsystem implements Drivetrain {
 
     @Override
     public void write() {
-        robot.frontLeftMotor.setPower(ws[0]);
-        robot.frontRightMotor.setPower(ws[1]);
-        robot.backLeftMotor.setPower(ws[2]);
-        robot.backRightMotor.setPower(ws[3]);
+        robot.dtFrontLeftMotor.setPower(ws[0]);
+        robot.dtFrontRightMotor.setPower(ws[1]);
+        robot.dtBackLeftMotor.setPower(ws[2]);
+        robot.dtBackRightMotor.setPower(ws[3]);
     }
 
     @Override

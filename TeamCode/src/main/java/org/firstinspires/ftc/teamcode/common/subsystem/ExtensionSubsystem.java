@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.AsymmetricMotionProfile;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileState;
+import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
 
 /**
@@ -17,34 +18,26 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
  */
 public class ExtensionSubsystem extends KSubsystem {
 
-    private final AsymmetricMotionProfile extensionProfile;
-    private final AsymmetricMotionProfile pitchProfile;
-
-    private ProfileState extensionState, angularState;
-
-    private final PIDController extensionController, pitchController;
+    private RobotHardware robot;
 
     public ExtensionSubsystem() {
-        extensionProfile = null;
-        pitchProfile = null;
+        this.robot = RobotHardware.getInstance();
 
-        extensionController = null;
-        pitchController = null;
     }
 
     @Override
     public void periodic() {
-
+        this.robot.extensionPitchActuator.periodic();
     }
 
     @Override
     public void read() {
-
+        robot.extensionPitchActuator.read();
     }
 
     @Override
     public void write() {
-
+        robot.extensionPitchActuator.write();
     }
 
     @Override

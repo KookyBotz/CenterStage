@@ -27,6 +27,12 @@ public class Globals {
     public static double INTAKE_PIVOT_STORED = 0.0;
     public static double INTAKE_PIVOT_SCORING = 0.0;
 
+    // TODO tune these values
+    public static double EXTENSION_PITCH_P = 0.0;
+    public static double EXTENSION_PITCH_I = 0.0;
+    public static double EXTENSION_PITCH_D = 0.0;
+    public static double EXTENSION_PITCH_F = 0.0;
+
     /**
      * Wait times for sequence tuning.
      */

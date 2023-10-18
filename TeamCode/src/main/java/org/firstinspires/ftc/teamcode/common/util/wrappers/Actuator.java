@@ -29,7 +29,10 @@ public class Actuator {
     private double targetPosition = 0.0;
     private double power = 0.0;
     private double tolerance = 0.0;
+    private double feedforward = 0.0;
+
     private boolean reached = false;
+    private boolean usingFeedforward = false;
 
     /**
      * Actuator constructor with varargs HardwareDevice parameter
@@ -51,12 +54,14 @@ public class Actuator {
         for (HardwareDevice device : devices.values()) {
             if (device instanceof AbsoluteAnalogEncoder) {
                 this.position = ((AbsoluteAnalogEncoder) device).getCurrentPosition();
-                break;
+                return;
             } else if (device instanceof Motor.Encoder) {
                 this.position = ((DcMotor) device).getCurrentPosition();
-                break;
+                return;
             }
         }
+
+
     }
 
     /**
@@ -114,6 +119,14 @@ public class Actuator {
      */
     public double getPosition() {
         return position;
+    }
+
+    /**
+     * Gets the current target position for the actuation group.
+     * @return double
+     */
+    public double getTargetPosition() {
+        return targetPosition;
     }
 
     /**

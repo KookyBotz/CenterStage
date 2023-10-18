@@ -29,9 +29,6 @@ public class IntakeSubsystem extends KSubsystem {
     private boolean pixelLeftTop,    pixelRightTop,
                     pixelLeftBottom, pixelRightBottom;
 
-    private double pivotAngle = 0.0;
-    private double pivotTargetAngle = 0.0;
-
     public enum ClawState {
         CLOSED,
         OPEN
@@ -45,8 +42,6 @@ public class IntakeSubsystem extends KSubsystem {
 
     public IntakeSubsystem() {
         this.robot = RobotHardware.getInstance();
-
-
     }
 
     public void updateState(@NotNull ClawState state, @NotNull ClawSide side) {
@@ -75,6 +70,7 @@ public class IntakeSubsystem extends KSubsystem {
 
         // TODO: fix
         double armAngle = 0.0; // some radian boi
+        double pivotTargetAngle = 0.0;
 
         // TODO NOT FINAL. just some shitty pseudocode
         if (pivotState == PivotState.FLAT) {
@@ -96,7 +92,6 @@ public class IntakeSubsystem extends KSubsystem {
 
     @Override
     public void read() {
-        this.pivotAngle = robot.intakePivotLeftServo.getPosition();
 
         this.clawLeftPosition = robot.intakeClawLeftServo.getPosition();
         this.clawRightPosition = robot.intakeClawRightServo.getPosition();
@@ -106,7 +101,7 @@ public class IntakeSubsystem extends KSubsystem {
         this.pixelRightTop = robot.intakeClawRightTop.getState();
         this.pixelRightBottom = robot.intakeClawRightBottom.getState();
 
-        this.pivotAngle = robot.intakePivotActuator.getPosition();
+        robot.intakePivotActuator.read();
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.outoftheboxrobotics.photoncore.hardware.i2c.imu.PhotonBNO055IMUNew;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -17,7 +18,10 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.Asym
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.Actuator;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.AnalogServo;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Nonnegative;
@@ -26,15 +30,14 @@ public class RobotHardware {
 
     public MotorEx extensionMotor;
     public MotorEx extensionPitchMotor;
-
-    public DcMotorEx frontLeftMotor;
-    public DcMotorEx frontRightMotor;
-    public DcMotorEx backLeftMotor;
-    public DcMotorEx backRightMotor;
-
     public AbsoluteAnalogEncoder extensionPitchEncoder;
+    public Actuator extensionPitchActuator;
 
-    public Actuator actuator;
+    public DcMotorEx dtFrontLeftMotor;
+    public DcMotorEx dtFrontRightMotor;
+    public DcMotorEx dtBackLeftMotor;
+    public DcMotorEx dtBackRightMotor;
+
 
     // TODO: Configure hardware map
     // TODO: Configure invert positions
@@ -82,6 +85,8 @@ public class RobotHardware {
     private final PhotonBNO055IMUNew imu = hardwareMap.get(PhotonBNO055IMUNew.class, "imu");
     public List<PhotonLynxModule> modules;
 
+    private ArrayList<KSubsystem> subsystems;
+
     private double imuAngle;
     private double imuOffset;
 
@@ -106,40 +111,70 @@ public class RobotHardware {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
 
+        this.subsystems = new ArrayList<>();
+
+
         // photon stuff
         for (PhotonLynxModule module : modules) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
+        // Intake Pivot Actuator
+        // Motion Profile
+        // Error Tolerance
         this.intakePivotActuator = new Actuator(intakePivotLeftServo, intakePivotRightServo, intakePivotEncoder)
-                .setPIDController(new PIDController(1, 1, 1))
                 .setMotionProfile(new AsymmetricMotionProfile(1, 1, new ProfileConstraints(1, 1, 1)))
                 .setErrorTolerance(0.02);
+
+        // Extension Pitch Actuator
+        // PID
+        // Motion Controller
+        // Error Tolerance
+        this.extensionPitchActuator = new Actuator((HardwareDevice) extensionPitchMotor, extensionPitchEncoder)
+                .setPIDController(new PIDController(1, 1, 1))
+                .setMotionProfile(new AsymmetricMotionProfile(0, 1, new ProfileConstraints(1, 1, 1)))
+                .setErrorTolerance(10)
+                .addAngularFeedForward()
+
     }
 
     public void read() {
-
+        for (KSubsystem subsystem : subsystems) {
+            subsystem.read();
+        }
     }
 
     public void write() {
-
+        for (KSubsystem subsystem : subsystems) {
+            subsystem.write();
+        }
     }
 
-    public void loop() {
+    public void periodic() {
         if (voltageTimer.seconds() > 5) {
             voltageTimer.reset();
             voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
         }
+
+        for (KSubsystem subsystem : subsystems) {
+            subsystem.periodic();
+        }
     }
 
     public void reset() {
-
+        for (KSubsystem subsystem : subsystems) {
+            subsystem.reset();
+        }
     }
 
     public void clearBulkCache() {
         for (PhotonLynxModule module : modules) {
             module.clearBulkCache();
         }
+    }
+
+    public void addSubsystem(KSubsystem... subsystems) {
+        this.subsystems.addAll(Arrays.asList(subsystems));
     }
 
     @Nonnegative

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.Asym
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileState;
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
+import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +37,9 @@ public class Actuator {
     private double targetPosition = 0.0;
     private double power = 0.0;
     private double tolerance = 0.0;
-    private double feedforward = 0.0;
+    private double feedforwardMin = 0.0;
+    private double feedforwardMax = 0.0;
+    private double currentFeedforward = 0.0;
 
     private boolean reached = false;
 
@@ -86,15 +89,16 @@ public class Actuator {
 
             switch (mode) {
                 case CONSTANT:
-                    this.power += feedforward;
+                    this.power += currentFeedforward;
                     break;
                 case ANGLE_BASED:
-                    this.power += Math.cos(position) * feedforward;
+                    this.power += Math.cos(position) * currentFeedforward;
                     break;
                 default:
             }
         }
 
+        this.power = MathUtils.clamp(power, -1, 1);
         this.reached = Math.abs(targetPosition - position) < tolerance;
     }
 
@@ -168,9 +172,18 @@ public class Actuator {
         return this;
     }
 
-    public Actuator setFeedforward(FeedforwardMode mode, double coefficient) {
+    public Actuator setFeedforward(FeedforwardMode mode, double feedforward) {
         this.mode = mode;
-        this.feedforward = coefficient;
+        this.feedforwardMin = feedforward;
+        this.currentFeedforward = feedforwardMin;
+        return this;
+    }
+
+    public Actuator setFeedforward(FeedforwardMode mode, double feedforwardMin, double feedforwardMax) {
+        this.mode = mode;
+        this.feedforwardMin = feedforwardMin;
+        this.feedforwardMax = feedforwardMax;
+        this.currentFeedforward = feedforwardMin;
         return this;
     }
 
@@ -195,6 +208,10 @@ public class Actuator {
         this.controller.setPID(P, I, D);
     }
 
+    public void updateFeedforward(double percentage) {
+        this.currentFeedforward = feedforwardMin + (feedforwardMax - feedforwardMin) * percentage;
+    }
+
     /**
      * Gets the value read by the actuation group.
      *
@@ -214,6 +231,10 @@ public class Actuator {
 
     public double getPower() {
         return power;
+    }
+
+    public double getCurrentFeedforward() {
+        return currentFeedforward;
     }
 
     /**

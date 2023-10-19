@@ -4,16 +4,24 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.AsymmetricMotionProfile;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileState;
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.Actuator;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.EncoderWrapper;
 
 @Config
 @TeleOp(name = "ActuationMotorTest")
@@ -24,22 +32,24 @@ public class ActuationMotorTest extends OpMode {
     public DcMotorEx extensionMotor;
     public DcMotorEx armMotor;
 
-    public Motor.Encoder extensionEncoder;
+    public EncoderWrapper extensionEncoder;
 
     public Actuator pitchActuator;
     public Actuator extensionActuator;
 
     private double loopTime = 0.0;
 
+    public static double v = 0.0;
+    public static double a1 = 0.0;
+    public static double a2 = 0.0;
+
     public static double P = 0.0;
     public static double I = 0.0;
     public static double D = 0.0;
-    public double p = 0.0;
-    public double i = 0.0;
-    public double d = 0.0;
-    public static double F_MIN = 0.05;
-    public static double F_MAX = 0.13;
-    public static double targetPosition = 0.0;
+    public static double F_MIN = 0.0;
+    public static double F_MAX = 0.0;
+    public static double armTargetPosition = 1.57;
+    public static double liftTargetPosition = 0;
 
     @Override
     public void init() {
@@ -49,19 +59,28 @@ public class ActuationMotorTest extends OpMode {
         armMotor = hardwareMap.get(DcMotorEx.class, "extensionPitchMotor");
         armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        extensionEncoder = new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder;
+        extensionEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
 
         // a, lift, went up with 0.1
         // b, arm, went down with 0.1
 
         this.extensionPitchEnc = hardwareMap.get(AnalogInput.class, "extensionPitchEncoder");
         this.extensionPitchEncoder = new AbsoluteAnalogEncoder(extensionPitchEnc);
+        extensionPitchEncoder.zero(2.086);
         extensionPitchEncoder.setInverted(true);
         extensionPitchEncoder.setNegArm(true);
 
-        pitchActuator = new Actuator(armMotor, extensionPitchEncoder)
+        this.extensionActuator = new Actuator(extensionMotor, extensionEncoder)
                 .setPIDController(new PIDController(0, 0, 0))
-                .setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, F_MIN, F_MAX);
+//                .setMotionProfile(new ProfileConstraints(0, 0, 0))
+                .setFeedforward(Actuator.FeedforwardMode.CONSTANT, 0.0);
+
+        pitchActuator = new Actuator(armMotor, extensionPitchEncoder)
+                .setPIDController(new PIDController(1.3, 0, 0.035))
+                .setMotionProfile(Math.PI / 2, new ProfileConstraints(4.7, 20, 7.5))
+                .setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, 0.05, 0.13);
+
+        pitchActuator.setTargetPosition(Math.PI / 2);
 
         telemetry.addLine("here");
         telemetry.update();
@@ -71,23 +90,29 @@ public class ActuationMotorTest extends OpMode {
     public void loop() {
 
         pitchActuator.read();
-        pitchActuator.setTargetPosition(targetPosition);
+        extensionActuator.read();
 
-        if (P != p || I != i || D != d) {
-            pitchActuator.setPIDController(new PIDController(P, I, D));
-            p = P;
-            i = I;
-            d = D;
+        if (gamepad1.a) {
+            pitchActuator.setMotionProfileTargetPosition(armTargetPosition);
         }
 
-//        pitchActuator.setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, 0.05, 0.12);
+        if (gamepad1.b) {
+            extensionActuator.setTargetPosition(liftTargetPosition);
+        }
+
+        if (gamepad1.y) {
+            extensionActuator.setPIDController(new PIDController(P, I, D));
+            extensionActuator.setFeedforward(Actuator.FeedforwardMode.CONSTANT, F_MIN);
+        }
 
         double liftTicks = extensionEncoder.getPosition();
         pitchActuator.updateFeedforward(liftTicks / 560.0);
 
         pitchActuator.periodic();
+        extensionActuator.periodic();
 
         pitchActuator.write();
+        extensionActuator.write();
 
 //        if (gamepad1.a) {
 //            liftMotor.setPower(0.1);
@@ -104,11 +129,21 @@ public class ActuationMotorTest extends OpMode {
 
 //        telemetry.addData("radian reading", extensionPitchEncoder.getCurrentPosition());
 
-        telemetry.addData("power", pitchActuator.getPower());
-        telemetry.addData("targetPosition", targetPosition);
-        telemetry.addData("currentPosition", pitchActuator.getPosition());
-        telemetry.addData("liftPosition", liftTicks);
-        telemetry.addData("currentFF", pitchActuator.getCurrentFeedforward());
+//        telemetry.addData("voltage", extensionEncoder.getVoltage());
+        telemetry.addData("power", extensionActuator.getPower());
+        telemetry.addData("targetPosition", liftTargetPosition);
+        telemetry.addData("currentPosition", extensionActuator.getPosition());
+        telemetry.addData("Current", extensionMotor.getCurrent(CurrentUnit.AMPS));
+//        ProfileState state = pitchActuator.getState();
+
+//        telemetry.addData("v", state.v);
+//        telemetry.addData("p", state.x);
+//        telemetry.addData("a", state.a);
+//        telemetry.addData("v", pitchActuator.getConstraints().velo);
+//        telemetry.addData("time:", pitchActuator.timer.time());
+
+//        telemetry.addData("liftPosition", liftTicks);
+//        telemetry.addData("currentFF", pitchActuator.getCurrentFeedforward());
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

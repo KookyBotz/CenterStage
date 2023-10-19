@@ -23,6 +23,7 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
         offset = 0;
         inverted = false;
     }
+
     public AbsoluteAnalogEncoder zero(double off){
         offset = off;
         return this;
@@ -55,6 +56,7 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
     public AnalogInput getEncoder() {
         return encoder;
     }
+
 
 
     public double getVoltage(){

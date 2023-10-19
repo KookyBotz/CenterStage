@@ -79,10 +79,19 @@ public class AsymmetricMotionProfile {
             position = finalPosition;
         }
 
-        if (flipped) {
-            state.x = originalPos - position;
+        // TODO fix later since something went so fucking wrong here
+        if (time <= totalTime) {
+            if (flipped) {
+                state.x = originalPos - position;
+            } else {
+                state.x = initialPosition + position;
+            }
         } else {
-            state.x = initialPosition + position;
+            if (flipped) {
+                state.x = initialPosition;
+            } else {
+                state.x = originalPos + position;
+            }
         }
         state.v = velocity;
         state.a = acceleration;

@@ -31,7 +31,7 @@ public class Actuator {
     private ProfileConstraints constraints;
     private ProfileState state;
     private PIDController controller;
-    private ElapsedTime timer;
+    public ElapsedTime timer;
 
     private double position = 0.0;
     private double targetPosition = 0.0;
@@ -54,6 +54,7 @@ public class Actuator {
         for (HardwareDevice device : devices) {
             this.devices.put(device.getDeviceName(), device);
         }
+        read();
     }
 
     /**
@@ -66,8 +67,8 @@ public class Actuator {
             if (device instanceof AbsoluteAnalogEncoder) {
                 this.position = ((AbsoluteAnalogEncoder) device).getCurrentPosition();
                 return;
-            } else if (device instanceof Motor.Encoder) {
-                this.position = ((DcMotor) device).getCurrentPosition();
+            } else if (device instanceof EncoderWrapper) {
+                this.position = ((EncoderWrapper) device).getPosition();
                 return;
             }
         }
@@ -79,6 +80,10 @@ public class Actuator {
      * some tolerance given by a specified value.
      */
     public void periodic() {
+        if (timer == null) {
+            timer = new ElapsedTime();
+        }
+
         if (profile != null) {
             this.state = profile.calculate(timer.time());
             this.targetPosition = state.x;
@@ -89,7 +94,7 @@ public class Actuator {
 
             switch (mode) {
                 case CONSTANT:
-                    this.power += currentFeedforward;
+                    this.power += currentFeedforward * Math.signum(targetPosition - position);
                     break;
                 case ANGLE_BASED:
                     this.power += Math.cos(position) * currentFeedforward;
@@ -124,22 +129,23 @@ public class Actuator {
      * @param targetPosition
      */
     public void setTargetPosition(double targetPosition) {
-        if (this.profile != null) {
-            this.setMotionProfile(new AsymmetricMotionProfile(position, targetPosition, constraints));
-            this.timer.reset();
-        } else {
-            this.targetPosition = targetPosition;
-        }
+       this.targetPosition = targetPosition;
+    }
+
+    public void setMotionProfileTargetPosition(double targetPosition) {
+        this.profile = new AsymmetricMotionProfile(getPosition(), targetPosition, constraints);
+        this.timer.reset();
     }
 
     /**
      * Saves the value passed in for the new motion profile.
      *
-     * @param profile The new asymmetrical motion profile
+//     * @param profile The new asymmetrical motion profile
      * @return
      */
-    public Actuator setMotionProfile(AsymmetricMotionProfile profile) {
-        this.profile = profile;
+    public Actuator setMotionProfile(double targetPosition, ProfileConstraints constraints) {
+        this.constraints = constraints;
+        this.profile = new AsymmetricMotionProfile(position, targetPosition, constraints);
         return this;
     }
 
@@ -201,7 +207,8 @@ public class Actuator {
 
     public void updateConstraints(ProfileConstraints constraints) {
         this.constraints = constraints;
-        setMotionProfile(new AsymmetricMotionProfile(position, targetPosition, constraints));
+//        setMotionProfile(new AsymmetricMotionProfile(position, targetPosition, constraints));
+//        this.constr
     }
 
     public void updatePID(double P, double I, double D) {
@@ -255,6 +262,14 @@ public class Actuator {
      */
     public List<HardwareDevice> getDevices() {
         return new ArrayList<>(devices.values());
+    }
+
+    public ProfileState getState() {
+        return this.state;
+    }
+
+    public ProfileConstraints getConstraints() {
+        return this.constraints;
     }
 
     /**

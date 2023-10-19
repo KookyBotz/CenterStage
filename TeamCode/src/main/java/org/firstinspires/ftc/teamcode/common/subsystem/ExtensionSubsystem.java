@@ -1,13 +1,9 @@
 package org.firstinspires.ftc.teamcode.common.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.SubsystemBase;
-import com.arcrobotics.ftclib.controller.PIDController;
 
-import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.AsymmetricMotionProfile;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileState;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.Actuator;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.KActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
 
 /**
@@ -36,7 +32,7 @@ public class ExtensionSubsystem extends KSubsystem {
     @Override
     public void periodic() {
         robot.extensionPitchActuator.updatePID(P, I, D);
-        robot.extensionPitchActuator.setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, F);
+        robot.extensionPitchActuator.setFeedforward(KActuatorGroup.FeedforwardMode.ANGLE_BASED, F);
 
         robot.extensionPitchActuator.periodic();
     }

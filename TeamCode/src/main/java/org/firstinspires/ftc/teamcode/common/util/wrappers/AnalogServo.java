@@ -1,17 +1,8 @@
 package org.firstinspires.ftc.teamcode.common.util.wrappers;
 
-import androidx.annotation.NonNull;
-
-import com.arcrobotics.ftclib.hardware.ServoEx;
-import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonLynxServoController;
 import com.outoftheboxrobotics.photoncore.hardware.servo.PhotonServo;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoControllerEx;
-import com.qualcomm.robotcore.hardware.ServoImpl;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.ServoConfigurationType;
 
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 

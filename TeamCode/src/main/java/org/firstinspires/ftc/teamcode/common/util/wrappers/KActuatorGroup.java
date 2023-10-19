@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.util.wrappers;
 
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -17,9 +16,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class Actuator {
+public class KActuatorGroup {
     public enum FeedforwardMode {
         NONE,
         CONSTANT,
@@ -50,7 +48,7 @@ public class Actuator {
      *
      * @param devices
      */
-    public Actuator(HardwareDevice... devices) {
+    public KActuatorGroup(HardwareDevice... devices) {
         for (HardwareDevice device : devices) {
             this.devices.put(device.getDeviceName(), device);
         }
@@ -67,8 +65,8 @@ public class Actuator {
             if (device instanceof AbsoluteAnalogEncoder) {
                 this.position = ((AbsoluteAnalogEncoder) device).getCurrentPosition();
                 return;
-            } else if (device instanceof EncoderWrapper) {
-                this.position = ((EncoderWrapper) device).getPosition();
+            } else if (device instanceof KEncoder) {
+                this.position = ((KEncoder) device).getPosition();
                 return;
             }
         }
@@ -143,7 +141,7 @@ public class Actuator {
 //     * @param profile The new asymmetrical motion profile
      * @return
      */
-    public Actuator setMotionProfile(double targetPosition, ProfileConstraints constraints) {
+    public KActuatorGroup setMotionProfile(double targetPosition, ProfileConstraints constraints) {
         this.constraints = constraints;
         this.profile = new AsymmetricMotionProfile(position, targetPosition, constraints);
         return this;
@@ -155,7 +153,7 @@ public class Actuator {
      * @param controller
      * @return
      */
-    public Actuator setPIDController(PIDController controller) {
+    public KActuatorGroup setPIDController(PIDController controller) {
         this.controller = controller;
         return this;
     }
@@ -168,7 +166,7 @@ public class Actuator {
      * @param d Derivative Constant
      * @return
      */
-    public Actuator setPID(double p, double i, double d) {
+    public KActuatorGroup setPID(double p, double i, double d) {
         if (controller == null) {
             this.controller = new PIDController(p, i, d);
         } else {
@@ -178,14 +176,14 @@ public class Actuator {
         return this;
     }
 
-    public Actuator setFeedforward(FeedforwardMode mode, double feedforward) {
+    public KActuatorGroup setFeedforward(FeedforwardMode mode, double feedforward) {
         this.mode = mode;
         this.feedforwardMin = feedforward;
         this.currentFeedforward = feedforwardMin;
         return this;
     }
 
-    public Actuator setFeedforward(FeedforwardMode mode, double feedforwardMin, double feedforwardMax) {
+    public KActuatorGroup setFeedforward(FeedforwardMode mode, double feedforwardMin, double feedforwardMax) {
         this.mode = mode;
         this.feedforwardMin = feedforwardMin;
         this.feedforwardMax = feedforwardMax;
@@ -200,7 +198,7 @@ public class Actuator {
      * @param tolerance
      * @return
      */
-    public Actuator setErrorTolerance(double tolerance) {
+    public KActuatorGroup setErrorTolerance(double tolerance) {
         this.tolerance = tolerance;
         return this;
     }

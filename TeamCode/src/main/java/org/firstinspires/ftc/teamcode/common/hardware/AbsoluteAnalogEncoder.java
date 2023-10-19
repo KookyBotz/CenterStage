@@ -12,7 +12,7 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
     private final AnalogInput encoder;
     private double offset, analogRange;
     private boolean inverted;
-    private boolean negArm;
+    private boolean wraparound;
 
     public AbsoluteAnalogEncoder(AnalogInput enc){
         this(enc, DEFAULT_RANGE);
@@ -33,8 +33,8 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
         return this;
     }
 
-    public AbsoluteAnalogEncoder setNegArm(boolean negArm) {
-        this.negArm = negArm;
+    public AbsoluteAnalogEncoder setWraparound(boolean wraparound) {
+        this.wraparound = wraparound;
         return this;
     }
 
@@ -45,7 +45,7 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
     private double pastPosition = 1;
     public double getCurrentPosition() {
         double pos = Angle.norm((!inverted ? 1 - getVoltage() / analogRange : getVoltage() / analogRange) * Math.PI*2 - offset);
-        if (negArm && pos > Math.PI * 1.5) {
+        if (wraparound && pos > Math.PI * 1.5) {
             pos -= Math.PI * 2;
         }
         //checks for crazy values when the encoder is close to zero
@@ -56,8 +56,6 @@ public class AbsoluteAnalogEncoder implements HardwareDevice {
     public AnalogInput getEncoder() {
         return encoder;
     }
-
-
 
     public double getVoltage(){
         return encoder.getVoltage();

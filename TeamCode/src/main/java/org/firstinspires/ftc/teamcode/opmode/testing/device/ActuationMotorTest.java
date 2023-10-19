@@ -4,24 +4,18 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.AsymmetricMotionProfile;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileState;
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.Actuator;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.EncoderWrapper;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.KActuatorGroup;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.KEncoder;
 
 @Config
 @TeleOp(name = "ActuationMotorTest")
@@ -32,10 +26,10 @@ public class ActuationMotorTest extends OpMode {
     public DcMotorEx extensionMotor;
     public DcMotorEx armMotor;
 
-    public EncoderWrapper extensionEncoder;
+    public KEncoder extensionEncoder;
 
-    public Actuator pitchActuator;
-    public Actuator extensionActuator;
+    public KActuatorGroup pitchActuator;
+    public KActuatorGroup extensionActuator;
 
     private double loopTime = 0.0;
 
@@ -59,7 +53,7 @@ public class ActuationMotorTest extends OpMode {
         armMotor = hardwareMap.get(DcMotorEx.class, "extensionPitchMotor");
         armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        extensionEncoder = new EncoderWrapper(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
+        extensionEncoder = new KEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
 
         // a, lift, went up with 0.1
         // b, arm, went down with 0.1
@@ -68,17 +62,17 @@ public class ActuationMotorTest extends OpMode {
         this.extensionPitchEncoder = new AbsoluteAnalogEncoder(extensionPitchEnc);
         extensionPitchEncoder.zero(2.086);
         extensionPitchEncoder.setInverted(true);
-        extensionPitchEncoder.setNegArm(true);
+        extensionPitchEncoder.setWraparound(true);
 
-        this.extensionActuator = new Actuator(extensionMotor, extensionEncoder)
+        this.extensionActuator = new KActuatorGroup(extensionMotor, extensionEncoder)
                 .setPIDController(new PIDController(0, 0, 0))
 //                .setMotionProfile(new ProfileConstraints(0, 0, 0))
-                .setFeedforward(Actuator.FeedforwardMode.CONSTANT, 0.0);
+                .setFeedforward(KActuatorGroup.FeedforwardMode.CONSTANT, 0.0);
 
-        pitchActuator = new Actuator(armMotor, extensionPitchEncoder)
+        pitchActuator = new KActuatorGroup(armMotor, extensionPitchEncoder)
                 .setPIDController(new PIDController(1.3, 0, 0.035))
                 .setMotionProfile(Math.PI / 2, new ProfileConstraints(4.7, 20, 7.5))
-                .setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, 0.05, 0.13);
+                .setFeedforward(KActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.05, 0.13);
 
         pitchActuator.setTargetPosition(Math.PI / 2);
 
@@ -102,7 +96,7 @@ public class ActuationMotorTest extends OpMode {
 
         if (gamepad1.y) {
             extensionActuator.setPIDController(new PIDController(P, I, D));
-            extensionActuator.setFeedforward(Actuator.FeedforwardMode.CONSTANT, F_MIN);
+            extensionActuator.setFeedforward(KActuatorGroup.FeedforwardMode.CONSTANT, F_MIN);
         }
 
         double liftTicks = extensionEncoder.getPosition();

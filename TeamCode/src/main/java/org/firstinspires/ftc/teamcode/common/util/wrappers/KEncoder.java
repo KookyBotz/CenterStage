@@ -3,12 +3,10 @@ package org.firstinspires.ftc.teamcode.common.util.wrappers;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 
-import java.util.function.Supplier;
-
-public class EncoderWrapper implements HardwareDevice {
+public class KEncoder implements HardwareDevice {
     public Motor.Encoder encoder;
 
-    public EncoderWrapper(Motor.Encoder encoder) {
+    public KEncoder(Motor.Encoder encoder) {
         this.encoder = encoder;
     }
 
@@ -19,7 +17,7 @@ public class EncoderWrapper implements HardwareDevice {
 
     @Override
     public String getDeviceName() {
-        return "Mason Stuart was here";
+        return "mason was here";
     }
 
     @Override

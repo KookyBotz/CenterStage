@@ -1,23 +1,18 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxModule;
 import com.outoftheboxrobotics.photoncore.hardware.i2c.imu.PhotonBNO055IMUNew;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.AsymmetricMotionProfile;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.Actuator;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.KActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.AnalogServo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
 
@@ -33,7 +28,7 @@ public class RobotHardware {
     public MotorEx extensionPitchMotor;
     public AbsoluteAnalogEncoder extensionPitchEncoder;
     public AnalogInput extensionPitchEnc;
-    public Actuator extensionPitchActuator;
+    public KActuatorGroup extensionPitchActuator;
 
     public DcMotorEx dtFrontLeftMotor;
     public DcMotorEx dtFrontRightMotor;
@@ -51,7 +46,7 @@ public class RobotHardware {
     public Servo intakePivotLeftServo;
     public Servo intakePivotRightServo;
     public AbsoluteAnalogEncoder intakePivotEncoder;
-    public Actuator intakePivotActuator;
+    public KActuatorGroup intakePivotActuator;
 
     public DigitalChannel intakeClawLeftBottom, intakeClawLeftTop,
             intakeClawRightBottom, intakeClawRightTop;

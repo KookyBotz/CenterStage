@@ -19,32 +19,29 @@ public class ExtensionSubsystem extends KSubsystem {
 
     private RobotHardware robot;
 
-    public static double P = 0.0;
-    public static double I = 0.0;
-    public static double D = 0.0;
-    public static double F = 0.0;
-
-
     public ExtensionSubsystem() {
         this.robot = RobotHardware.getInstance();
     }
 
     @Override
     public void periodic() {
-        robot.extensionPitchActuator.updatePID(P, I, D);
-        robot.extensionPitchActuator.setFeedforward(KActuatorGroup.FeedforwardMode.ANGLE_BASED, F);
+        double liftTicks = robot.extensionEncoder.getPosition();
+        robot.pitchActuator.updateFeedforward(liftTicks / 560.0);
 
-        robot.extensionPitchActuator.periodic();
+        robot.pitchActuator.periodic();
+        robot.extensionActuator.periodic();
     }
 
     @Override
     public void read() {
-        robot.extensionPitchActuator.read();
+        robot.pitchActuator.read();
+        robot.extensionActuator.read();
     }
 
     @Override
     public void write() {
-        robot.extensionPitchActuator.write();
+        robot.pitchActuator.write();
+        robot.extensionActuator.write();
     }
 
     @Override

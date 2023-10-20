@@ -7,12 +7,14 @@ import com.outoftheboxrobotics.photoncore.Photon;
 import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxModule;
 import com.outoftheboxrobotics.photoncore.hardware.i2c.imu.PhotonBNO055IMUNew;
 import com.outoftheboxrobotics.photoncore.hardware.motor.commands.PhotonLynxGetBulkInputDataCommand;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataResponse;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -22,52 +24,60 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import java.util.List;
 
 @Config
-@Photon
-@TeleOp(name = "DT-TEST")
+@TeleOp(name = "DT-TEST3")
 public class MotorTest extends OpMode {
     public DcMotorEx motor1;
     public DcMotorEx motor2;
     public DcMotorEx motor3;
     public DcMotorEx motor4;
 
-    PhotonBNO055IMUNew imu;
-    List<PhotonLynxModule> modules;
+    BNO055IMU imu;
 
     public MecanumDrivetrain dt;
+    private YawPitchRollAngles angles;
+
+    private List<LynxModule> modules;
 
     private double imuOffset = 0.0;
+    private boolean start = false;
 
     @Override
     public void init() {
 //        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
 
-        this.imu = hardwareMap.get(PhotonBNO055IMUNew.class, "imu");
-        modules = hardwareMap.getAll(PhotonLynxModule.class);
+        this.imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
 
-        for(PhotonLynxModule module: modules) module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        modules = hardwareMap.getAll(LynxModule.class);
+        modules.get(0).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
 
-        this.motor1 = hardwareMap.get(DcMotorEx.class, "motor1");
+//        for(PhotonLynxModule module: modules) module.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+
+        this.motor1 = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // motor1 = back left
 
-        this.motor2 = hardwareMap.get(DcMotorEx.class, "motor2");
+        this.motor2 = hardwareMap.get(DcMotorEx.class, "dtFrontLeftMotor");
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // front left
 
-        this.motor3 = hardwareMap.get(DcMotorEx.class, "motor3");
+        this.motor3 = hardwareMap.get(DcMotorEx.class, "dtBackRightMotor");
         motor3.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor3.setDirection(DcMotorSimple.Direction.REVERSE);
         // back right
 
-        this.motor4 = hardwareMap.get(DcMotorEx.class, "motor4");
+        this.motor4 = hardwareMap.get(DcMotorEx.class, "dtFrontRightMotor");
         motor4.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor4.setDirection(DcMotorSimple.Direction.REVERSE);
         // front right
 
         telemetry.addLine("here1");
         telemetry.update();
 
         dt = new MecanumDrivetrain(motor2, motor3, motor1, motor4);
-
-//        imu = hardwareMap.get(PhotonBNO055IMUNew.class, "imu");
 
         telemetry.addLine("here");
         telemetry.update();
@@ -76,49 +86,40 @@ public class MotorTest extends OpMode {
     @Override
     public void loop() {
         modules.get(0).clearBulkCache();
-        modules.get(1).clearBulkCache();
-
-        imu.scheduleInterleavedCommand(new PhotonLynxGetBulkInputDataCommand(modules.get(0)));
-        YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
-        modules.get(0).feedBulkData((LynxGetBulkInputDataResponse)imu.getResult());
-
-//        if (gamepad1.a) {
-//            motor1.setPower(0.2);
-//            // back left
-//        }
+//        modules.get(1).clearBulkCache();
 //
-//        if (gamepad1.b) {
-//            motor2.setPower(0.2);
-//            // front left
-//        }
-//
-//        if (gamepad1.x) {
-//            motor3.setPower(0.2);
-//            // back right
-//        }
-//
-//        if (gamepad1.y) {
-//            motor4.setPower(0.2);
-//            // front right
-//        }
+//        imu.scheduleInterleavedCommand(new PhotonLynxGetBulkInputDataCommand(modules.get(0)));
+//        angles = imu.getRobotYawPitchRollAngles();
+//        modules.get(0).feedBulkData((LynxGetBulkInputDataResponse)imu.getResult());
 
-        double yaw = angles.getYaw(AngleUnit.RADIANS);
-        if (gamepad1.right_stick_button) {
-            imuOffset = yaw + Math.PI;
+        double imuAngle = imu.getAngularOrientation().firstAngle;
+        if (!start) {
+            imuOffset = imuAngle;
+            start = true;
         }
 
-        double angle = yaw - imuOffset;
-
-        dt.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x));
+        dt.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), imuAngle);
         dt.write();
 
-        telemetry.addData("YAW: ", angles.getYaw(AngleUnit.RADIANS));
-//        telemetry.addData("PITCH: ", angles.getPitch(AngleUnit.RADIANS));
-//        telemetry.addData("ROLL: ", angles.getRoll(AngleUnit.RADIANS));
+        telemetry.addData("YAW: ", imuAngle);
         telemetry.addData("imu offset", imuOffset);
-        telemetry.addData("angle: ", angle);
-//        telemetry.addLine(dt.toString());
+        telemetry.addData("angle: ", imuAngle);
         telemetry.addLine(gamepad1.left_stick_x + " " + gamepad1.left_stick_y + " " + gamepad1.right_stick_x);
         telemetry.update();
+
+        modules.get(0).clearBulkCache();
+//        modules.get(1).clearBulkCache();
+    }
+
+    private double joystickScalar(double num, double min) {
+        return joystickScalar(num, min, 0.66, 4);
+    }
+
+    private double joystickScalar(double n, double m, double l, double a) {
+        return Math.signum(n) * m
+                + (1 - m) *
+                (Math.abs(n) > l ?
+                        Math.pow(Math.abs(n), Math.log(l / a) / Math.log(l)) * Math.signum(n) :
+                        n / a);
     }
 }

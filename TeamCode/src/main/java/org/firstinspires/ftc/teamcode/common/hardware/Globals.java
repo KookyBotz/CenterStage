@@ -47,6 +47,12 @@ public class Globals {
     }
 
     public static class INTAKE {
+        public static double CLAW_A_CLOSED = 0.0;
+        public static double CLAW_A_OPEN = 0.0;
+
+        public static double CLAW_B_CLOSED = 0.0;
+        public static double CLAW_B_OPEN = 0.0;
+
         public static double INTAKE_PIVOT_V = 0.0;
         public static double INTAKE_PIVOT_A = 0.0;
         public static double INTAKE_PIVOT_D = 0.0;

@@ -44,8 +44,8 @@ public class ExtensionTest extends CommandOpMode {
 
         gamepadEx = new GamepadEx(gamepad1);
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(() -> schedule(new InstantCommand(() -> robot.extensionPitchActuator.setTargetPosition(targetPosition))));
+//        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
+//                .whenPressed(() -> schedule(new InstantCommand(() -> robot.extensionPitchActuator.setTargetPosition(targetPosition))));
     }
 
     @Override
@@ -54,9 +54,9 @@ public class ExtensionTest extends CommandOpMode {
         super.run();
         robot.write();
 
-        telemetry.addData("current position", robot.extensionPitchActuator.getPosition());
-        telemetry.addData("target position", robot.extensionPitchActuator.getTargetPosition());
-        telemetry.addData("reached", robot.extensionPitchActuator.hasReached());
+//        telemetry.addData("current position", extensionPitchActuator.getPosition());
+//        telemetry.addData("target position", extensionPitchActuator.getTargetPosition());
+//        telemetry.addData("reached", robot.extensionPitchActuator.hasReached());
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

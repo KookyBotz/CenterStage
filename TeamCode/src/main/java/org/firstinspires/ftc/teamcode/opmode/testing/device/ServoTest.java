@@ -5,13 +5,15 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
+
 @Config
 @TeleOp(name = "ServoTest")
 public class ServoTest extends OpMode {
-    private Servo servo1;
-    private Servo servo2;
-    private Servo servo3;
-    private Servo servo4;
+    private WServo servo1;
+    private WServo servo2;
+    private WServo servo3;
+    private WServo servo4;
 
     public static double targetPos1 = 0.0;
     public static double targetPos2 = 0.0;
@@ -20,10 +22,10 @@ public class ServoTest extends OpMode {
 
     @Override
     public void init() {
-        servo1 = hardwareMap.get(Servo.class, "servo1");
-        servo2 = hardwareMap.get(Servo.class, "servo2");
-        servo3 = hardwareMap.get(Servo.class, "servo3");
-        servo4 = hardwareMap.get(Servo.class, "servo4");
+        servo1 = (WServo) hardwareMap.get(Servo.class, "servo1");
+        servo2 = (WServo) hardwareMap.get(Servo.class, "servo2");
+        servo3 = (WServo) hardwareMap.get(Servo.class, "servo3");
+        servo4 = (WServo) hardwareMap.get(Servo.class, "servo4");
     }
 
     @Override

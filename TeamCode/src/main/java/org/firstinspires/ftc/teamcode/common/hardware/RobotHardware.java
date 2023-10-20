@@ -181,7 +181,7 @@ public class RobotHardware {
 
         // TODO: add lift actuator here
         this.extensionActuator = new KActuatorGroup(extensionMotor, extensionEncoder)
-                .setPIDController(new PIDController(0.016379, 0, 0))
+                .setPIDController(new PIDController(0.016379, 0.0, 0.0254))
 //                .setMotionProfile(new ProfileConstraints(0, 0, 0))
                 .setFeedforward(KActuatorGroup.FeedforwardMode.CONSTANT, 0.0);
 
@@ -189,27 +189,6 @@ public class RobotHardware {
                 .setPIDController(new PIDController(1.3, 0, 0.035))
                 .setMotionProfile(Math.PI / 2, new ProfileConstraints(4.7, 20, 7.5))
                 .setFeedforward(KActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.05, 0.13);
-        /*
-        // TODO
-        // Intake Pivot Actuator
-        // Motion Profile
-        // Error Tolerance
-        this.intakePivotActuator = new Actuator(intakePivotLeftServo, intakePivotRightServo, intakePivotEncoder)
-                .setMotionProfile(new AsymmetricMotionProfile(1, 1, new ProfileConstraints(1, 1, 1)))
-                .setErrorTolerance(0.02);
-
-        // TODO
-        // Extension Pitch Actuator
-        // PID
-        // Motion Controller
-        // Error Tolerance
-        this.extensionPitchActuator = new Actuator((HardwareDevice) extensionPitchMotor, extensionPitchEncoder)
-                .setPIDController(new PIDController(0, 0, 0))
-//                .setMotionProfile(new AsymmetricMotionProfile(0, 1, new ProfileConstraints(1, 1, 1)))
-                .setFeedforward(Actuator.FeedforwardMode.ANGLE_BASED, 0.0)
-                .setErrorTolerance(20);
-                */
-
     }
 
     public void read() {

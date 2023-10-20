@@ -5,6 +5,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.outoftheboxrobotics.photoncore.Photon;
@@ -45,9 +48,9 @@ public class OpMode extends CommandOpMode {
 
         robot.init(hardwareMap, telemetry);
         drivetrain = new MecanumDrivetrain();
-//        extension = new ExtensionSubsystem();
+        extension = new ExtensionSubsystem();
 //        intake = new IntakeSubsystem();
-        robot.addSubsystem(drivetrain);
+        robot.addSubsystem(drivetrain, extension);
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .toggleWhenPressed(
@@ -57,13 +60,24 @@ public class OpMode extends CommandOpMode {
                 .toggleWhenPressed(
                         new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
                         new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT));
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
+                        .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0))
+                                .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(50))));
+        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
+                        .whenPressed(new SequentialCommandGroup(
+                                new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                                new WaitCommand(50),
+                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(Math.PI / 2)),
+                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(100))));
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
+                .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(2.5))
+                .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(450))));
 
         robot.read();
         while (opModeInInit()) {
             telemetry.addLine("Robot Initialized. Mason is very cool and he is the best perosn to ever exist in the owrld and java ois the owrst progmraming kanguage nad ih ate it so so os much LLL + Ratio + cope + cget out of my game L");
             telemetry.update();
         }
-
     }
 
     @Override

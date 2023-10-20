@@ -5,7 +5,7 @@ import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_CLAW
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -17,14 +17,12 @@ import org.jetbrains.annotations.NotNull;
  *     <li>4x Digital Sensor(2 Left, 2 Right)</li>
  * </ul>
  */
-public class IntakeSubsystem extends KSubsystem {
+public class IntakeSubsystem extends WSubsystem {
 
     private final RobotHardware robot;
 
     private ClawState clawState;
     private PivotState pivotState;
-
-    private double clawLeftPosition, clawRightPosition;
 
     private boolean pixelLeftTop,    pixelRightTop,
                     pixelLeftBottom, pixelRightBottom;
@@ -93,13 +91,15 @@ public class IntakeSubsystem extends KSubsystem {
     @Override
     public void read() {
 
-        this.clawLeftPosition = robot.intakeClawLeftServo.getPosition();
-        this.clawRightPosition = robot.intakeClawRightServo.getPosition();
+//        this.clawLeftPosition = robot.intakeClawLeftServo.getPosition();
+//        this.clawRightPosition = robot.intakeClawRightServo.getPosition();
 
-        this.pixelLeftTop = robot.intakeClawLeftTop.getState();
-        this.pixelLeftBottom = robot.intakeClawLeftBottom.getState();
-        this.pixelRightTop = robot.intakeClawRightTop.getState();
-        this.pixelRightBottom = robot.intakeClawRightBottom.getState();
+
+
+//        this.pixelLeftTop = robot.intakeClawLeftTop.getState();
+//        this.pixelLeftBottom = robot.intakeClawLeftBottom.getState();
+//        this.pixelRightTop = robot.intakeClawRightTop.getState();
+//        this.pixelRightBottom = robot.intakeClawRightBottom.getState();
 
         robot.intakePivotActuator.read();
     }

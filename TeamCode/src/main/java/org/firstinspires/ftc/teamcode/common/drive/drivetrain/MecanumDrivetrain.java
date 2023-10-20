@@ -1,21 +1,16 @@
 package org.firstinspires.ftc.teamcode.common.drive.drivetrain;
 
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.drivebase.RobotDrive;
-import com.arcrobotics.ftclib.geometry.Vector2d;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.sun.tools.javac.util.List;
 
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Vector2D;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.util.MathUtils;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
 import java.util.Arrays;
-import java.util.Collections;
 
-public class MecanumDrivetrain extends KSubsystem implements Drivetrain {
+public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
     private RobotHardware robot = RobotHardware.getInstance();
 //    public MecanumDrive drive;
 

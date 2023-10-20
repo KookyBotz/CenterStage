@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class KActuatorGroup {
+public class WActuatorGroup {
     public enum FeedforwardMode {
         NONE,
         CONSTANT,
@@ -48,7 +48,7 @@ public class KActuatorGroup {
      *
      * @param devices
      */
-    public KActuatorGroup(HardwareDevice... devices) {
+    public WActuatorGroup(HardwareDevice... devices) {
         for (HardwareDevice device : devices) {
             this.devices.put(device.getDeviceName(), device);
         }
@@ -65,11 +65,12 @@ public class KActuatorGroup {
             if (device instanceof AbsoluteAnalogEncoder) {
                 this.position = ((AbsoluteAnalogEncoder) device).getCurrentPosition();
                 return;
-            } else if (device instanceof KEncoder) {
-                this.position = ((KEncoder) device).getPosition();
+            } else if (device instanceof WEncoder) {
+                this.position = ((WEncoder) device).getPosition();
                 return;
             }
         }
+        this.position = 0.0;
     }
 
     /**
@@ -99,9 +100,9 @@ public class KActuatorGroup {
                     break;
                 default:
             }
+            this.power = MathUtils.clamp(power, -1, 1);
         }
 
-        this.power = MathUtils.clamp(power, -1, 1);
         this.reached = Math.abs(targetPosition - position) < tolerance;
     }
 
@@ -141,7 +142,7 @@ public class KActuatorGroup {
 //     * @param profile The new asymmetrical motion profile
      * @return
      */
-    public KActuatorGroup setMotionProfile(double targetPosition, ProfileConstraints constraints) {
+    public WActuatorGroup setMotionProfile(double targetPosition, ProfileConstraints constraints) {
         this.constraints = constraints;
         this.profile = new AsymmetricMotionProfile(position, targetPosition, constraints);
         return this;
@@ -153,7 +154,7 @@ public class KActuatorGroup {
      * @param controller
      * @return
      */
-    public KActuatorGroup setPIDController(PIDController controller) {
+    public WActuatorGroup setPIDController(PIDController controller) {
         this.controller = controller;
         return this;
     }
@@ -166,7 +167,7 @@ public class KActuatorGroup {
      * @param d Derivative Constant
      * @return
      */
-    public KActuatorGroup setPID(double p, double i, double d) {
+    public WActuatorGroup setPID(double p, double i, double d) {
         if (controller == null) {
             this.controller = new PIDController(p, i, d);
         } else {
@@ -176,14 +177,14 @@ public class KActuatorGroup {
         return this;
     }
 
-    public KActuatorGroup setFeedforward(FeedforwardMode mode, double feedforward) {
+    public WActuatorGroup setFeedforward(FeedforwardMode mode, double feedforward) {
         this.mode = mode;
         this.feedforwardMin = feedforward;
         this.currentFeedforward = feedforwardMin;
         return this;
     }
 
-    public KActuatorGroup setFeedforward(FeedforwardMode mode, double feedforwardMin, double feedforwardMax) {
+    public WActuatorGroup setFeedforward(FeedforwardMode mode, double feedforwardMin, double feedforwardMax) {
         this.mode = mode;
         this.feedforwardMin = feedforwardMin;
         this.feedforwardMax = feedforwardMax;
@@ -198,7 +199,7 @@ public class KActuatorGroup {
      * @param tolerance
      * @return
      */
-    public KActuatorGroup setErrorTolerance(double tolerance) {
+    public WActuatorGroup setErrorTolerance(double tolerance) {
         this.tolerance = tolerance;
         return this;
     }

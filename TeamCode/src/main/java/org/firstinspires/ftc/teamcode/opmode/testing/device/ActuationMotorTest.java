@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.KActuatorGroup;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.KEncoder;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 
 @Config
 @TeleOp(name = "ActuationMotorTest")
@@ -26,10 +26,10 @@ public class ActuationMotorTest extends OpMode {
     public DcMotorEx extensionMotor;
     public DcMotorEx armMotor;
 
-    public KEncoder extensionEncoder;
+    public WEncoder extensionEncoder;
 
-    public KActuatorGroup pitchActuator;
-    public KActuatorGroup extensionActuator;
+    public WActuatorGroup pitchActuator;
+    public WActuatorGroup extensionActuator;
 
     private double loopTime = 0.0;
 
@@ -53,7 +53,7 @@ public class ActuationMotorTest extends OpMode {
         armMotor = hardwareMap.get(DcMotorEx.class, "extensionPitchMotor");
         armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        extensionEncoder = new KEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
+        extensionEncoder = new WEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
 
         // a, lift, went up with 0.1
         // b, arm, went down with 0.1
@@ -64,15 +64,15 @@ public class ActuationMotorTest extends OpMode {
         extensionPitchEncoder.setInverted(true);
         extensionPitchEncoder.setWraparound(true);
 
-        this.extensionActuator = new KActuatorGroup(extensionMotor, extensionEncoder)
+        this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
                 .setPIDController(new PIDController(0, 0, 0))
 //                .setMotionProfile(new ProfileConstraints(0, 0, 0))
-                .setFeedforward(KActuatorGroup.FeedforwardMode.CONSTANT, 0.0);
+                .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0);
 
-        pitchActuator = new KActuatorGroup(armMotor, extensionPitchEncoder)
+        pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
                 .setPIDController(new PIDController(1.3, 0, 0.035))
                 .setMotionProfile(Math.PI / 2, new ProfileConstraints(4.7, 20, 7.5))
-                .setFeedforward(KActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.05, 0.13);
+                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.05, 0.13);
 
         pitchActuator.setTargetPosition(Math.PI / 2);
 
@@ -96,7 +96,7 @@ public class ActuationMotorTest extends OpMode {
 
         if (gamepad1.y) {
             extensionActuator.setPIDController(new PIDController(P, I, D));
-            extensionActuator.setFeedforward(KActuatorGroup.FeedforwardMode.CONSTANT, F_MIN);
+            extensionActuator.setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, F_MIN);
         }
 
         double liftTicks = extensionEncoder.getPosition();

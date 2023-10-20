@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.common.util.wrappers;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 
-public class KEncoder implements HardwareDevice {
+public class WEncoder implements HardwareDevice {
     public Motor.Encoder encoder;
 
-    public KEncoder(Motor.Encoder encoder) {
+    public WEncoder(Motor.Encoder encoder) {
         this.encoder = encoder;
     }
 

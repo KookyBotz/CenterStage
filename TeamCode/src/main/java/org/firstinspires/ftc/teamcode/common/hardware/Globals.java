@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.KActuatorGroup;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
 
 public class Globals {
 
@@ -29,7 +29,7 @@ public class Globals {
         public static double ARM_D = 0.035;
         public static double ARM_F_MIN = 0.05;
         public static double ARM_F_MAX = 0.13;
-        public static KActuatorGroup.FeedforwardMode ARM_FF_MODE = KActuatorGroup.FeedforwardMode.ANGLE_BASED;
+        public static WActuatorGroup.FeedforwardMode ARM_FF_MODE = WActuatorGroup.FeedforwardMode.ANGLE_BASED;
 
         public static double ARM_MP_V = 4.7;
         public static double ARM_MP_A = 20;
@@ -39,7 +39,7 @@ public class Globals {
         public static double EXTENSION_I = 0.0;
         public static double EXTENSION_D = 0.0;
         public static double EXTENSION_F = 0.0;
-        public static KActuatorGroup.FeedforwardMode EXTENSION_FF_MODE = KActuatorGroup.FeedforwardMode.CONSTANT;
+        public static WActuatorGroup.FeedforwardMode EXTENSION_FF_MODE = WActuatorGroup.FeedforwardMode.CONSTANT;
 
         public static double EXTENSION_MP_V = 0.0;
         public static double EXTENSION_MP_A = 0.0;

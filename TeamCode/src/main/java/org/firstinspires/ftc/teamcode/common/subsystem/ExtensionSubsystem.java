@@ -3,8 +3,7 @@ package org.firstinspires.ftc.teamcode.common.subsystem;
 import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.KActuatorGroup;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
 /**
  * Parts List:
@@ -15,7 +14,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.KSubsystem;
  * </ul>
  */
 @Config
-public class ExtensionSubsystem extends KSubsystem {
+public class ExtensionSubsystem extends WSubsystem {
 
     private RobotHardware robot;
 

@@ -49,29 +49,42 @@ public class OpMode extends CommandOpMode {
         robot.init(hardwareMap, telemetry);
         drivetrain = new MecanumDrivetrain();
         extension = new ExtensionSubsystem();
-//        intake = new IntakeSubsystem();
-        robot.addSubsystem(drivetrain, extension);
+        intake = new IntakeSubsystem();
+        robot.addSubsystem(drivetrain, extension, intake);
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .toggleWhenPressed(
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT));
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .toggleWhenPressed(
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT));
+                .whenPressed(new InstantCommand(() -> robot.intakeClawLeftServo.setPosition(0.13)));
+        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(new InstantCommand(() -> robot.intakeClawRightServo.setPosition(0.54)));
         gamepadEx.getGamepadButton(GamepadKeys.Button.A)
-                        .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0))
-                                .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(50))));
+                .whenPressed(new SequentialCommandGroup(
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.025)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
+                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.455)),
+                        new WaitCommand(250),
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
+                ))
+                        .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.05))
+                                .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(300))
+                                        .alongWith(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.435)))));
         gamepadEx.getGamepadButton(GamepadKeys.Button.B)
                         .whenPressed(new SequentialCommandGroup(
                                 new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                                new WaitCommand(50),
-                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(Math.PI / 2)),
-                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(100))));
-        gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(2.5))
-                .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(450))));
+                                new WaitCommand(250),
+                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(10)),
+                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.1))));
+        gamepadEx.getGamepadButton(GamepadKeys.Button.X)
+                .whenPressed(new SequentialCommandGroup(
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(2.75)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(300)),
+                        new WaitCommand(200),
+                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.67))
+                ));
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                        .whenPressed(new InstantCommand(() -> robot.intakeClawLeftServo.setPosition(0.12)));
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .whenPressed(new InstantCommand(() -> robot.intakeClawLeftServo.setPosition(0.53)));
 
         robot.read();
         while (opModeInInit()) {
@@ -85,7 +98,7 @@ public class OpMode extends CommandOpMode {
         robot.clearBulkCache();
         robot.read();
 
-        drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), robot.getAngle());
+        drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
 
         // input
         super.run();

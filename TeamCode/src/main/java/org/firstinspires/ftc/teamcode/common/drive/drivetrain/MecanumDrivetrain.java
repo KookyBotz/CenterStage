@@ -40,36 +40,7 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
 
     @Override
     public void set(Pose pose) {
-        double strafeSpeed = pose.x;
-        double forwardSpeed = pose.y;
-        double turnSpeed = pose.heading;
-
-        Vector2D input = new Vector2D(strafeSpeed, forwardSpeed).rotate(-robot.getAngle());
-
-        strafeSpeed = input.x;
-        forwardSpeed = input.y;
-
-        double[] wheelSpeeds = new double[4];
-
-        wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] = forwardSpeed + strafeSpeed + turnSpeed;
-        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] = forwardSpeed + strafeSpeed - turnSpeed;
-        wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] = (forwardSpeed - strafeSpeed + turnSpeed);
-        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = (forwardSpeed - strafeSpeed - turnSpeed);
-        // 1.06, 1.04
-
-        double max = Arrays.stream(wheelSpeeds).max().getAsDouble();
-
-        if (Math.abs(max) > 1) {
-            wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] /= max;
-            wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] /= max;
-            wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] /= max;
-            wheelSpeeds[RobotDrive.MotorType.kBackRight.value] /= max;
-        }
-
-        ws[0] = wheelSpeeds[0];
-        ws[1] = wheelSpeeds[1];
-        ws[2] = wheelSpeeds[2];
-        ws[3] = wheelSpeeds[3];
+        set(pose, 0);
     }
 
     public void set(double strafeSpeed, double forwardSpeed,
@@ -83,9 +54,9 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
         double[] wheelSpeeds = new double[4];
 
         wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] = forwardSpeed + strafeSpeed + turnSpeed;
-        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] = forwardSpeed + strafeSpeed - turnSpeed;
+        wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] = forwardSpeed - strafeSpeed - turnSpeed;
         wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] = (forwardSpeed - strafeSpeed + turnSpeed);
-        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = (forwardSpeed - strafeSpeed - turnSpeed);
+        wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = (forwardSpeed + strafeSpeed - turnSpeed);
         // 1.06, 1.04
 
         double max = Arrays.stream(wheelSpeeds).max().getAsDouble();

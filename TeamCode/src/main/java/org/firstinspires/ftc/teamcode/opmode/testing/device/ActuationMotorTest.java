@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
@@ -40,10 +41,14 @@ public class ActuationMotorTest extends OpMode {
     public static double P = 0.0;
     public static double I = 0.0;
     public static double D = 0.0;
+    private double p = 0.0;
+    private double i = 0.0;
+    private double d = 0.0;
     public static double F_MIN = 0.0;
     public static double F_MAX = 0.0;
     public static double armTargetPosition = 1.57;
-    public static double liftTargetPosition = 0;
+    public static double newTargetPos = 0;
+    private double liftTargetPosition = 0.0;
 
     @Override
     public void init() {
@@ -65,9 +70,9 @@ public class ActuationMotorTest extends OpMode {
         extensionPitchEncoder.setWraparound(true);
 
         this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
-                .setPIDController(new PIDController(0, 0, 0))
-//                .setMotionProfile(new ProfileConstraints(0, 0, 0))
-                .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0);
+                .setPIDController(new PIDController(0.04, 0, 0))
+                .setMotionProfile(100, new ProfileConstraints(1200, 4000, 2000));
+//                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED_SIN, 0.0);
 
         pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
                 .setPIDController(new PIDController(1.3, 0, 0.035))
@@ -86,21 +91,53 @@ public class ActuationMotorTest extends OpMode {
         pitchActuator.read();
         extensionActuator.read();
 
+        ProfileConstraints constraints = extensionActuator.getConstraints();
+        if (v != constraints.velo || a1 != constraints.accel || a2 != constraints.decel) {
+            extensionActuator.setMotionProfile(liftTargetPosition, new ProfileConstraints(v, a1, a2));
+        }
+
+        if (gamepad1.x) {
+            extensionActuator.setMotionProfile(liftTargetPosition, new ProfileConstraints(v, a1, a2));
+        }
+
+//        if (P != p || I != i || D != d) {
+//            extensionActuator.setPIDController(new PIDController(P, I, D));
+//            this.p = P;
+//            this.i = I;
+//            this.d = D;
+//        }
+
+        if (gamepad1.right_bumper) {
+            extensionActuator.setPIDController(new PIDController(P, I, D));
+        }
+
         if (gamepad1.a) {
             pitchActuator.setMotionProfileTargetPosition(armTargetPosition);
         }
 
-        if (gamepad1.b) {
-            extensionActuator.setTargetPosition(liftTargetPosition);
-        }
-
         if (gamepad1.y) {
-            extensionActuator.setPIDController(new PIDController(P, I, D));
-            extensionActuator.setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, F_MIN);
+            extensionActuator.setMotionProfileTargetPosition(liftTargetPosition);
+            liftTargetPosition = newTargetPos;
+        }
+//
+//        if (gamepad1.b) {
+//            extensionActuator.setMotionProfileTargetPosition(liftTargetPosition);
+//        }
+//
+//        if (gamepad1.y) {
+//            extensionActuator.setPIDController(new PIDController(P, I, D));
+//            extensionActuator.setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, F_MIN);
+//        }
+
+        if (gamepad1.b) {
+            extensionActuator.setMotionProfileTargetPosition(newTargetPos);
+            liftTargetPosition = newTargetPos;
         }
 
         double liftTicks = extensionEncoder.getPosition();
         pitchActuator.updateFeedforward(liftTicks / 560.0);
+
+//        extensionActuator.updateFeedforward(pitchActuator.getPosition());
 
         pitchActuator.periodic();
         extensionActuator.periodic();
@@ -126,6 +163,7 @@ public class ActuationMotorTest extends OpMode {
 //        telemetry.addData("voltage", extensionEncoder.getVoltage());
         telemetry.addData("power", extensionActuator.getPower());
         telemetry.addData("targetPosition", liftTargetPosition);
+        telemetry.addData("targetPositionLift", extensionActuator.getTargetPosition());
         telemetry.addData("currentPosition", extensionActuator.getPosition());
         telemetry.addData("Current", extensionMotor.getCurrent(CurrentUnit.AMPS));
 //        ProfileState state = pitchActuator.getState();

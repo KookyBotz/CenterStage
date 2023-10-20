@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_CLAW
 import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_CLAW_OPEN;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
+import org.firstinspires.ftc.teamcode.common.centerstage.Side;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +41,12 @@ public class IntakeSubsystem extends WSubsystem {
 
     public IntakeSubsystem() {
         this.robot = RobotHardware.getInstance();
+
+        updateState(ClawState.CLOSED, ClawSide.BOTH);
     }
 
     public void updateState(@NotNull ClawState state, @NotNull ClawSide side) {
-        double position = getClawStatePosition(state);
+        double position = getClawStatePosition(state, side);
         this.clawState = state;
         switch(side) {
             case LEFT:
@@ -53,7 +56,9 @@ public class IntakeSubsystem extends WSubsystem {
                 robot.intakeClawRightServo.setPosition(position);
                 break;
             case BOTH:
+                position = getClawStatePosition(state, ClawSide.LEFT);
                 robot.intakeClawLeftServo.setPosition(position);
+                position = getClawStatePosition(state, ClawSide.RIGHT);
                 robot.intakeClawRightServo.setPosition(position);
                 break;
         }
@@ -124,12 +129,26 @@ public class IntakeSubsystem extends WSubsystem {
 //        robot.pivotRightServo.setPosition(position);
     }
 
-    private double getClawStatePosition(ClawState state) {
-        switch (state) {
-            case CLOSED:
-                return INTAKE_CLAW_CLOSED;
-            case OPEN:
-                return INTAKE_CLAW_OPEN;
+    private double getClawStatePosition(ClawState state, ClawSide side) {
+        switch (side) {
+            case LEFT:
+                switch (state) {
+                    case CLOSED:
+                        return 0.09;
+                    case OPEN:
+                        return 0.4;
+                    default:
+                        return 0.0;
+                }
+            case RIGHT:
+                switch (state) {
+                    case CLOSED:
+                        return 0.51;
+                    case OPEN:
+                        return 0.9;
+                    default:
+                        return 0.0;
+                }
             default:
                 return 0.0;
         }

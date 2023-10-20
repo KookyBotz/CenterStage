@@ -22,14 +22,34 @@ public class ServoTest extends OpMode {
 
     @Override
     public void init() {
-        servo1 = (WServo) hardwareMap.get(Servo.class, "servo1");
-        servo2 = (WServo) hardwareMap.get(Servo.class, "servo2");
-        servo3 = (WServo) hardwareMap.get(Servo.class, "servo3");
-        servo4 = (WServo) hardwareMap.get(Servo.class, "servo4");
+        servo1 = new WServo(hardwareMap.get(Servo.class, "servo1"));
+        servo2 = new WServo(hardwareMap.get(Servo.class, "servo2"));
+        servo2.setDirection(Servo.Direction.REVERSE);
+        servo3 = new WServo(hardwareMap.get(Servo.class, "servo3"));
+        servo3.setOffset(0.025);
+        servo4 = new WServo(hardwareMap.get(Servo.class, "servo4"));
+        servo4.setDirection(Servo.Direction.REVERSE);
     }
 
     @Override
     public void loop() {
+
+        // 0.435 intaking
+        // 0.5 neutral
+        // 0.75 scoring
+
+        // LEFT SIDE CLAW, 0.09 CLOSE, 0.12 DEPOSIT OPEN, 0.4 OPEN
+
+        // RIGHT SIDE CLAW, 0.51 CLOSE, 0.88 OPEN
+
+        // 0.51, 0.53, 0.88
+
+        // servo 3 = claw right
+        // servo 4 - claw left
+
+        // 0.475
+        // 0.5
+
         if (gamepad1.a) {
             servo1.setPosition(targetPos1);
         }

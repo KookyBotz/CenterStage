@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -161,16 +162,24 @@ public class RobotHardware {
 
         // TODO: tune extension, motion profile, feedforward, and error tolerance
         this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
-                .setPIDController(new PIDController(0.016379, 0.0, 0.0254))
-//                .setMotionProfile(new ProfileConstraints(0, 0, 0))
-                .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0);
+                .setPIDController(new PIDController(0.015, 0.0, 0.0))
+                .setMotionProfile(0, new ProfileConstraints(600, 4000, 600));
+//                .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0);
 
         this.pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
                 .setPIDController(new PIDController(1.3, 0, 0.035))
-                .setMotionProfile(0, new ProfileConstraints(4.7, 20, 7.5))
+                .setMotionProfile(0, new ProfileConstraints(4.7, 20, 4))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.05, 0.13)
                 .setErrorTolerance(0.03);
 
+        intakeClawLeftServo = new WServo(hardwareMap.get(Servo.class, "servo1"));
+        intakeClawRightServo = new WServo(hardwareMap.get(Servo.class, "servo2"));
+        intakeClawRightServo.setDirection(Servo.Direction.REVERSE);
+
+        this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
+        intakePivotLeftServo.setOffset(0.025);
+        this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
+        intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
     }
 

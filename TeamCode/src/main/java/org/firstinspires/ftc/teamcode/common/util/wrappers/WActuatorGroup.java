@@ -21,7 +21,8 @@ public class WActuatorGroup {
     public enum FeedforwardMode {
         NONE,
         CONSTANT,
-        ANGLE_BASED
+        ANGLE_BASED,
+        ANGLE_BASED_SIN
     }
 
     private final Map<String, HardwareDevice> devices = new HashMap<>();
@@ -98,6 +99,9 @@ public class WActuatorGroup {
                 case ANGLE_BASED:
                     this.power += Math.cos(position) * currentFeedforward;
                     break;
+                case ANGLE_BASED_SIN:
+                    this.power += Math.sin(position) * currentFeedforward;
+                    break;
                 default:
             }
             this.power = MathUtils.clamp(power, -1, 1);
@@ -132,7 +136,7 @@ public class WActuatorGroup {
     }
 
     public void setMotionProfileTargetPosition(double targetPosition) {
-        this.profile = new AsymmetricMotionProfile(getPosition(), targetPosition, constraints);
+        this.profile = new AsymmetricMotionProfile(getTargetPosition(), targetPosition, constraints);
         this.timer.reset();
     }
 

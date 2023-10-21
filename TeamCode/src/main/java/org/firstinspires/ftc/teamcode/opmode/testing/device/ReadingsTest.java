@@ -76,6 +76,7 @@ public class ReadingsTest extends OpMode {
     @Override
     public void loop() {
         telemetry.addData("radian reading", extensionPitchEncoder.getCurrentPosition());
+//        telemetry.addData("extension reading", )
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

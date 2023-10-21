@@ -6,8 +6,12 @@ import static org.firstinspires.ftc.teamcode.common.hardware.Globals.INTAKE_CLAW
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Parts List:
@@ -22,14 +26,17 @@ public class IntakeSubsystem extends WSubsystem {
 
     private final RobotHardware robot;
 
-    private ClawState clawState;
+//    private ClawState clawState;
     private PivotState pivotState;
+
+    private Map<ClawSide, ClawState> clawState;
 
     private boolean pixelLeftTop,    pixelRightTop,
                     pixelLeftBottom, pixelRightBottom;
 
     public enum ClawState {
         CLOSED,
+        INTERMEDIATE,
         OPEN
     }
 
@@ -41,25 +48,33 @@ public class IntakeSubsystem extends WSubsystem {
 
     public IntakeSubsystem() {
         this.robot = RobotHardware.getInstance();
+        this.clawState = new HashMap<>();
+        clawState.put(ClawSide.LEFT, ClawState.CLOSED);
+        clawState.put(ClawSide.RIGHT, ClawState.CLOSED);
 
         updateState(ClawState.CLOSED, ClawSide.BOTH);
     }
 
     public void updateState(@NotNull ClawState state, @NotNull ClawSide side) {
         double position = getClawStatePosition(state, side);
-        this.clawState = state;
+//        this.clawState = state;
         switch(side) {
             case LEFT:
                 robot.intakeClawLeftServo.setPosition(position);
+                this.clawState.replace(side, state);
                 break;
             case RIGHT:
                 robot.intakeClawRightServo.setPosition(position);
+                this.clawState.replace(side, state);
                 break;
             case BOTH:
                 position = getClawStatePosition(state, ClawSide.LEFT);
                 robot.intakeClawLeftServo.setPosition(position);
                 position = getClawStatePosition(state, ClawSide.RIGHT);
                 robot.intakeClawRightServo.setPosition(position);
+                this.clawState.replace(ClawSide.LEFT, state);
+                this.clawState.replace(ClawSide.RIGHT, state);
+
                 break;
         }
     }
@@ -72,24 +87,29 @@ public class IntakeSubsystem extends WSubsystem {
     public void periodic() {
 
         // TODO: fix
-        double armAngle = 0.0; // some radian boi
-        double pivotTargetAngle = 0.0;
+//        double armAngle = 0.0; // some radian boi
+//        double pivotTargetAngle = 0.0;
 
         // TODO NOT FINAL. just some shitty pseudocode
-        if (pivotState == PivotState.FLAT) {
-            if (armAngle <= Math.PI / 2) {
-                // angle = 0 - armAngle
-                pivotTargetAngle = -armAngle;
-            } else {
-                // angle = pi + (pi - armAngle)
-                pivotTargetAngle = Math.PI + (Math.PI - armAngle);
-            }
-        } else if (pivotState == PivotState.STORED) {
-            // angle = pi/2 - armAngle
-            pivotTargetAngle = (Math.PI / 2) - armAngle;
-        } else if (pivotState == PivotState.SCORING) {
-            // angle = 2pi / 3 + (pi - armAngle)
-            pivotTargetAngle = (2 * Math.PI / 3) + (Math.PI - armAngle);
+//        if (pivotState == PivotState.FLAT) {
+//            if (armAngle <= Math.PI / 2) {
+//                // angle = 0 - armAngle
+//                pivotTargetAngle = -armAngle;
+//            } else {
+//                // angle = pi + (pi - armAngle)
+//                pivotTargetAngle = Math.PI + (Math.PI - armAngle);
+//            }
+//        } else if (pivotState == PivotState.STORED) {
+//            // angle = pi/2 - armAngle
+//            pivotTargetAngle = (Math.PI / 2) - armAngle;
+//        } else if (pivotState == PivotState.SCORING) {
+//            // angle = 2pi / 3 + (pi - armAngle)
+//            pivotTargetAngle = (2 * Math.PI / 3) + (Math.PI - armAngle);
+//        }
+
+        if (pivotState == PivotState.SCORING) {
+            double targetAngle = (robot.pitchActuator.getPosition() - ((2 * Math.PI) / 3));
+            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2, 0.47, 0.96), 0.075, 0.96));
         }
     }
 
@@ -135,6 +155,8 @@ public class IntakeSubsystem extends WSubsystem {
                 switch (state) {
                     case CLOSED:
                         return 0.09;
+                    case INTERMEDIATE:
+                        return 0.13;
                     case OPEN:
                         return 0.4;
                     default:
@@ -144,6 +166,8 @@ public class IntakeSubsystem extends WSubsystem {
                 switch (state) {
                     case CLOSED:
                         return 0.51;
+                    case INTERMEDIATE:
+                        return 0.54;
                     case OPEN:
                         return 0.9;
                     default:
@@ -152,5 +176,9 @@ public class IntakeSubsystem extends WSubsystem {
             default:
                 return 0.0;
         }
+    }
+
+    public ClawState getClawState(ClawSide side) {
+        return clawState.get(side);
     }
 }

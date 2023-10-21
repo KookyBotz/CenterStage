@@ -164,14 +164,14 @@ public class RobotHardware {
         this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
                 .setPIDController(new PIDController(0.015, 0.0, 0.0))
                 .setMotionProfile(0, new ProfileConstraints(600, 4000, 600));
-//                .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0);
 
         this.pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
                 .setPIDController(new PIDController(1.3, 0, 0.035))
                 .setMotionProfile(0, new ProfileConstraints(4.7, 20, 4))
-                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.05, 0.13)
+                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.0, 0.13)
                 .setErrorTolerance(0.03);
 
+        // INTAKE
         intakeClawLeftServo = new WServo(hardwareMap.get(Servo.class, "servo1"));
         intakeClawRightServo = new WServo(hardwareMap.get(Servo.class, "servo2"));
         intakeClawRightServo.setDirection(Servo.Direction.REVERSE);

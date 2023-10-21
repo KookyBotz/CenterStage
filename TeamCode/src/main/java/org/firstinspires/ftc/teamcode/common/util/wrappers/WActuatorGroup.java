@@ -39,6 +39,8 @@ public class WActuatorGroup {
     private double feedforwardMin = 0.0;
     private double feedforwardMax = 0.0;
     private double currentFeedforward = 0.0;
+    private double targetPositionOffset = 0.0;
+    private double offset = 0.0;
 
     private boolean reached = false;
 
@@ -64,10 +66,10 @@ public class WActuatorGroup {
     public void read() {
         for (HardwareDevice device : devices.values()) {
             if (device instanceof AbsoluteAnalogEncoder) {
-                this.position = ((AbsoluteAnalogEncoder) device).getCurrentPosition();
+                this.position = ((AbsoluteAnalogEncoder) device).getCurrentPosition() + offset;
                 return;
             } else if (device instanceof WEncoder) {
-                this.position = ((WEncoder) device).getPosition();
+                this.position = (int) (((WEncoder) device).getPosition() + offset);
                 return;
             }
         }
@@ -86,15 +88,15 @@ public class WActuatorGroup {
 
         if (profile != null) {
             this.state = profile.calculate(timer.time());
-            this.targetPosition = state.x;
+            this.targetPosition = state.x + targetPositionOffset;
         }
 
         if (controller != null) {
-            this.power = controller.calculate(position, targetPosition);
+            this.power = controller.calculate(position, targetPosition + targetPositionOffset);
 
             switch (mode) {
                 case CONSTANT:
-                    this.power += currentFeedforward * Math.signum(targetPosition - position);
+                    this.power += currentFeedforward * Math.signum((targetPosition + targetPositionOffset) - position);
                     break;
                 case ANGLE_BASED:
                     this.power += Math.cos(position) * currentFeedforward;
@@ -107,7 +109,7 @@ public class WActuatorGroup {
             this.power = MathUtils.clamp(power, -1, 1);
         }
 
-        this.reached = Math.abs(targetPosition - position) < tolerance;
+        this.reached = Math.abs((targetPosition + targetPositionOffset) - position) < tolerance;
     }
 
     /**
@@ -133,6 +135,10 @@ public class WActuatorGroup {
      */
     public void setTargetPosition(double targetPosition) {
        this.targetPosition = targetPosition;
+    }
+
+    public void setOffset(double offset) {
+        this.offset = offset;
     }
 
     public void setMotionProfileTargetPosition(double targetPosition) {

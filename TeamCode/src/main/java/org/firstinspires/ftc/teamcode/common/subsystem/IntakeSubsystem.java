@@ -29,7 +29,8 @@ public class IntakeSubsystem extends WSubsystem {
 //    private ClawState clawState;
     private PivotState pivotState;
 
-    private Map<ClawSide, ClawState> clawState;
+    public ClawState leftClaw = ClawState.CLOSED;
+    public ClawState rightClaw = ClawState.CLOSED;
 
     private boolean pixelLeftTop,    pixelRightTop,
                     pixelLeftBottom, pixelRightBottom;
@@ -48,9 +49,9 @@ public class IntakeSubsystem extends WSubsystem {
 
     public IntakeSubsystem() {
         this.robot = RobotHardware.getInstance();
-        this.clawState = new HashMap<>();
-        clawState.put(ClawSide.LEFT, ClawState.CLOSED);
-        clawState.put(ClawSide.RIGHT, ClawState.CLOSED);
+//        this.clawState = new HashMap<>();
+//        clawState.put(ClawSide.LEFT, ClawState.CLOSED);
+//        clawState.put(ClawSide.RIGHT, ClawState.CLOSED);
 
         updateState(ClawState.CLOSED, ClawSide.BOTH);
     }
@@ -61,19 +62,23 @@ public class IntakeSubsystem extends WSubsystem {
         switch(side) {
             case LEFT:
                 robot.intakeClawLeftServo.setPosition(position);
-                this.clawState.replace(side, state);
+                this.leftClaw = state;
+//                this.clawState.replace(side, state);
                 break;
             case RIGHT:
                 robot.intakeClawRightServo.setPosition(position);
-                this.clawState.replace(side, state);
+                this.rightClaw = state;
+//                this.clawState.replace(side, state);
                 break;
             case BOTH:
                 position = getClawStatePosition(state, ClawSide.LEFT);
                 robot.intakeClawLeftServo.setPosition(position);
+                this.leftClaw = state;
                 position = getClawStatePosition(state, ClawSide.RIGHT);
                 robot.intakeClawRightServo.setPosition(position);
-                this.clawState.replace(ClawSide.LEFT, state);
-                this.clawState.replace(ClawSide.RIGHT, state);
+                this.rightClaw = state;
+//                this.clawState.replace(ClawSide.LEFT, state);
+//                this.clawState.replace(ClawSide.RIGHT, state);
 
                 break;
         }
@@ -176,9 +181,5 @@ public class IntakeSubsystem extends WSubsystem {
             default:
                 return 0.0;
         }
-    }
-
-    public ClawState getClawState(ClawSide side) {
-        return clawState.get(side);
     }
 }

@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.outoftheboxrobotics.photoncore.Photon;
@@ -38,6 +39,12 @@ public class OpMode extends CommandOpMode {
 
     private double loopTime = 0.0;
 
+    private boolean rightStickGreat = false;
+    private boolean lastRightStickGreat = false;
+
+    private boolean lastJoystickUp = false;
+    private boolean lastJoystickDown = false;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -59,17 +66,17 @@ public class OpMode extends CommandOpMode {
                         .whenPressed(new ConditionalCommand(
                                 new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT),
                                 new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
-                                () -> (intake.getClawState(ClawSide.LEFT) == (IntakeSubsystem.ClawState.CLOSED))
+                                () -> (intake.leftClaw == (IntakeSubsystem.ClawState.CLOSED))
                         ));
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new ConditionalCommand(
                         new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT),
                         new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
-                        () -> (intake.getClawState(ClawSide.RIGHT) == (IntakeSubsystem.ClawState.CLOSED))
+                        () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED))
                 ));
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
                 .whenPressed(new SequentialCommandGroup(
                         new InstantCommand(() -> extension.setScoring(false)),
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.025)),
@@ -82,7 +89,7 @@ public class OpMode extends CommandOpMode {
                         .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.05))
                                 .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(300))
                                         .alongWith(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.435)))));
-        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
                         .whenPressed(
                                 new ConditionalCommand(
                                         new SequentialCommandGroup(
@@ -105,27 +112,20 @@ public class OpMode extends CommandOpMode {
 
 
                                 );
-        gamepadEx.getGamepadButton(GamepadKeys.Button.X)
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(new SequentialCommandGroup(
                         new InstantCommand(() -> extension.setScoring(true)),
                         new InstantCommand(() -> extension.setUpdated(false)),
-//                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(2.75)),
-//                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(300)),
                         new WaitCommand(200),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING))
                 ));
-        gamepadEx.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new InstantCommand(() -> extension.incrementBackdropHeight(1)));
-        gamepadEx.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
                 .whenPressed(new InstantCommand(() -> extension.incrementBackdropHeight(-1)));
 
+
         // combination of angle and extension amount, get minimums, get maximums, math.map
-
-//        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-//                        .whenPressed(new InstantCommand(() -> robot.intakeClawLeftServo.setPosition(0.12)));
-//        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenPressed(new InstantCommand(() -> robot.intakeClawLeftServo.setPosition(0.53)));
-
         robot.read();
         while (opModeInInit()) {
             telemetry.addLine("Robot Initialized. Mason is very cool and he is the best perosn to ever exist in the owrld and java ois the owrst progmraming kanguage nad ih ate it so so os much LLL + Ratio + cope + cget out of my game L");
@@ -140,18 +140,37 @@ public class OpMode extends CommandOpMode {
 
         drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
 
+        boolean currentJoystickUp = gamepad2.right_stick_y < -0.5;
+        boolean currentJoystickDown = gamepad2.right_stick_y > 0.5;
+        if (currentJoystickUp && !lastJoystickUp) {
+            // height go upp
+            extension.incrementBackdropHeight(1);
+        }
+
+        if (currentJoystickDown && !lastJoystickDown) {
+            // gheight go dwodn
+            extension.incrementBackdropHeight(-1);
+        }
+        lastJoystickUp = currentJoystickUp;
+        lastJoystickDown = currentJoystickDown;
+
         // input
         super.run();
         robot.periodic();
 
+        lastRightStickGreat = rightStickGreat;
 
 //        telemetry.addData("extension", robot.extensionActuator.getPosition());
 //        telemetry.addData("angle", robot.pitchActuator.getPosition());
         telemetry.addData("LEVEL", extension.getBackdropHeight());
+        telemetry.addData("targetAngle", extension.t_angle);
+        telemetry.addData("targetExtension", extension.t_extension);
+        telemetry.addData("diffX", extension.diff_x);
+        telemetry.addData("diffy", extension.diff_y);
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;
         telemetry.update();
-        robot.write();
+//        robot.write();
     }
 }

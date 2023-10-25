@@ -9,10 +9,8 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
@@ -39,7 +37,7 @@ public class OpMode extends CommandOpMode {
 
     private double loopTime = 0.0;
 
-    private boolean rightStickGreat = false;
+    private final boolean rightStickGreat = false;
     private boolean lastRightStickGreat = false;
 
     private boolean lastJoystickUp = false;
@@ -163,14 +161,14 @@ public class OpMode extends CommandOpMode {
 //        telemetry.addData("extension", robot.extensionActuator.getPosition());
 //        telemetry.addData("angle", robot.pitchActuator.getPosition());
         telemetry.addData("LEVEL", extension.getBackdropHeight());
-        telemetry.addData("targetAngle", extension.t_angle);
-        telemetry.addData("targetExtension", extension.t_extension);
-        telemetry.addData("diffX", extension.diff_x);
-        telemetry.addData("diffy", extension.diff_y);
+//        telemetry.addData("targetAngle", extension.t_angle);
+//        telemetry.addData("targetExtension", extension.t_extension);
+//        telemetry.addData("diffX", extension.diff_x);
+//        telemetry.addData("diffy", extension.diff_y);
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;
         telemetry.update();
-//        robot.write();
+        robot.write();
     }
 }

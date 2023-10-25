@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 @Config
 public class ExtensionSubsystem extends WSubsystem {
 
-    private RobotHardware robot;
+    private final RobotHardware robot;
     private int backdropHeight = 0;
     private boolean scoring = false;
     private boolean updated = false;
@@ -49,31 +49,31 @@ public class ExtensionSubsystem extends WSubsystem {
             updated = true;
         }
 
-        double distance_sensor_input = 4.0;
-        double backdrop_front = 1.41;
-        double perp_backdrop_distance = 0.75;
-        double height_backdrop_distance = 3.0;
-
-        double t_y = (7.25 + 22.5 * ((0) / 10.0)) + perp_backdrop_distance * Math.sin(Math.PI / 6) + height_backdrop_distance * Math.sin(2 * Math.PI / 3);
-        double t_x = -(((20.125 * t_y) / 30.0) - backdrop_front + distance_sensor_input + perp_backdrop_distance * Math.cos(Math.PI / 6) + height_backdrop_distance * Math.cos(2 * Math.PI / 3));
-
-        double x_c = 2.48; // gear center_x
-        double y_c = 3.43; // gear center_y
-        double r = 1.57; // distance from gear center to base of the extension
-
-        double dx = t_x - x_c;
-        double dy = t_y - y_c;
-        double len = Math.sqrt(dx * dx + dy * dy);
-
-        double x_t = x_c + r * dy / len;
-        double y_t = y_c - r * dx / len;
-
-
-        double diff_y = t_y - x_t;
-        double diff_x = t_x - y_t;
-
-        double t_angle = Math.atan2(diff_y, diff_x);
-        double t_extension = MathUtils.clamp(Math.hypot(diff_x, diff_y), 0, 20); //TODO replace 500 with the max distance in inches // 25 ticks per inch, 20 inches
+//        double distance_sensor_input = 4.0;
+//        double backdrop_front = 1.41;
+//        double perp_backdrop_distance = 0.75;
+//        double height_backdrop_distance = 3.0;
+//
+//        double t_y = (7.25 + 22.5 * ((0) / 10.0)) + perp_backdrop_distance * Math.sin(Math.PI / 6) + height_backdrop_distance * Math.sin(2 * Math.PI / 3);
+//        double t_x = -(((20.125 * t_y) / 30.0) - backdrop_front + distance_sensor_input + perp_backdrop_distance * Math.cos(Math.PI / 6) + height_backdrop_distance * Math.cos(2 * Math.PI / 3));
+//
+//        double x_c = 2.48; // gear center_x
+//        double y_c = 3.43; // gear center_y
+//        double r = 1.57; // distance from gear center to base of the extension
+//
+//        double dx = t_x - x_c;
+//        double dy = t_y - y_c;
+//        double len = Math.sqrt(dx * dx + dy * dy);
+//
+//        double x_t = x_c + r * dy / len;
+//        double y_t = y_c - r * dx / len;
+//
+//
+//        double diff_y = t_y - x_t;
+//        double diff_x = t_x - y_t;
+//
+//        double t_angle = Math.atan2(diff_y, diff_x);
+//        double t_extension = MathUtils.clamp(Math.hypot(diff_x, diff_y), 0, 20); //TODO replace 500 with the max distance in inches // 25 ticks per inch, 20 inches
 
         robot.pitchActuator.periodic();
         robot.extensionActuator.periodic();

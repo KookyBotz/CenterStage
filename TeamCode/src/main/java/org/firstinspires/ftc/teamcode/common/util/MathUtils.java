@@ -9,6 +9,10 @@ public class MathUtils {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
     }
 
+    public static boolean epsilonEquals(double val1, double val2) {
+        return Math.abs(val1 - val2) < 1e-6;
+    }
+
     public static double joystickScalar(double num, double min) {
         return joystickScalar(num, min, 0.66, 4);
     }

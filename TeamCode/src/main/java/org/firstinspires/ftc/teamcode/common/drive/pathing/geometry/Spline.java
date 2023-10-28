@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode.common.drive.pathing.geometry;
 
 public class Spline {
-    private Polynomial x, y;
+    private final Polynomial x;
+    private final Polynomial y;
 
     public Spline(Polynomial x, Polynomial y) {
         this.x = x;
         this.y = y;
     }
 
-    public Point calculate(double t, int n) {
-        return new Point(x.calculate(t, n), y.calculate(t, n));
+    public Pose calculate(double t, int n) {
+        return new Pose(x.calculate(t, n), y.calculate(t, n), 0.0);
     }
 
     public double curvature(double t) {

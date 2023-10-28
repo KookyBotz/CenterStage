@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.common.drive.pathing.path;
 
-import com.arcrobotics.ftclib.util.MathUtils;
-
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Spline;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Vector2D;
+import org.firstinspires.ftc.teamcode.common.util.MathUtils;
+
+import java.util.ArrayList;
 
 public class GVFPathFollower {
-    private HermitePath path;
+    private final HermitePath path;
 
     private final double MAX_VELOCITY = 180; /* Inches per second */
     private final double MAX_ACCEL = 480; /* Inches per second squared */
@@ -17,12 +18,14 @@ public class GVFPathFollower {
 
     private final double DECEL_PERIOD_DIST = (Math.pow(MAX_VELOCITY, 2)) / (2 * MAX_DECEL);
 
-    private double kN;
-    private double kS;
-    private double kC;
+    private final double kN;
+    private final double kS;
+    private final double kC;
     private Pose currentPose;
     public static double nearestT = 0.0;
-    private boolean initialSearch = false;
+
+    private final double TOLERANCE = 1e-6;
+    private final int MAX_ITERATIONS = 10;
 
     public GVFPathFollower(HermitePath path, final Pose initialPose, double kN, double kS, double kC) {
         this.path = path;
@@ -32,60 +35,65 @@ public class GVFPathFollower {
         this.kC = kC;
     }
 
-    private double gradientOf(Spline s, double t, Pose targetPose) {
-        double dx = s.getX().calculate(t, 1);
-        double dy = s.getY().calculate(t, 1);
-        double fx = s.getX().calculate(t, 0) - targetPose.x;
-        double fy = s.getY().calculate(t, 0) - targetPose.y;
-        return 2 * (dx * fx + dy * fy);
-    }
+    public double projectPos(Spline s, Pose pos) {
+        double curr = 0.5;
+        double length = 0;
 
-    private Vector2D minimumT(double t, Pose targetPose) {
-        final double TOLERANCE = 1e-6;
-        final int MAX_ITERATIONS = 10;
+        for (double t = 0.01; t <= 1; t += 0.01) {
+            Pose prev = s.calculate(t - 0.01, 0);
+            Pose now = s.calculate(t, 0);
+            length += prev.toVec2D().subt(now.toVec2D()).magnitude();
+        }
 
-        double currentT = t;
-        for (int i = 0; i < MAX_ITERATIONS; i++) {
-            Spline s = path.getSpline(currentT);
-            double gradient = gradientOf(s, currentT, targetPose);
-            double hessian = 2 * (Math.pow(s.getX().calculate(currentT, 1), 2) + Math.pow(s.getY().calculate(currentT, 1), 2));
-            double newT = currentT - (gradient / hessian);
+        for (int i = 0; i < 250; i++) {
+            Pose p = s.calculate(curr, 0);
+            Pose deriv = s.calculate(curr, 1);
 
-            if (Math.abs(newT - currentT) < TOLERANCE) {
+            double ds = pos.toVec2D().subt(p.toVec2D()).dot(deriv.toVec2D());
+
+            ds = ds / deriv.toVec2D().dot(deriv.toVec2D());
+
+            if (MathUtils.epsilonEquals(ds, 0)) {
                 break;
             }
-            currentT = newT;
+
+            curr += (ds / length);
+
+            if (curr < 0) {
+                //curr = 0;
+            }
+            if (curr > 1) {
+                //curr = 1;
+            }
         }
 
-        double distance = (path.get(currentT, 0).subt(targetPose)).toVec2D().magnitude();
-        return new Vector2D(currentT, distance);
+        return (Math.max(0, Math.min(curr, 1)));
     }
 
-    public double getNearestT() {
+    public double projectPosNew(Pose position) {
+        double minDist = Double.MAX_VALUE;
+        Pose bestPos = new Pose(0.0, 0.0, 0.0);
+        double projectPos = 0;
 
-        if (!initialSearch) {
-            Vector2D nearestSplineDist = new Vector2D(0, Integer.MAX_VALUE);
+        ArrayList<Spline> splines = path.getSplines();
+        for (int i = 0; i < splines.size(); i++) {
+            double d = projectPos(splines.get(i), position);
+            Pose pos = splines.get(i).calculate(d, 0);
 
-            for (int i = 1; i < path.length() - 1; i++) {
-                System.out.println("CURRENT ITER:" + i);
-                Vector2D currentIterPair = minimumT(i, currentPose);
-                if (currentIterPair.y < nearestSplineDist.y) {
-                    nearestSplineDist = currentIterPair;
-                }
+            if (pos.toVec2D().subt(position.toVec2D()).magnitude() < minDist) {
+                minDist = pos.toVec2D().subt(position.toVec2D()).magnitude();
+                bestPos = pos;
+                projectPos = d + i;
             }
-            initialSearch = !initialSearch;
-            nearestT = nearestSplineDist.x;
-        } else {
-            nearestT = minimumT(nearestT, currentPose).x;
         }
 
-        return MathUtils.clamp(nearestT, 0.0, path.length() - 1);
+        return projectPos;
     }
 
     public Pose calculateGVF() {
         double startTime = System.nanoTime();
-        nearestT = getNearestT();
-        System.out.println("TIME:" + (System.nanoTime() - startTime) / 1000000000);
+        nearestT = projectPosNew(currentPose);
+        System.out.println("T" + nearestT + " TIME:" + (System.nanoTime() - startTime) / 1000000000);
         if (nearestT < 1e-2) {
             nearestT = 1e-2;
         }

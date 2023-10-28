@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class HermitePath {
     public HermiteInterpolator interpolator;
-    private ArrayList<HermitePose> controlPoses = new ArrayList<>();
+    private final ArrayList<HermitePose> controlPoses = new ArrayList<>();
 
     public HermitePath() {
         interpolator = new HermiteInterpolator();
@@ -24,13 +24,18 @@ public class HermitePath {
         return this.addPose(new HermitePose(x, y, Vector2D.fromHeadingAndMagnitude(h, m)));
     }
 
+    public HermitePath addPose(double x, double y, double h) {
+        return this.addPose(new HermitePose(x, y, Vector2D.fromHeadingAndMagnitude(h, 1)));
+    }
+
     public HermitePath addPose(HermitePose pose) {
         this.controlPoses.add(pose);
         return this;
     }
 
     public HermitePath construct() {
-        if (controlPoses.size() <= 1) throw new IllegalStateException("Need a minimum of two control poses.");
+        if (controlPoses.size() <= 1)
+            throw new IllegalStateException("Need a minimum of two control poses.");
         interpolator = new HermiteInterpolator();
         interpolator.setControlPoses(controlPoses);
         return this;
@@ -56,6 +61,10 @@ public class HermitePath {
 
     public Spline getSpline(double t) {
         return interpolator.getSpline(t);
+    }
+
+    public ArrayList<Spline> getSplines() {
+        return interpolator.getSplines();
     }
 
     public int length() {

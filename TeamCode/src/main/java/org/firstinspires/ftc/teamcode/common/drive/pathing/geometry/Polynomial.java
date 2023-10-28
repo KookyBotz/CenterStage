@@ -5,7 +5,7 @@ import org.ejml.simple.SimpleMatrix;
 import java.util.ArrayList;
 
 public class Polynomial {
-    private ArrayList<Double> coeffs = new ArrayList<>();
+    private final ArrayList<Double> coeffs = new ArrayList<>();
 
     public Polynomial(SimpleMatrix coeffs) {
         for (int i = 0; i < 4; i++) {

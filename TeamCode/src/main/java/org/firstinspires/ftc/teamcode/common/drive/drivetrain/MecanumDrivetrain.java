@@ -11,10 +11,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import java.util.Arrays;
 
 public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
-    private RobotHardware robot = RobotHardware.getInstance();
-//    public MecanumDrive drive;
-
-//    public DcMotorEx frontLeft, frontRight, backLeft, backRight;
+    private final RobotHardware robot = RobotHardware.getInstance();
 
     double[] ws = new double[4];
 
@@ -32,10 +29,6 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
     }
 
     public MecanumDrivetrain() {
-//        this.frontLeft = robot.dtFrontLeftMotor;
-//        this.frontRight = robot.dtFrontRightMotor;
-//        this.backLeft = robot.dtBackLeftMotor;
-//        this.backRight = robot.dtBackRightMotor;
     }
 
     @Override
@@ -76,34 +69,6 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
 
     public void set(Pose pose, double angle) {
         set(pose.x, pose.y, pose.heading, angle);
-//        double strafeSpeed = MathUtils.clamp(pose.x, -1, 1);
-//        double forwardSpeed = MathUtils.clamp(pose.heading, -1, 1);
-//        double turnSpeed = MathUtils.clamp(pose.y, -1, 1);
-//
-//        Vector2D input = new Vector2D(strafeSpeed, forwardSpeed);
-//        input = input.rotate(-angle);
-//
-//        double theta = input.angle();
-//
-//        double[] wheelSpeeds = new double[4];
-//        wheelSpeeds[0] = Math.sin(theta + Math.PI / 4);
-//        wheelSpeeds[1] = Math.sin(theta - Math.PI / 4);
-//        wheelSpeeds[2] = Math.sin(theta - Math.PI / 4);
-//        wheelSpeeds[3] = Math.sin(theta + Math.PI / 4);
-//
-//        normalize(wheelSpeeds, input.magnitude());
-//
-//        wheelSpeeds[0] += turnSpeed;
-//        wheelSpeeds[1] -= turnSpeed;
-//        wheelSpeeds[2] += turnSpeed;
-//        wheelSpeeds[3] -= turnSpeed;
-//
-//        normalize(wheelSpeeds);
-//
-//        ws[0] = wheelSpeeds[0];
-//        ws[1] = wheelSpeeds[1];
-//        ws[2] = wheelSpeeds[2];
-//        ws[3] = wheelSpeeds[3];
     }
 
     @Override
@@ -118,11 +83,6 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
 
     @Override
     public void write() {
-//        robot.dtFrontLeftMotor.setPower(ws[0]);
-//        robot.dtFrontRightMotor.setPower(ws[1]);
-//        robot.dtBackLeftMotor.setPower(ws[2]);
-//        robot.dtBackRightMotor.setPower(ws[3]);
-
         robot.dtFrontLeftMotor.setPower(ws[0]);
         robot.dtFrontRightMotor.setPower(ws[1]);
         robot.dtBackLeftMotor.setPower(ws[2]);

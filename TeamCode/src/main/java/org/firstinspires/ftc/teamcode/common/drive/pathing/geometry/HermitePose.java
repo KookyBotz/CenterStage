@@ -10,6 +10,12 @@ public class HermitePose {
         this.tangent = tangent;
     }
 
+    public HermitePose(double x, double y, double heading) {
+        this.x = x;
+        this.y = y;
+        this.tangent = new Vector2D(Math.cos(heading), Math.sin(heading));
+    }
+
     public Point add(HermitePose other) {
         return new Point(x + other.x, y + other.y);
     }

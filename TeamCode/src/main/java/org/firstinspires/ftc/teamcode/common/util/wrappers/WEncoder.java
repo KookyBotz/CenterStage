@@ -43,4 +43,8 @@ public class WEncoder implements HardwareDevice {
     public double getPosition() {
         return this.encoder.getPosition();
     }
+
+    public double getRawVelocity() {
+        return this.encoder.getRawVelocity();
+    }
 }

@@ -18,62 +18,68 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
 
     private final RobotHardware robot;
 
-    public static double TICKS_PER_REV = 8192;
+    public static double TICKS_PER_REV = 4096;
     public static double WHEEL_RADIUS = 0.689;
     public static double GEAR_RATIO = 1;
 
-    public static double PARALLEL_X = 0;
-    public static double PARALLEL_Y = 1.7374; // 1.16442
+    public static double TRACK_WIDTH = 10.787;
+    public static double FORWARD_OFFSET = 4.252;
 
-    public static double PERPENDICULAR_X = -4.4149; // -3.61212 old
-    public static double PERPENDICULAR_Y = 0;
-
-    private final DoubleSupplier horizontalPositionLeft, horizontalPositionRight, lateralPosition, imuAngle;
+    private final DoubleSupplier positionLeft, positionRight, positionFront, imuAngle;
 
     public ThreeWheelLocalizer() {
-
-        // TODO double check impl
         super(Arrays.asList(
-                new Pose2d(PARALLEL_X, PARALLEL_Y, 0),
-                new Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90))
+                new Pose2d(0, TRACK_WIDTH / 2, 0), // left
+                new Pose2d(0, -TRACK_WIDTH / 2, 0), // right
+                new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        this.robot = RobotHardware.getInstance();
+        robot = RobotHardware.getInstance();
 
+        positionLeft = () -> robot.podLeft.getPosition();
+        positionRight = () -> robot.podRight.getPosition();
+        positionFront = () -> robot.podFront.getPosition();
+//        imuAngle = robot::getAngle;
+        imuAngle = () -> 0.0;
 
-        this.horizontalPositionLeft = () -> robot.parallelPodLeft.getPosition();
-        this.horizontalPositionRight = () -> robot.parallelPodRight.getPosition();
-        this.lateralPosition = () -> robot.perpindicularPod.getPosition();
-        this.imuAngle = robot::getAngle;
+//        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
+//        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
+//        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
 
+        // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
-    public double getHeading() {
-        return imuAngle.getAsDouble();
-    }
-
-    public Double getHeadingVelocity() {
-        return 0.0;
-    }
-
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
-                encoderTicksToInches(horizontalPositionLeft.getAsDouble()),
-                encoderTicksToInches(horizontalPositionRight.getAsDouble()),
-                encoderTicksToInches(lateralPosition.getAsDouble())
+                encoderTicksToInches(robot.podLeft.getPosition()),
+                encoderTicksToInches(robot.podRight.getPosition()),
+                encoderTicksToInches(robot.podFront.getPosition())
         );
     }
 
     @NonNull
     @Override
     public List<Double> getWheelVelocities() {
-        return Arrays.asList(0.0, 0.0);
+        // TODO: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
+        //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
+        //  compensation method
+
+        return Arrays.asList(
+                encoderTicksToInches(robot.podLeft.getRawVelocity()),
+                encoderTicksToInches(robot.podRight.getRawVelocity()),
+                encoderTicksToInches(robot.podFront.getRawVelocity())
+        );
+    }
+
+    @Override
+    public void periodic() {
+
     }
 
     @Override
@@ -84,10 +90,22 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
 
     @Override
     public void setPos(Pose pose) {
+
     }
 
-    @Override
-    public void periodic() {
-        super.update();
+    public double getHeading() {
+        return 0.0;
+    }
+
+    public double getRawExternalHeading() {
+        return 0;
+    }
+
+    public double getExternalHeadingVelocity() {
+        return 0.0;
+    }
+
+    public void setPoseEstimate(Pose2d pose) {
+        super.setPoseEstimate(pose);
     }
 }

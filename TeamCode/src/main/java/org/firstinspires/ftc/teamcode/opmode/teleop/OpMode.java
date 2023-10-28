@@ -74,6 +74,13 @@ public class OpMode extends CommandOpMode {
                         () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED))
                 ));
 
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(new ConditionalCommand(
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
+                        () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (intake.leftClaw == IntakeSubsystem.ClawState.CLOSED))
+                ));
+
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
                 .whenPressed(new SequentialCommandGroup(
                         new InstantCommand(() -> extension.setScoring(false)),

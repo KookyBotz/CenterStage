@@ -71,9 +71,9 @@ public class RobotHardware {
     /**
      * Odometry pod encoders.
      */
-    public Motor.Encoder parallelPodLeft;
-    public Motor.Encoder parallelPodRight;
-    public Motor.Encoder perpindicularPod;
+    public WEncoder podLeft;
+    public WEncoder podRight;
+    public WEncoder podFront;
 
     /**
      * HardwareMap storage.
@@ -181,6 +181,10 @@ public class RobotHardware {
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
+
+        this.podLeft = new WEncoder(new MotorEx(hardwareMap, "podLeft").encoder);
+        this.podFront = new WEncoder(new MotorEx(hardwareMap, "podFront").encoder);
+        this.podRight = new WEncoder(new MotorEx(hardwareMap, "podRight").encoder);
     }
 
     public void read() {

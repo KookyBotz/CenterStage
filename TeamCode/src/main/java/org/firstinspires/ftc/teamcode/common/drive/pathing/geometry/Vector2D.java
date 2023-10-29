@@ -16,6 +16,11 @@ public class Vector2D {
         return Math.atan2(y, x);
     }
 
+    public Vector2D deadzoneX(double val){
+        if(Math.abs(x) < val) return new Vector2D(0, y);
+        return this;
+    }
+
     public Vector2D mult(double scalar) {
         return new Vector2D(x * scalar, y * scalar);
     }

@@ -125,7 +125,9 @@ public class RobotHardware {
 
         modules = hardwareMap.getAll(LynxModule.class);
         modules.get(0).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+        try {
+            modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+        } catch(Exception e) {}
 
         this.imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -162,7 +164,7 @@ public class RobotHardware {
 
         // TODO: tune extension, motion profile, feedforward, and error tolerance
         this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
-                .setPIDController(new PIDController(0.015, 0.0, 0.0))
+                .setPIDController(new PIDController(0.03, 0.0, 0.0))
                 .setMotionProfile(0, new ProfileConstraints(600, 4000, 600));
 
         this.pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
@@ -182,9 +184,9 @@ public class RobotHardware {
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
 
-        this.podLeft = new WEncoder(new MotorEx(hardwareMap, "podLeft").encoder);
-        this.podFront = new WEncoder(new MotorEx(hardwareMap, "podFront").encoder);
-        this.podRight = new WEncoder(new MotorEx(hardwareMap, "podRight").encoder);
+        this.podLeft = new WEncoder(new MotorEx(hardwareMap, "dtFrontRightMotor").encoder);
+        this.podFront = new WEncoder(new MotorEx(hardwareMap, "dtBackRightMotor").encoder);
+        this.podRight = new WEncoder(new MotorEx(hardwareMap, "dtBackLeftMotor").encoder);
     }
 
     public void read() {

@@ -25,7 +25,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
     public static double TRACK_WIDTH = 10.787;
     public static double FORWARD_OFFSET = 4.252;
 
-    private final DoubleSupplier positionLeft, positionRight, positionFront, imuAngle;
+    public final DoubleSupplier positionLeft, positionRight, positionFront, imuAngle;
 
     public ThreeWheelLocalizer() {
         super(Arrays.asList(
@@ -38,7 +38,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
 
         positionLeft = () -> robot.podLeft.getPosition();
         positionRight = () -> robot.podRight.getPosition();
-        positionFront = () -> robot.podFront.getPosition();
+        positionFront = () -> -robot.podFront.getPosition();
 //        imuAngle = robot::getAngle;
         imuAngle = () -> 0.0;
 
@@ -57,9 +57,9 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
-                encoderTicksToInches(robot.podLeft.getPosition()),
-                encoderTicksToInches(robot.podRight.getPosition()),
-                encoderTicksToInches(robot.podFront.getPosition())
+                encoderTicksToInches(positionLeft.getAsDouble()),
+                encoderTicksToInches(positionRight.getAsDouble()),
+                encoderTicksToInches(positionFront.getAsDouble())
         );
     }
 
@@ -79,7 +79,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
 
     @Override
     public void periodic() {
-
+        super.update();
     }
 
     @Override
@@ -107,5 +107,10 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
 
     public void setPoseEstimate(Pose2d pose) {
         super.setPoseEstimate(pose);
+    }
+
+    public Pose getNewPoseVelocity() {
+        Pose2d a = super.getPoseVelocity();
+        return new Pose(a.getX(), a.getY(), Math.toRadians(a.getHeading()));
     }
 }

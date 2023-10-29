@@ -24,6 +24,12 @@ public class Pose extends Point {
         this(0, 0, 0);
     }
 
+    public void set(Pose other) {
+        this.x = other.x;
+        this.y = other.y;
+        this.heading = heading;
+    }
+
     public Pose add(Pose other) {
         return new Pose(x + other.x, y + other.y, heading + other.heading);
     }

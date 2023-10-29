@@ -10,11 +10,11 @@ import java.util.ArrayList;
 public class GVFPathFollower {
     private final HermitePath path;
 
-    private final double MAX_VELOCITY = 180; /* Inches per second */
-    private final double MAX_ACCEL = 480; /* Inches per second squared */
-    private final double MAX_DECEL = 720; /* Inches per second squared */
+    private final double MAX_VELOCITY = 36; /* Inches per second */
+    private final double MAX_ACCEL = 36; /* Inches per second squared */
+    private final double MAX_DECEL = 36; /* Inches per second squared */
     private final double FINISH_TOLERANCE = 0.1; /* Finishing Error */
-    private double lastVelocity = 0.5;
+    private double lastVelocity = 1e-7;
 
     private final double DECEL_PERIOD_DIST = (Math.pow(MAX_VELOCITY, 2)) / (2 * MAX_DECEL);
 
@@ -23,6 +23,7 @@ public class GVFPathFollower {
     private final double kC;
     private Pose currentPose;
     public static double nearestT = 0.0;
+    public static Pose bestPos = new Pose(0, 0, 0);
 
     private final double TOLERANCE = 1e-6;
     private final int MAX_ITERATIONS = 10;
@@ -72,7 +73,7 @@ public class GVFPathFollower {
 
     public double projectPosNew(Pose position) {
         double minDist = Double.MAX_VALUE;
-        Pose bestPos = new Pose(0.0, 0.0, 0.0);
+        bestPos = new Pose(0.0, 0.0, 0.0);
         double projectPos = 0;
 
         ArrayList<Spline> splines = path.getSplines();
@@ -93,9 +94,9 @@ public class GVFPathFollower {
     public Pose calculateGVF() {
         double startTime = System.nanoTime();
         nearestT = projectPosNew(currentPose);
-        System.out.println("T" + nearestT + " TIME:" + (System.nanoTime() - startTime) / 1000000000);
+        System.out.println("T " + nearestT);
         if (nearestT < 1e-2) {
-            nearestT = 1e-2;
+            nearestT = 1e-7;
         }
 
         Vector2D tangent = path.get(nearestT, 1).toVec2D().unit();

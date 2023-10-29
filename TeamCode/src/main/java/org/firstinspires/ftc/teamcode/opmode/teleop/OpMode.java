@@ -43,6 +43,8 @@ public class OpMode extends CommandOpMode {
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
 
+    public static double targetpos = 0.1;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -59,6 +61,9 @@ public class OpMode extends CommandOpMode {
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
         robot.addSubsystem(drivetrain, extension, intake);
+
+        robot.intakePivotActuator.setTargetPosition(targetpos);
+        robot.intakePivotActuator.write();
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                         .whenPressed(new ConditionalCommand(

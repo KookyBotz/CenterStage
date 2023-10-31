@@ -21,9 +21,10 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 public class ExtensionSubsystem extends WSubsystem {
 
     private final RobotHardware robot;
-    private int backdropHeight = 0;
+    private int backdropHeight = 1;
     private boolean scoring = false;
     private boolean updated = false;
+    private boolean flip = false;
 
     public double t_angle = 0.0;
     public double t_extension = 0.0;
@@ -41,13 +42,15 @@ public class ExtensionSubsystem extends WSubsystem {
 //        robot.extensionActuator.setTargetPositionOffset((robot.pitchActuator.getPosition() / Math.PI) * 50);
         robot.extensionActuator.setOffset(-(robot.pitchActuator.getPosition() / Math.PI) * 50);
 
-        if (this.scoring && !updated) {
-            // extension range angle math or whatever for given backdrop height selection
-            Pair currentHeight = ScoringHeights.HEIGHTS[backdropHeight];
-            robot.pitchActuator.setMotionProfileTargetPosition(((Double) currentHeight.first).doubleValue());
-            robot.extensionActuator.setMotionProfileTargetPosition(((Integer) currentHeight.second).doubleValue());
-            updated = true;
-        }
+//        if (this.scoring && !updated) {
+//            // extension range angle math or whatever for given backdrop height selection
+//            Pair currentHeight = ScoringHeights.HEIGHTS[backdropHeight];
+//            robot.pitchActuator.setMotionProfileTargetPosition(((Double) currentHeight.first).doubleValue());
+//            if (flip) {
+//                robot.extensionActuator.setMotionProfileTargetPosition(((Integer) currentHeight.second).doubleValue());
+//            }
+//            updated = true;
+//        }
 
 //        double distance_sensor_input = 4.0;
 //        double backdrop_front = 1.41;
@@ -115,5 +118,13 @@ public class ExtensionSubsystem extends WSubsystem {
 
     public void setUpdated(boolean updated) {
         this.updated = updated;
+    }
+
+    public void setFlip(boolean flip) {
+        this.flip = flip;
+    }
+
+    public Pair getPair() {
+        return ScoringHeights.HEIGHTS[backdropHeight];
     }
 }

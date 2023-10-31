@@ -164,12 +164,12 @@ public class RobotHardware {
 
         // TODO: tune extension, motion profile, feedforward, and error tolerance
         this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
-                .setPIDController(new PIDController(0.03, 0.0, 0.0))
-                .setMotionProfile(0, new ProfileConstraints(600, 4000, 600));
+                .setPIDController(new PIDController(0.02, 0.0, 0.001))
+                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000));
 
         this.pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
-                .setPIDController(new PIDController(1.3, 0, 0.035))
-                .setMotionProfile(0, new ProfileConstraints(4.7, 20, 4))
+                .setPIDController(new PIDController(1, 0, 0.05))
+                .setMotionProfile(0, new ProfileConstraints(4, 20, 2.5))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.0, 0.13)
                 .setErrorTolerance(0.03);
 

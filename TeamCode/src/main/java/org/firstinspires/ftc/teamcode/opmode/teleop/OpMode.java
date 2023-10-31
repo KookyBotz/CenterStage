@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
@@ -16,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.state.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
@@ -79,16 +81,19 @@ public class OpMode extends CommandOpMode {
                         () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED))
                 ));
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
+        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(new ConditionalCommand(
                         new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
                         new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
                         () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (intake.leftClaw == IntakeSubsystem.ClawState.CLOSED))
                 ));
 
+
+
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
                 .whenPressed(new SequentialCommandGroup(
                         new InstantCommand(() -> extension.setScoring(false)),
+                        new InstantCommand(() -> extension.setFlip(false)),
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.025)),
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
@@ -99,11 +104,12 @@ public class OpMode extends CommandOpMode {
                         .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.05))
                                 .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(300))
                                         .alongWith(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.435)))));
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
+        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
                         .whenPressed(
                                 new ConditionalCommand(
                                         new SequentialCommandGroup(
                                                 new InstantCommand(() -> extension.setScoring(false)),
+                                                new InstantCommand(() -> extension.setFlip(false)),
                                                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
                                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                                 new WaitCommand(250),
@@ -112,6 +118,7 @@ public class OpMode extends CommandOpMode {
                                                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.1))),
                                         new SequentialCommandGroup(
                                                 new InstantCommand(() -> extension.setScoring(false)),
+                                                new InstantCommand(() -> extension.setFlip(false)),
                                                 new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                                                 new WaitCommand(250),
                                                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
@@ -122,17 +129,67 @@ public class OpMode extends CommandOpMode {
 
 
                                 );
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(new SequentialCommandGroup(
-                        new InstantCommand(() -> extension.setScoring(true)),
-                        new InstantCommand(() -> extension.setUpdated(false)),
-                        new WaitCommand(200),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING))
-                ));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new InstantCommand(() -> extension.setScoring(false)),
+                                        new InstantCommand(() -> extension.setFlip(false)),
+                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+                                        new WaitCommand(250),
+                                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.1))),
+                                new WaitCommand(1),
+                                () -> extension.getScoring())
+
+
+                );
+
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.X)
+//                .whenPressed(new SequentialCommandGroup(
+//                        new InstantCommand(() -> extension.setScoring(true)),
+//                        new InstantCommand(() -> extension.setUpdated(false)),
+//                        new WaitCommand(200),
+//                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+//                        new WaitCommand(500),
+//                        new InstantCommand(() -> extension.setFlip(true))
+//                ));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
+                        .whenPressed(new SequentialCommandGroup(
+                                new InstantCommand(() -> extension.setScoring(true)),
+                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+                                new WaitCommand(200),
+                                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+                                new WaitCommand(400),
+                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())))
+                        );
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new InstantCommand(() -> extension.incrementBackdropHeight(1)));
+                .whenPressed(new SequentialCommandGroup(
+                        new InstantCommand(() -> extension.incrementBackdropHeight(1)),
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue()))
+                                ),
+                                new WaitCommand(1),
+                                () -> extension.getScoring()
+                        )));
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new InstantCommand(() -> extension.incrementBackdropHeight(-1)));
+                .whenPressed(new SequentialCommandGroup(
+                        new InstantCommand(() -> extension.incrementBackdropHeight(-1)),
+                        new ConditionalCommand(
+                                new SequentialCommandGroup(
+                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue()))
+                                ),
+                                new WaitCommand(1),
+                                () -> extension.getScoring()
+                        )));
+
 
 
         // combination of angle and extension amount, get minimums, get maximums, math.map
@@ -145,7 +202,6 @@ public class OpMode extends CommandOpMode {
 
     @Override
     public void run() {
-        robot.clearBulkCache();
         robot.read();
 
         drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
@@ -155,11 +211,23 @@ public class OpMode extends CommandOpMode {
         if (currentJoystickUp && !lastJoystickUp) {
             // height go upp
             extension.incrementBackdropHeight(1);
+            CommandScheduler.getInstance().schedule(
+                    new SequentialCommandGroup(
+                            new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+                            new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+                            new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())))
+            );
         }
 
         if (currentJoystickDown && !lastJoystickDown) {
             // gheight go dwodn
             extension.incrementBackdropHeight(-1);
+            CommandScheduler.getInstance().schedule(
+                    new SequentialCommandGroup(
+                            new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+                            new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+                            new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())))
+            );
         }
         lastJoystickUp = currentJoystickUp;
         lastJoystickDown = currentJoystickDown;
@@ -174,13 +242,15 @@ public class OpMode extends CommandOpMode {
 //        telemetry.addData("angle", robot.pitchActuator.getPosition());
         telemetry.addData("LEVEL", extension.getBackdropHeight());
 //        telemetry.addData("targetAngle", extension.t_angle);
-//        telemetry.addData("targetExtension", extension.t_extension);
+        telemetry.addData("targetExtension", robot.extensionActuator.getTargetPosition());
 //        telemetry.addData("diffX", extension.diff_x);
 //        telemetry.addData("diffy", extension.diff_y);
+//        telemetry.addData("velocity", localizer.getNewPoseVelocity());
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;
         telemetry.update();
         robot.write();
+        robot.clearBulkCache();
     }
 }

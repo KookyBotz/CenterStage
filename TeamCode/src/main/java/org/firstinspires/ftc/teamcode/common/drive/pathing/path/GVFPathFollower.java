@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.drive.pathing.path;
 
+import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDriveConstants;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Spline;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Vector2D;
@@ -10,9 +11,9 @@ import java.util.ArrayList;
 public class GVFPathFollower {
     private final HermitePath path;
 
-    private final double MAX_VELOCITY = 36; /* Inches per second */
-    private final double MAX_ACCEL = 36; /* Inches per second squared */
-    private final double MAX_DECEL = 36; /* Inches per second squared */
+    private final double MAX_VELOCITY = MecanumDriveConstants.MAX_LINEAR_SPEED; /* Inches per second */
+    private final double MAX_ACCEL = MecanumDriveConstants.MAX_LINEAR_SPEED; /* Inches per second squared */
+    private final double MAX_DECEL = MecanumDriveConstants.MAX_LINEAR_SPEED; /* Inches per second squared */
     private final double FINISH_TOLERANCE = 0.1; /* Finishing Error */
     private double lastVelocity = 1e-7;
 
@@ -23,6 +24,7 @@ public class GVFPathFollower {
     private final double kC;
     private Pose currentPose;
     public static double nearestT = 0.0;
+    public static Pose nearestPose = new Pose(0, 0, 0);
     public static Pose bestPos = new Pose(0, 0, 0);
 
     private final double TOLERANCE = 1e-6;
@@ -88,6 +90,8 @@ public class GVFPathFollower {
             }
         }
 
+        nearestPose = bestPos;
+
         return projectPos;
     }
 
@@ -122,8 +126,8 @@ public class GVFPathFollower {
             vMax = Math.min(Math.sqrt(MAX_ACCEL / (curvature * kC)), vMax);
         }
 
-        double alpha = 0.9;
-        vMax = alpha * lastVelocity + (1 - alpha) * vMax;
+//        double alpha = 0.9;
+//        vMax = alpha * lastVelocity + (1 - alpha) * vMax;
 
         gvf = gvf.mult(vMax).mult(kS);
 
@@ -131,7 +135,7 @@ public class GVFPathFollower {
             gvf = displacement.unit().project(gvf);
         }
 
-        lastVelocity = vMax;
+//        lastVelocity = vMax;
         return new Pose(gvf, heading);
     }
 

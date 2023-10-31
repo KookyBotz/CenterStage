@@ -30,9 +30,11 @@ public class LeftSideAuto extends CommandOpMode {
     private WSubsystem extension;
     private WSubsystem intake;
 
+    // path that goes forward and to the left
     private HermitePath path = new HermitePath()
             .addPose(0, 0, new Vector2D(100, 0))
-            .addPose(20, 0, new Vector2D(100, 0))
+            .addPose(30, 0, new Vector2D(2000, 0))
+            .addPose(60, -30, new Vector2D(0, 500))
             .construct();
 
     @Override

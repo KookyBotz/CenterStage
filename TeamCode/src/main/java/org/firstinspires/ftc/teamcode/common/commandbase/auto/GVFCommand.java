@@ -1,18 +1,18 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.auto;
 
-import androidx.core.math.MathUtils;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
 
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDriveConstants;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.Localizer;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Vector2D;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.path.GVFPathFollower;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.path.HermitePath;
+import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Config
 public class GVFCommand extends CommandBase {
@@ -40,8 +40,8 @@ public class GVFCommand extends CommandBase {
     public static double max_heading = 0.5;
 
     public static double kN = 0.15;
-    public static double kS = 0.5;
-    public static double kC = 1.0;
+    public static double kS = 0.6;
+    public static double kC = 1e-9;
 
     public static Pose gvf = new Pose(0, 0, 0);
 
@@ -62,15 +62,23 @@ public class GVFCommand extends CommandBase {
     @Override
     public void execute() {
         Pose robotPose = localizer.getPos();
-        robotPose.heading = Math.toRadians(robotPose.heading);
+
         controller.setCurrentPose(robotPose);
         gvf = controller.calculateGVF();
-        gvf.heading = gvf.toVec2D().deadzoneX(0.02).angle();
-//        gvf.heading = gvf.toVec2D().angle();
-//        System.out.println(gvf);
-        Pose robotVelocity = ((ThreeWheelLocalizer) localizer).getNewPoseVelocity();
-        Pose powers = getPowers(gvf, robotVelocity, robotPose);
+
+        Pose powers = getPower(gvf, robotPose);
         drivetrain.set(powers);
+
+//        Pose robotPose = localizer.getPos();
+//        robotPose.heading = Math.toRadians(robotPose.heading);
+//        controller.setCurrentPose(robotPose);
+//        gvf = controller.calculateGVF();
+//        gvf.heading = gvf.toVec2D().deadzoneX(0.02).angle();
+////        gvf.heading = gvf.toVec2D().angle();
+////        System.out.println(gvf);
+//        Pose robotVelocity = ((ThreeWheelLocalizer) localizer).getNewPoseVelocity();
+//        Pose powers = getPowers(gvf, robotVelocity, robotPose);
+//        drivetrain.set(powers);
     }
 
     @Override
@@ -80,6 +88,29 @@ public class GVFCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+    }
+
+    public Pose getPower(Pose gvfPose, Pose robotPose) {
+
+        Vector2D gvf = gvfPose.toVec2D();
+        double length = gvf.magnitude();
+        double theta = gvf.angle() - robotPose.heading;
+        Vector2D rotated = MathUtils.toCartesian(length, theta);
+
+        double angleDelta = MathUtils.getRotDist(robotPose.heading, GVFPathFollower.nearestPose.heading);
+
+        double xSpeed = rotated.x;
+        xSpeed = xSpeed / MecanumDriveConstants.MAX_LINEAR_SPEED;
+
+        double ySpeed = rotated.y;
+        ySpeed = ySpeed / MecanumDriveConstants.MAX_LINEAR_SPEED;
+
+        double rSpeed = Math.min(MecanumDriveConstants.MAX_ROTATIONAL_SPEED, Math.sqrt(2 * Math.abs(angleDelta) * MecanumDriveConstants.MAX_ROTATIONAL_SPEED));
+        rSpeed = rSpeed / MecanumDriveConstants.MAX_ROTATIONAL_SPEED;
+
+        Vector2D linearVel = new Vector2D(xSpeed * MecanumDriveConstants.FORWARD_GAIN, ySpeed * MecanumDriveConstants.STRAFE_GAIN);
+        this.powers2 = new Pose(linearVel.y, linearVel.x, rSpeed * MecanumDriveConstants.ROTATIONAL_GAIN * Math.signum(-angleDelta));
+        return powers2;
     }
 
     public Pose getPowers(Pose gvf, Pose velocityPose, Pose robotPose) {

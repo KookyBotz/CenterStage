@@ -31,7 +31,7 @@ import javax.annotation.Nonnegative;
 @Config
 public class RobotHardware {
 
-    public static double servoOffset = 0.0;
+    public static double servoOffset = -0.13;
 
     // TODO DONE:
     //drivetrain
@@ -182,9 +182,10 @@ public class RobotHardware {
         intakeClawRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
-        intakePivotLeftServo.setOffset(servoOffset);
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
+        intakePivotRightServo.setOffset(servoOffset);
+
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
 
         this.podLeft = new WEncoder(new MotorEx(hardwareMap, "dtFrontRightMotor").encoder);

@@ -45,7 +45,7 @@ public class OpMode extends CommandOpMode {
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
 
-    public static double targetpos = 0.1;
+    public static double targetpos = 0.0475;
 
     public static double targetServo = 0.455;
 
@@ -117,7 +117,7 @@ public class OpMode extends CommandOpMode {
                                                 new WaitCommand(250),
                                                 new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                                                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.16))),
+                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))),
                                         new SequentialCommandGroup(
                                                 new InstantCommand(() -> extension.setScoring(false)),
                                                 new InstantCommand(() -> extension.setFlip(false)),
@@ -126,7 +126,7 @@ public class OpMode extends CommandOpMode {
                                                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
                                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.16))),
+                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))),
                                         () -> extension.getScoring())
 
 
@@ -142,7 +142,7 @@ public class OpMode extends CommandOpMode {
                                         new WaitCommand(250),
                                         new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.16))),
+                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))),
                                 new WaitCommand(1),
                                 () -> extension.getScoring())
 

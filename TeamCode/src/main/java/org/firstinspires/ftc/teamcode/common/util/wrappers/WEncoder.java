@@ -17,7 +17,9 @@ public class WEncoder implements HardwareDevice {
 
     @Override
     public String getDeviceName() {
-        return "mason was here";
+        // Note: only one encoder should ever be in an actuator group at a time,
+        // So a preset name works fine.
+        return "WEncoder";
     }
 
     @Override

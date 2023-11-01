@@ -52,9 +52,8 @@ public class WActuatorGroup {
      * @param devices
      */
     public WActuatorGroup(HardwareDevice... devices) {
-        int i = 0;
         for (HardwareDevice device : devices) {
-            this.devices.put(device.getDeviceName() + " " + i++, device);
+            this.devices.put(device.getDeviceName(), device);
         }
         read();
     }
@@ -124,7 +123,6 @@ public class WActuatorGroup {
                 ((DcMotor) device).setPower(power);
             } else if (device instanceof Servo) {
                 ((Servo) device).setPosition(targetPosition);
-                System.out.println(device.getDeviceName() + " " + (i++));
             }
         }
     }

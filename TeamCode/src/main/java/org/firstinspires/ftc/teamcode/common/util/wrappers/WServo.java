@@ -28,7 +28,7 @@ public class WServo implements Servo {
 
     @Override
     public String getDeviceName() {
-        return "w servo gang gang gang!!!!!! ";
+        return servo.getDeviceName();
     }
 
     @Override

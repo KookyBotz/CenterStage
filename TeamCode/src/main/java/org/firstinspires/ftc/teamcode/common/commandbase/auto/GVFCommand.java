@@ -39,13 +39,16 @@ public class GVFCommand extends CommandBase {
     public static double max_power = 1.0;
     public static double max_heading = 0.5;
 
-    public static double kN = 0.15;
-    public static double kS = 0.6;
+    public static double kN = 0.37;
+    public static double kS = 0.67;
     public static double kC = 1e-9;
+    public static double kStatic = 0.1;
 
     public static Pose gvf = new Pose(0, 0, 0);
 
     public static Pose powers2 = new Pose(0, 0, 0);
+
+    public static double hahaFunnyDelta = 0.0;
 
     public GVFCommand(Drivetrain drivetrain, Localizer localizer, HermitePath path) {
         this.drivetrain = drivetrain;
@@ -97,7 +100,9 @@ public class GVFCommand extends CommandBase {
         double theta = gvf.angle() - robotPose.heading;
         Vector2D rotated = MathUtils.toCartesian(length, theta);
 
-        double angleDelta = MathUtils.getRotDist(robotPose.heading, GVFPathFollower.nearestPose.heading);
+        double angleDelta = MathUtils.getRotDist(robotPose.heading, gvfPose.heading);
+        hahaFunnyDelta = angleDelta;
+//        angleDelta = 0;
 
         double xSpeed = rotated.x;
         xSpeed = xSpeed / MecanumDriveConstants.MAX_LINEAR_SPEED;
@@ -109,6 +114,7 @@ public class GVFCommand extends CommandBase {
         rSpeed = rSpeed / MecanumDriveConstants.MAX_ROTATIONAL_SPEED;
 
         Vector2D linearVel = new Vector2D(xSpeed * MecanumDriveConstants.FORWARD_GAIN, ySpeed * MecanumDriveConstants.STRAFE_GAIN);
+//        linearVel.x = MathUtils.clamp(linearVel.x, )
         this.powers2 = new Pose(linearVel.y, linearVel.x, rSpeed * MecanumDriveConstants.ROTATIONAL_GAIN * Math.signum(-angleDelta));
         return powers2;
     }

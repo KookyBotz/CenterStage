@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -27,8 +28,10 @@ import java.util.List;
 
 import javax.annotation.Nonnegative;
 
+@Config
 public class RobotHardware {
 
+    public static double servoOffset = 0.0;
 
     // TODO DONE:
     //drivetrain
@@ -179,7 +182,7 @@ public class RobotHardware {
         intakeClawRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
-        intakePivotLeftServo.setOffset(0.025);
+        intakePivotLeftServo.setOffset(servoOffset);
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);

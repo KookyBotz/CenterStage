@@ -47,6 +47,8 @@ public class OpMode extends CommandOpMode {
 
     public static double targetpos = 0.1;
 
+    public static double targetServo = 0.455;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -97,13 +99,13 @@ public class OpMode extends CommandOpMode {
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.025)),
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
-                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.455)),
+                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515)),
                         new WaitCommand(250),
                         new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
                 ))
                         .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.05))
                                 .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(300))
-                                        .alongWith(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.435)))));
+                                        .alongWith(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.495)))));
         gamepadEx.getGamepadButton(GamepadKeys.Button.A)
                         .whenPressed(
                                 new ConditionalCommand(
@@ -115,7 +117,7 @@ public class OpMode extends CommandOpMode {
                                                 new WaitCommand(250),
                                                 new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                                                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.1))),
+                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.16))),
                                         new SequentialCommandGroup(
                                                 new InstantCommand(() -> extension.setScoring(false)),
                                                 new InstantCommand(() -> extension.setFlip(false)),
@@ -124,7 +126,7 @@ public class OpMode extends CommandOpMode {
                                                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
                                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.1))),
+                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.16))),
                                         () -> extension.getScoring())
 
 
@@ -140,7 +142,7 @@ public class OpMode extends CommandOpMode {
                                         new WaitCommand(250),
                                         new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.1))),
+                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.16))),
                                 new WaitCommand(1),
                                 () -> extension.getScoring())
 

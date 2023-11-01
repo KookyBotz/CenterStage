@@ -27,14 +27,12 @@ public class LeftSideAuto extends CommandOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private WSubsystem drivetrain;
     private ThreeWheelLocalizer localizer;
-    private WSubsystem extension;
-    private WSubsystem intake;
 
     // path that goes forward and to the left
-    private HermitePath path = new HermitePath()
-            .addPose(0, 0, new Vector2D(100, 0))
-            .addPose(30, 0, new Vector2D(2000, 0))
-            .addPose(60, -30, new Vector2D(0, 500))
+    private HermitePath trajectory = new HermitePath()
+            .addPose(120, -84, new Vector2D(100, 0))
+            .addPose(72, -84, new Vector2D(2000, 0))
+            .addPose(18, -108, new Vector2D(1000, 0))
             .construct();
 
     @Override
@@ -47,10 +45,8 @@ public class LeftSideAuto extends CommandOpMode {
         robot.init(hardwareMap, telemetry);
         drivetrain = new MecanumDrivetrain();
         localizer = new ThreeWheelLocalizer();
-        extension = new ExtensionSubsystem();
-        intake = new IntakeSubsystem();
 
-        robot.addSubsystem(drivetrain, extension, intake);
+        robot.addSubsystem(drivetrain);
 
         robot.enabled = true;
 
@@ -60,11 +56,11 @@ public class LeftSideAuto extends CommandOpMode {
             telemetry.update();
         }
 
-        localizer.setPoseEstimate(new Pose2d(0, 0, 0));
+        localizer.setPoseEstimate(new Pose2d(84, 120, -Math.PI / 2));
         robot.reset();
 
         CommandScheduler.getInstance().schedule(
-                new GVFCommand((Drivetrain) drivetrain, localizer, path)
+                new GVFCommand((Drivetrain) drivetrain, localizer, trajectory)
         );
 
         while (opModeIsActive()) {
@@ -78,7 +74,9 @@ public class LeftSideAuto extends CommandOpMode {
             telemetry.addData("targetVel", GVFCommand.gvf);
             telemetry.addData("currentVel", localizer.getNewPoseVelocity());
             telemetry.addData("currentPose", localizer.getPoseEstimate());
+            telemetry.addData("HEADING", localizer.getPos().heading);
             telemetry.addData("powers2", GVFCommand.powers2);
+            telemetry.addData("delta", GVFCommand.hahaFunnyDelta);
 
 
             telemetry.update();

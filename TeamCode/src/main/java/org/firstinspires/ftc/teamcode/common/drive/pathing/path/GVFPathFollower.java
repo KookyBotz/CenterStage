@@ -13,7 +13,7 @@ public class GVFPathFollower {
 
     private final double MAX_VELOCITY = MecanumDriveConstants.MAX_LINEAR_SPEED; /* Inches per second */
     private final double MAX_ACCEL = MecanumDriveConstants.MAX_LINEAR_SPEED; /* Inches per second squared */
-    private final double MAX_DECEL = MecanumDriveConstants.MAX_LINEAR_SPEED; /* Inches per second squared */
+    private final double MAX_DECEL = MecanumDriveConstants.MAX_LINEAR_SPEED - 20; /* Inches per second squared */
     private final double FINISH_TOLERANCE = 0.1; /* Finishing Error */
     private double lastVelocity = 1e-7;
 
@@ -103,11 +103,12 @@ public class GVFPathFollower {
             nearestT = 1e-7;
         }
 
-        Vector2D tangent = path.get(nearestT, 1).toVec2D().unit();
+        Pose tang = path.get(nearestT, 1);
+        Vector2D tangent = tang.toVec2D().unit();
         Vector2D normal = tangent.rotate(Math.PI / 2);
         Pose nearestPose = path.get(nearestT, 0);
 
-        double heading = nearestPose.heading;
+        double heading = tang.toVec2D().angle();
 
         Vector2D displacement = nearestPose.subt(currentPose).toVec2D();
         double error = displacement.magnitude() * Math.signum((displacement.cross(tangent)));

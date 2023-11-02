@@ -33,6 +33,47 @@ public class HermitePath {
         return this;
     }
 
+    public HermitePath flip() {
+        for (HermitePose pose : controlPoses) {
+            double x = pose.x;
+            pose.x = pose.y;
+            pose.y = x;
+
+            double v_x = pose.tangent.x;
+            pose.tangent.x = pose.tangent.y;
+            pose.tangent.y = v_x;
+        }
+        return this;
+    }
+
+    public HermitePath negateX() {
+        for (HermitePose pose : controlPoses) {
+            pose.x *= -1;
+        }
+        return this;
+    }
+
+    public HermitePath negateY() {
+        for (HermitePose pose : controlPoses) {
+            pose.y *= -1;
+        }
+        return this;
+    }
+
+    public HermitePath offsetX(double x) {
+        for (HermitePose pose : controlPoses) {
+            pose.x += x;
+        }
+        return this;
+    }
+
+    public HermitePath offsetY(double y) {
+        for (HermitePose pose : controlPoses) {
+            pose.y += y;
+        }
+        return this;
+    }
+
     public HermitePath construct() {
         if (controlPoses.size() <= 1)
             throw new IllegalStateException("Need a minimum of two control poses.");

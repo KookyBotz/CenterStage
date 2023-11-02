@@ -4,24 +4,19 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.auto.GVFCommand;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.Localizer;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Vector2D;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.path.GVFPathFollower;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.path.HermitePath;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
-import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
-@Autonomous(name = "LeftSideAuto")
+@Autonomous(name = "LeftSideAuto2")
 public class LeftSideAuto extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
@@ -30,9 +25,10 @@ public class LeftSideAuto extends CommandOpMode {
 
     // path that goes forward and to the left
     private HermitePath trajectory = new HermitePath()
-            .addPose(120, -84, new Vector2D(100, 0))
-            .addPose(72, -84, new Vector2D(2000, 0))
-            .addPose(18, -108, new Vector2D(1000, 0))
+            .addPose(0, 0, new Vector2D(0, 100))
+            .addPose(0, 20, new Vector2D(0, 500))
+            .addPose(20, 40, new Vector2D(500, 0))
+            .flip()
             .construct();
 
     @Override
@@ -56,7 +52,7 @@ public class LeftSideAuto extends CommandOpMode {
             telemetry.update();
         }
 
-        localizer.setPoseEstimate(new Pose2d(84, 120, -Math.PI / 2));
+        localizer.setPoseEstimate(new Pose2d(0, 0, 0));
         robot.reset();
 
         CommandScheduler.getInstance().schedule(

@@ -96,7 +96,7 @@ public class OpMode extends CommandOpMode {
                 .whenPressed(new SequentialCommandGroup(
                         new InstantCommand(() -> extension.setScoring(false)),
                         new InstantCommand(() -> extension.setFlip(false)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.025)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.01)),
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515)),

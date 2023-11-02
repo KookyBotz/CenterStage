@@ -39,9 +39,9 @@ public class GVFCommand extends CommandBase {
     public static double max_power = 1.0;
     public static double max_heading = 0.5;
 
-    public static double kN = 0.37;
+    public static double kN = 0.5;
     public static double kS = 0.67;
-    public static double kC = 1e-9;
+    public static double kC = 0.4;
     public static double kStatic = 0.1;
 
     public static Pose gvf = new Pose(0, 0, 0);
@@ -49,6 +49,7 @@ public class GVFCommand extends CommandBase {
     public static Pose powers2 = new Pose(0, 0, 0);
 
     public static double hahaFunnyDelta = 0.0;
+    public static Pose funny = new Pose(0, 0, 0);
 
     public GVFCommand(Drivetrain drivetrain, Localizer localizer, HermitePath path) {
         this.drivetrain = drivetrain;
@@ -86,6 +87,7 @@ public class GVFCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        if (controller.isFinished()) drivetrain.set(new Pose(0, 0, 0));
         return controller.isFinished();
     }
 
@@ -96,11 +98,20 @@ public class GVFCommand extends CommandBase {
     public Pose getPower(Pose gvfPose, Pose robotPose) {
 
         Vector2D gvf = gvfPose.toVec2D();
-        double length = gvf.magnitude();
-        double theta = gvf.angle() - robotPose.heading;
-        Vector2D rotated = MathUtils.toCartesian(length, theta);
+        gvf = gvf.rotate(-robotPose.heading - gvfPose.heading);
+//        gvf = gvf.rotate()
+//        gvf = gvf.rotate(-robotPose.heading);
+//        double length = gvf.magnitude();
+//        double theta = robotPose.heading - gvfPose.heading;
 
-        double angleDelta = MathUtils.getRotDist(robotPose.heading, gvfPose.heading);
+        // robot heading, 0
+        // gvf angle = 0
+        // target heading = 0
+
+//        Vector2D rotated = MathUtils.toCartesian(length, theta);
+        Vector2D rotated = gvf;
+
+        double angleDelta = MathUtils.getRotDist(-robotPose.heading, gvfPose.heading);
         hahaFunnyDelta = angleDelta;
 //        angleDelta = 0;
 
@@ -115,7 +126,10 @@ public class GVFCommand extends CommandBase {
 
         Vector2D linearVel = new Vector2D(xSpeed * MecanumDriveConstants.FORWARD_GAIN, ySpeed * MecanumDriveConstants.STRAFE_GAIN);
 //        linearVel.x = MathUtils.clamp(linearVel.x, )
-        this.powers2 = new Pose(linearVel.y, linearVel.x, rSpeed * MecanumDriveConstants.ROTATIONAL_GAIN * Math.signum(-angleDelta));
+        double x = linearVel.y / 14 * 12;
+        double y = linearVel.x / 14 * 12;
+        this.powers2 = new Pose(x, y + Math.signum(y) * kStatic, rSpeed * MecanumDriveConstants.ROTATIONAL_GAIN * Math.signum(angleDelta) / 14 * 12);
+        this.funny = gvfPose;
         return powers2;
     }
 

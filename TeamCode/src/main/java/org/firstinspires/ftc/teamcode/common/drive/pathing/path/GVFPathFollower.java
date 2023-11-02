@@ -11,10 +11,10 @@ import java.util.ArrayList;
 public class GVFPathFollower {
     private final HermitePath path;
 
-    private final double MAX_VELOCITY = MecanumDriveConstants.MAX_LINEAR_SPEED; /* Inches per second */
-    private final double MAX_ACCEL = MecanumDriveConstants.MAX_LINEAR_SPEED; /* Inches per second squared */
-    private final double MAX_DECEL = MecanumDriveConstants.MAX_LINEAR_SPEED - 20; /* Inches per second squared */
-    private final double FINISH_TOLERANCE = 0.1; /* Finishing Error */
+    private final double MAX_VELOCITY = MecanumDriveConstants.MAX_LINEAR_SPEED - 20; /* Inches per second */
+    private final double MAX_ACCEL = MecanumDriveConstants.MAX_LINEAR_ACCELERATION; /* Inches per second squared */
+    private final double MAX_DECEL = MecanumDriveConstants.MAX_LINEAR_ACCELERATION; /* Inches per second squared */
+    private final double FINISH_TOLERANCE = 1.5; /* Finishing Error */
     private double lastVelocity = 1e-7;
 
     private final double DECEL_PERIOD_DIST = (Math.pow(MAX_VELOCITY, 2)) / (2 * MAX_DECEL);
@@ -127,8 +127,8 @@ public class GVFPathFollower {
             vMax = Math.min(Math.sqrt(MAX_ACCEL / (curvature * kC)), vMax);
         }
 
-//        double alpha = 0.9;
-//        vMax = alpha * lastVelocity + (1 - alpha) * vMax;
+        double alpha = 0.9;
+        vMax = alpha * lastVelocity + (1 - alpha) * vMax;
 
         gvf = gvf.mult(vMax).mult(kS);
 

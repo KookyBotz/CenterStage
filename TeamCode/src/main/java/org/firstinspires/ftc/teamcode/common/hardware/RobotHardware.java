@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
@@ -122,7 +124,12 @@ public class RobotHardware {
      */
     public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
-        this.telemetry = telemetry;
+        if (Globals.USING_DASHBOARD) {
+            this.telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
+        } else {
+            this.telemetry = telemetry;
+        }
+
 
         this.subsystems = new ArrayList<>();
 

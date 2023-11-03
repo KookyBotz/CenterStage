@@ -54,6 +54,8 @@ public class LeftSideAuto extends CommandOpMode {
             .negateX()
             .construct();
 
+    private double loopTime = 0.0;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -69,12 +71,10 @@ public class LeftSideAuto extends CommandOpMode {
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
 
-        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
+//        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
 
         robot.addSubsystem(drivetrain, extension, intake);
         intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
-
-        robot.write();
 
         robot.read();
         while (!isStarted()) {
@@ -83,11 +83,10 @@ public class LeftSideAuto extends CommandOpMode {
         }
 
         localizer.setPoseEstimate(new Pose2d(0, 0, 0));
-        robot.reset();
 
-        CommandScheduler.getInstance().schedule(
-                new SequentialCommandGroup(
-                    new GVFCommand((Drivetrain) drivetrain, localizer, trajectory)
+//        CommandScheduler.getInstance().schedule(
+//                new SequentialCommandGroup(
+//                    new GVFCommand((Drivetrain) drivetrain, localizer, trajectory)
 //                    new WaitCommand(4000),
 //                    new SequentialCommandGroup(
 //                            new InstantCommand(() -> extension.setScoring(false)),
@@ -109,8 +108,8 @@ public class LeftSideAuto extends CommandOpMode {
 //                            new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
 //                            new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))
 //                    )
-                )
-        );
+//                )
+//        );
 
         // extend preload + start driving at the same time
         // once position is reached, open claw
@@ -124,7 +123,7 @@ public class LeftSideAuto extends CommandOpMode {
                         new InstantCommand(() -> extension.setScoring(false)),
                         new InstantCommand(() -> extension.setFlip(false)),
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.05)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(200)),
+//                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(200)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515)),
 
@@ -133,68 +132,87 @@ public class LeftSideAuto extends CommandOpMode {
                         new WaitCommand(1000),
 
                         // wont trigger until bot reaches its position
-                        // (when facing bot from the front, the left side of the claw is (RIGHT) in code with the purple pixel)
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
+                        // (when facing bot from the front, the left side of the claw is (LEFT) in code with the purple pixel)
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
 
                         // delay, then retract
-                        new WaitCommand(1000),
+                        new WaitCommand(4000),
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.05)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+//                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515)),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT)),
-
-                        new WaitCommand(1000),
-                        // go to the next position
-                        new GVFCommand((Drivetrain) drivetrain, localizer, Paths.PRELOAD_TO_BACKDROP),
-
-                        // extend to score
-                        new WaitCommand(1000),
-                        new InstantCommand(() -> extension.setScoring(true)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
-                        new WaitCommand(200),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                        new WaitCommand(400),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())),
-
-                        // drop pixels
-                        new WaitCommand(3000),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT)),
-
-                        // retract
-                        new WaitCommand(1000),
-                        new InstantCommand(() -> extension.setScoring(false)),
-                        new InstantCommand(() -> extension.setFlip(false)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                        new WaitCommand(250),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT))
+//
+//                        new WaitCommand(1000),
+//                        // go to the next position
+//                        new GVFCommand((Drivetrain) drivetrain, localizer, Paths.PRELOAD_TO_BACKDROP),
+//
+//                        // extend to score
+//                        new WaitCommand(1000),
+//                        new InstantCommand(() -> extension.setScoring(true)),
+//                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+//                        new WaitCommand(200),
+//                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+//                        new WaitCommand(400),
+//                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())),
+//
+//                        // drop pixels
+//                        new WaitCommand(3000),
+//                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT)),
+//
+//                        // retract
+//                        new WaitCommand(1000),
+//                        new InstantCommand(() -> extension.setScoring(false)),
+//                        new InstantCommand(() -> extension.setFlip(false)),
+//                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+//                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+//                        new WaitCommand(250),
+//                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+//                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+//                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))
 
                         // figure out what to do from here
                 )
         );
 
-        while (opModeIsActive()) {
-            robot.clearBulkCache();
-            robot.read();
+//        while (opModeIsActive()) {
+//            robot.read();
+//
+//            super.run();
+//            robot.periodic();
+//            localizer.periodic();
+//
+//            telemetry.addData("nearestT", GVFPathFollower.nearestT);
+//            telemetry.addData("targetVel", GVFCommand.gvf);
+//            telemetry.addData("currentVel", localizer.getNewPoseVelocity());
+//            telemetry.addData("currentPose", localizer.getPoseEstimate());
+//            telemetry.addData("HEADING", localizer.getPos().heading);
+//            telemetry.addData("powers2", GVFCommand.powers2);
+//            telemetry.addData("delta", GVFCommand.hahaFunnyDelta);
+//            telemetry.addData("funny", GVFCommand.funny);
+//
+//            telemetry.update();
+//            CommandScheduler.getInstance().run();
+//            robot.write();
+//            robot.clearBulkCache();
+//        }
+    }
 
-            robot.periodic();
-            localizer.periodic();
+    @Override
+    public void run() {
 
-            telemetry.addData("nearestT", GVFPathFollower.nearestT);
-            telemetry.addData("targetVel", GVFCommand.gvf);
-            telemetry.addData("currentVel", localizer.getNewPoseVelocity());
-            telemetry.addData("currentPose", localizer.getPoseEstimate());
-            telemetry.addData("HEADING", localizer.getPos().heading);
-            telemetry.addData("powers2", GVFCommand.powers2);
-            telemetry.addData("delta", GVFCommand.hahaFunnyDelta);
-            telemetry.addData("funny", GVFCommand.funny);
+        robot.read();
 
-            telemetry.update();
-            CommandScheduler.getInstance().run();
-            robot.write();
-        }
+        super.run();
+        robot.periodic();
+        localizer.periodic();
+
+        double loop = System.nanoTime();
+        telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+        loopTime = loop;
+        telemetry.update();
+
+        robot.write();
+        robot.clearBulkCache();
     }
 }

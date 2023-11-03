@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.util.Paths;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
 @Config
@@ -37,7 +38,7 @@ public class LeftSideAuto extends CommandOpMode {
     private IntakeSubsystem intake;
 
     // path that goes forward and to the left
-    private HermitePath trajectory = new HermitePath()
+    private final HermitePath trajectory = new HermitePath()
             .addPose(0, 0, new Vector2D(0, 100))
             .addPose(0, 20, new Vector2D(0, 500))
             .addPose(20, 40, new Vector2D(500, 0))
@@ -45,7 +46,7 @@ public class LeftSideAuto extends CommandOpMode {
             .flip()
             .construct();
 
-    private HermitePath trajectory2 = new HermitePath()
+    private final HermitePath trajectory2 = new HermitePath()
             .addPose(136.5, 60, new Vector2D(50, 0))
             .addPose(124, 65, Vector2D.fromHeadingAndMagnitude(0.5, 100))
             .offsetX(-136.5)
@@ -109,7 +110,71 @@ public class LeftSideAuto extends CommandOpMode {
 //                            new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))
 //                    )
                 )
-                );
+        );
+
+        // extend preload + start driving at the same time
+        // once position is reached, open claw
+        // retract + bring pivot + arm upwards, will allow time for the claw to close
+        // path over to the desired preload spot
+        // extend to score at the preload spot
+        // retract and then park
+        CommandScheduler.getInstance().schedule(
+                new SequentialCommandGroup(
+                        // extend, keep arm slightly off ground to help not hit tape
+                        new InstantCommand(() -> extension.setScoring(false)),
+                        new InstantCommand(() -> extension.setFlip(false)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.05)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(200)),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
+                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515)),
+
+                        // drive
+                        new GVFCommand((Drivetrain) drivetrain, localizer, Paths.PRELOAD_SCORE_RIGHT),
+                        new WaitCommand(1000),
+
+                        // wont trigger until bot reaches its position
+                        // (when facing bot from the front, the left side of the claw is (RIGHT) in code with the purple pixel)
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
+
+                        // delay, then retract
+                        new WaitCommand(1000),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.05)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515)),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT)),
+
+                        new WaitCommand(1000),
+                        // go to the next position
+                        new GVFCommand((Drivetrain) drivetrain, localizer, Paths.PRELOAD_TO_BACKDROP),
+
+                        // extend to score
+                        new WaitCommand(1000),
+                        new InstantCommand(() -> extension.setScoring(true)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+                        new WaitCommand(200),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+                        new WaitCommand(400),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())),
+
+                        // drop pixels
+                        new WaitCommand(3000),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT)),
+
+                        // retract
+                        new WaitCommand(1000),
+                        new InstantCommand(() -> extension.setScoring(false)),
+                        new InstantCommand(() -> extension.setFlip(false)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+                        new WaitCommand(250),
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))
+
+                        // figure out what to do from here
+                )
+        );
 
         while (opModeIsActive()) {
             robot.clearBulkCache();

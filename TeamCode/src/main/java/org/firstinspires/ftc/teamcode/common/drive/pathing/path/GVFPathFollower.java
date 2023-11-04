@@ -15,6 +15,7 @@ public class GVFPathFollower {
     private final double MAX_ACCEL = MecanumDriveConstants.MAX_LINEAR_ACCELERATION; /* Inches per second squared */
     private final double MAX_DECEL = MecanumDriveConstants.MAX_LINEAR_ACCELERATION; /* Inches per second squared */
     private final double FINISH_TOLERANCE = 1.5; /* Finishing Error */
+    private final double FINISH_HEADING_TOLERANCE = 0.25;
     private double lastVelocity = 1e-7;
 
     private final double DECEL_PERIOD_DIST = (Math.pow(MAX_VELOCITY, 2)) / (2 * MAX_DECEL);
@@ -149,7 +150,7 @@ public class GVFPathFollower {
     }
 
     public boolean isFinished() {
-        return currentPose.toVec2D().subt(path.endPose().toVec2D()).magnitude() < FINISH_TOLERANCE;
+        return currentPose.toVec2D().subt(path.endPose().toVec2D()).magnitude() < FINISH_TOLERANCE /*&& Math.abs(currentPose.heading -  path.endPose().heading) < FINISH_HEADING_TOLERANCE*/;
     }
 
     public void resetV() {

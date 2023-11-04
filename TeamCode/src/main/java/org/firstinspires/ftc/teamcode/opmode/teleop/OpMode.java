@@ -240,11 +240,11 @@ public class OpMode extends CommandOpMode {
 
         lastRightStickGreat = rightStickGreat;
 
-//        telemetry.addData("extension", robot.extensionActuator.getPosition());
-//        telemetry.addData("angle", robot.pitchActuator.getPosition());
-        telemetry.addData("LEVEL", extension.getBackdropHeight());
+        telemetry.addData("extension", robot.extensionActuator.getPosition());
+        telemetry.addData("angle", robot.pitchActuator.getPosition());
+//        telemetry.addData("LEVEL", extension.getBackdropHeight());
 //        telemetry.addData("targetAngle", extension.t_angle);
-        telemetry.addData("targetExtension", robot.extensionActuator.getTargetPosition());
+//        telemetry.addData("targetExtension", robot.extensionActuator.getTargetPosition());
 //        telemetry.addData("diffX", extension.diff_x);
 //        telemetry.addData("diffy", extension.diff_y);
 //        telemetry.addData("velocity", localizer.getNewPoseVelocity());
@@ -252,7 +252,7 @@ public class OpMode extends CommandOpMode {
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;
         telemetry.update();
-        robot.write();
+//        robot.write();
         robot.clearBulkCache();
     }
 }

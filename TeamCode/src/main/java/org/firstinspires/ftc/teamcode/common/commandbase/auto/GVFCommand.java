@@ -40,8 +40,8 @@ public class GVFCommand extends CommandBase {
     public static double max_heading = 0.5;
 
     public static double kN = 0.5;
-    public static double kS = 0.67;
-    public static double kC = 0.4;
+    public static double kS = 1;
+    public static double kC = 0.1;
     public static double kStatic = 0.1;
 
     public static Pose gvf = new Pose(0, 0, 0);

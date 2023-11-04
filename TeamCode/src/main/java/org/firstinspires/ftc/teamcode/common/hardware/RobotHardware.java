@@ -64,9 +64,6 @@ public class RobotHardware {
     public WServo intakePivotRightServo;
     public AbsoluteAnalogEncoder intakePivotEncoder;
 
-
-
-
     public DigitalChannel intakeClawLeftBottom, intakeClawLeftTop,
             intakeClawRightBottom, intakeClawRightTop;
 
@@ -135,14 +132,12 @@ public class RobotHardware {
 
         modules = hardwareMap.getAll(LynxModule.class);
         modules.get(0).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        try {
-            modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
-        } catch(Exception e) {}
+        modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
 
-        this.imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+//        this.imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//        imu.initialize(parameters);
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
@@ -231,10 +226,8 @@ public class RobotHardware {
     }
 
     public void clearBulkCache() {
-//        for (LynxModule module : modules) {
-//            module.clearBulkCache();
-//        }
         modules.get(0).clearBulkCache();
+        modules.get(1).clearBulkCache();
     }
 
     public void addSubsystem(WSubsystem... subsystems) {

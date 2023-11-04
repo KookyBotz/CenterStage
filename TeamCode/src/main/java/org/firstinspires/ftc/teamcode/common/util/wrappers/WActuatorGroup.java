@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.Asym
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileState;
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
+import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class WActuatorGroup {
     private ProfileState state;
     private PIDController controller;
     public ElapsedTime timer;
+    private RobotHardware robot = RobotHardware.getInstance();
 
     private double position = 0.0;
     private double targetPosition = 0.0;
@@ -124,7 +126,6 @@ public class WActuatorGroup {
                 ((DcMotor) device).setPower(power);
             } else if (device instanceof Servo) {
                 ((Servo) device).setPosition(targetPosition);
-                System.out.println(device.getDeviceName() + " " + (i++));
             }
         }
     }

@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.auto.PositionCommand;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
 @Config
 @Autonomous(name = "PosAutoTest")
+@Disabled
 public class PosAutoTest extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();

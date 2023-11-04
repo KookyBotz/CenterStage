@@ -27,7 +27,7 @@ public class Pose extends Point {
     public void set(Pose other) {
         this.x = other.x;
         this.y = other.y;
-        this.heading = heading;
+        this.heading = other.heading;
     }
 
     public Pose add(Pose other) {

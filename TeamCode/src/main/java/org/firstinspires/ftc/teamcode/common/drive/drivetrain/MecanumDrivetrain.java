@@ -83,6 +83,7 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
 
     @Override
     public void write() {
+
         robot.dtFrontLeftMotor.setPower(ws[0]);
         robot.dtFrontRightMotor.setPower(ws[1]);
         robot.dtBackLeftMotor.setPower(ws[2]);

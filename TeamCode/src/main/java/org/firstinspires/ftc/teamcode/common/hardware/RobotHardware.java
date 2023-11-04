@@ -86,7 +86,7 @@ public class RobotHardware {
     /**
      * Voltage timer and voltage value.
      */
-    private ElapsedTime voltageTimer;
+    private ElapsedTime voltageTimer = new ElapsedTime();
     private double voltage = 0.0;
 
     /**
@@ -126,6 +126,8 @@ public class RobotHardware {
         } else {
             this.telemetry = telemetry;
         }
+
+        voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
 
 
         this.subsystems = new ArrayList<>();
@@ -209,10 +211,10 @@ public class RobotHardware {
     }
 
     public void periodic() {
-//        if (voltageTimer.seconds() > 5) {
-//            voltageTimer.reset();
-//            voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-//        }
+        if (voltageTimer.seconds() > 5) {
+            voltageTimer.reset();
+            voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+        }
 
         for (WSubsystem subsystem : subsystems) {
             subsystem.periodic();
@@ -239,5 +241,9 @@ public class RobotHardware {
     @Nonnegative
     public double getAngle() {
         return imuAngle;
+    }
+
+    public double getVoltage() {
+        return voltage;
     }
 }

@@ -73,12 +73,7 @@ public class LeftSideAuto extends CommandOpMode {
         Pose yellowScorePos = new Pose();
         Pose purpleScorePos = new Pose();
         Pose parkPos = new Pose(50, -35, 3 * Math.PI / 2);
-        double purpleExtensionPos = 0;
-        double purpleAngle = Math.PI;
 
-        Pose cyclePose = new Pose(45, 62, 1.5);
-        double extensionPos = 114;
-        double extensionAngle = 3.26;
 
         // 0.3, 300
 
@@ -115,41 +110,33 @@ public class LeftSideAuto extends CommandOpMode {
                         new WaitCommand(750),
                         // open claw boi
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
-                        new WaitCommand(500),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                        new WaitCommand(250),
+                        new WaitCommand(200),
 
                         // retract
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0)),
-                        new WaitCommand(250),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+                        new WaitCommand(50),
+                        new InstantCommand(() -> extension.setScoring(false)),
+                        new InstantCommand(() -> extension.setFlip(false)),
                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT)),
-
-                        // go to position
-                        new WaitCommand(500),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(Math.PI)),
 
                         new ParallelCommandGroup(
                                 new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos),
                                 new SequentialCommandGroup(
-                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(Math.PI)),
-                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                         new WaitCommand(250),
                                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
                                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515))
                                 )
                         ),
 
-                        new WaitCommand(750),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT)),
-                        new WaitCommand(500),
+                        new WaitCommand(250),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
+                        new WaitCommand(200),
 
-                        new InstantCommand(() -> extension.setScoring(false)),
-                        new InstantCommand(() -> extension.setFlip(false)),
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                        new WaitCommand(250),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475)),
 

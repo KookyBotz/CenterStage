@@ -4,6 +4,7 @@ import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -20,6 +21,7 @@ import java.util.List;
 
 @Config
 @TeleOp(name = "AprilTagTester")
+@Disabled
 public class AprilTagTester extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.testing.device;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @TeleOp(name = "IVKTest")
+@Disabled
 public class IVKTest extends OpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private MecanumDrivetrain drivetrain;

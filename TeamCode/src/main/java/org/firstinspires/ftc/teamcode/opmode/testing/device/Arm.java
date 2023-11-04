@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.testing.device;
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 
 
 @TeleOp(name = "arm")
+@Disabled
 public class Arm extends OpMode {
     public AbsoluteAnalogEncoder extensionPitchEncoder;
     public AnalogInput extensionPitchEnc;

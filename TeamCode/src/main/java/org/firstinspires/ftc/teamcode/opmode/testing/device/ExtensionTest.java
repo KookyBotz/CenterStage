@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.outoftheboxrobotics.photoncore.Photon;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 
 @TeleOp(name = "ExtensionTest")
 @Photon(maximumParallelCommands = 8)
+@Disabled
 public class ExtensionTest extends CommandOpMode {
 
     private ElapsedTime timer;

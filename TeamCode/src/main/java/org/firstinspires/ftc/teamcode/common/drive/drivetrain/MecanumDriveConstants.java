@@ -7,7 +7,7 @@ public class MecanumDriveConstants {
     public static double MAX_LINEAR_ACCELERATION = 20;
     public static double MAX_ROTATIONAL_SPEED = Math.PI / 3;
 
-    public static double STRAFE_GAIN = 5;
-    public static double FORWARD_GAIN = 3;
-    public static double ROTATIONAL_GAIN = 0.5;
+    public static double STRAFE_GAIN = 8;
+    public static double FORWARD_GAIN = 6;
+    public static double ROTATIONAL_GAIN = 0.65;
 }

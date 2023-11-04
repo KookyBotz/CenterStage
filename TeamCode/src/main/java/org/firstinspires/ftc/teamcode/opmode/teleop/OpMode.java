@@ -84,11 +84,18 @@ public class OpMode extends CommandOpMode {
                 ));
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new ConditionalCommand(
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
-                        () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (intake.leftClaw == IntakeSubsystem.ClawState.CLOSED))
-                ));
+                .whenPressed(
+                    new SequentialCommandGroup(
+                        new InstantCommand(() -> extension.setScoring(false)),
+                        new InstantCommand(() -> extension.setFlip(false)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+                        new WaitCommand(250),
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))
+                  )
+                );
 
 
 
@@ -96,7 +103,7 @@ public class OpMode extends CommandOpMode {
                 .whenPressed(new SequentialCommandGroup(
                         new InstantCommand(() -> extension.setScoring(false)),
                         new InstantCommand(() -> extension.setFlip(false)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.01)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.05)),
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515)),
@@ -106,18 +113,24 @@ public class OpMode extends CommandOpMode {
                         .whenPressed(new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.05))
                                 .alongWith(new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(300))
                                         .alongWith(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.495)))));
+
         gamepadEx.getGamepadButton(GamepadKeys.Button.A)
                         .whenPressed(
                                 new ConditionalCommand(
-                                        new SequentialCommandGroup(
-                                                new InstantCommand(() -> extension.setScoring(false)),
-                                                new InstantCommand(() -> extension.setFlip(false)),
-                                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
-                                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                                                new WaitCommand(250),
-                                                new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                                                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))),
+                                        new ConditionalCommand(
+                                                new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
+                                                new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
+                                                () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (intake.leftClaw == IntakeSubsystem.ClawState.CLOSED))
+                                        ),
+                                                //
+//                                                new InstantCommand(() -> extension.setScoring(false)),
+//                                                new InstantCommand(() -> extension.setFlip(false)),
+//                                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+//                                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+//                                                new WaitCommand(250),
+//                                                new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+//                                                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+//                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))),
                                         new SequentialCommandGroup(
                                                 new InstantCommand(() -> extension.setScoring(false)),
                                                 new InstantCommand(() -> extension.setFlip(false)),
@@ -252,7 +265,7 @@ public class OpMode extends CommandOpMode {
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;
         telemetry.update();
-//        robot.write();
+        robot.write();
         robot.clearBulkCache();
     }
 }

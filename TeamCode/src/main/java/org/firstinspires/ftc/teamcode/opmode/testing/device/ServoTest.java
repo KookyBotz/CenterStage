@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.testing.device;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 
 @Config
 @TeleOp(name = "ServoTest")
+@Disabled
 public class ServoTest extends OpMode {
     private WServo servo1;
     private WServo servo2;

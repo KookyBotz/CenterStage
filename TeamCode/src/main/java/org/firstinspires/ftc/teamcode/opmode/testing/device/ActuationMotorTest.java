@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 
 @Config
 @TeleOp(name = "ActuationMotorTest")
+@Disabled
 public class ActuationMotorTest extends OpMode {
     public AbsoluteAnalogEncoder extensionPitchEncoder;
     public AnalogInput extensionPitchEnc;

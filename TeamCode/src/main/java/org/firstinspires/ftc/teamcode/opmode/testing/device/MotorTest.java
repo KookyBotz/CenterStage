@@ -10,6 +10,7 @@ import com.outoftheboxrobotics.photoncore.hardware.motor.commands.PhotonLynxGetB
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataResponse;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Config
 @TeleOp(name = "DT-TEST3")
+@Disabled
 public class MotorTest extends OpMode {
     public DcMotorEx motor1;
     public DcMotorEx motor2;

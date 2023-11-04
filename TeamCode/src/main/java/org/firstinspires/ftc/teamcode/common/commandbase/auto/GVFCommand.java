@@ -41,7 +41,7 @@ public class GVFCommand extends CommandBase {
 
     public static double kN = 0.5;
     public static double kS = 1;
-    public static double kC = 0.1;
+    public static double kC = 1e-7;
     public static double kStatic = 0.1;
 
     public static Pose gvf = new Pose(0, 0, 0);
@@ -126,9 +126,11 @@ public class GVFCommand extends CommandBase {
 
         Vector2D linearVel = new Vector2D(xSpeed * MecanumDriveConstants.FORWARD_GAIN, ySpeed * MecanumDriveConstants.STRAFE_GAIN);
 //        linearVel.x = MathUtils.clamp(linearVel.x, )
-        double x = linearVel.y / 14 * 12;
-        double y = linearVel.x / 14 * 12;
-        this.powers2 = new Pose(x, y + Math.signum(y) * kStatic, rSpeed * MecanumDriveConstants.ROTATIONAL_GAIN * Math.signum(angleDelta) / 14 * 12);
+        double x = linearVel.y / 12 * 12;
+        double y = linearVel.x / 12 * 12;
+        double r = rSpeed * MecanumDriveConstants.ROTATIONAL_GAIN * Math.signum(angleDelta) / 12 * 12;
+//        if (r )
+        this.powers2 = new Pose(x, y + Math.signum(y) * kStatic, rSpeed * MecanumDriveConstants.ROTATIONAL_GAIN * Math.signum(angleDelta) / 12 * 12);
         this.funny = gvfPose;
         return powers2;
     }

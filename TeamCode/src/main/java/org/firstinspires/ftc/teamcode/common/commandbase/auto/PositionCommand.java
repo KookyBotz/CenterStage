@@ -13,27 +13,24 @@ public class PositionCommand extends CommandBase {
     Drivetrain drivetrain;
     Pose targetPose;
 
-    public static double xP = 0.04;
-    public static double xD = 0.0;
+    public static double xP = 0.035;
+    public static double xD = 0.0125;
     public static double xF = 0.0;
 
-    public static double yP = 0.04;
-    public static double yD = 0.0;
+    public static double yP = 0.035;
+    public static double yD = 0.0125;
     public static double yF = 0.0;
 
-    public static double hP = 0.0;
-    public static double hD = 0.0;
+    public static double hP = 0.5;
+    public static double hD = 0.02;
     public static double hF = 0;
 
     public static PIDFController xController = new PIDFController(xP, 0.0, xD, xF);
     public static PIDFController yController = new PIDFController(yP, 0.0, yD, yF);
     public static PIDFController hController = new PIDFController(hP, 0.0, hD, hF);
 
-    public static double ALLOWED_TRANSLATIONAL_ERROR = 2; // inches
-    public static double ALLOWED_HEADING_ERROR = 0.2; // radians
-
-    public static double max_power = 0.5;
-    public static double max_heading = 0.3;
+    public static double ALLOWED_TRANSLATIONAL_ERROR = 0.5; // inches
+    public static double ALLOWED_HEADING_ERROR = 0.02; // radians
 
     public PositionCommand(Drivetrain drivetrain, Localizer localizer, Pose targetPose) {
         this.drivetrain = drivetrain;
@@ -54,7 +51,9 @@ public class PositionCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return super.isFinished();
+        Pose robotPose = localizer.getPos();
+        return targetPose.subt(robotPose).toVec2D().magnitude() < ALLOWED_TRANSLATIONAL_ERROR
+                && Math.abs(MathUtils.getRotDist(-robotPose.heading, targetPose.heading)) < ALLOWED_HEADING_ERROR;
     }
 
     public Pose getPower(Pose robotPose) {
@@ -69,16 +68,11 @@ public class PositionCommand extends CommandBase {
         double x_rotated = xPower * Math.cos(robotPose.heading) - yPower * Math.sin(robotPose.heading);
         double y_rotated = xPower * Math.sin(robotPose.heading) + yPower * Math.cos(robotPose.heading);
 
-        double x_power = -x_rotated < -max_power ? -max_power :
-                Math.min(-x_rotated, max_power);
-        double y_power = -y_rotated < -max_power ? -max_power :
-                Math.min(-y_rotated, max_power);
-        double heading_power = MathUtils.clamp(hPower, -max_heading, max_heading);
-
-        if (Math.abs(x_power) < 0.01) x_power = 0;
-        if (Math.abs(y_power) < 0.01) y_power = 0;
+        if (Math.abs(x_rotated) < 0.02) x_rotated = 0;
+        if (Math.abs(y_rotated) < 0.02) y_rotated = 0;
+        if (Math.abs(hPower) < 0.02) hPower = 0;
 
         // todo replace first 12 with voltage
-        return new Pose(xPower / 12 * 12, yPower / 12 * 12, hPower / 12 * 12);
+        return new Pose(y_rotated / 12 * 12, x_rotated / 12 * 12, hPower / 12 * 12);
     }
 }

@@ -63,7 +63,7 @@ public class PosAutoTest extends CommandOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new PositionCommand((Drivetrain) drivetrain, localizer, new Pose(20, 0, 0))
+                        new PositionCommand((Drivetrain) drivetrain, localizer, new Pose(20, 20, Math.PI/2))
                 )
         );
     }

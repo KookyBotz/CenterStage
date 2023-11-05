@@ -110,8 +110,8 @@ public class BlueAuto extends CommandOpMode {
                 parkPos = new Pose(49, -35, 3 * Math.PI / 2);
                 break;
             case RIGHT:
-                yellowScorePos = new Pose(33, -25.75, 1.5);
-                purpleScorePos = new Pose(25, -4.5, 1.5);
+                yellowScorePos = new Pose(33.5, -25.75, 1.5);
+                purpleScorePos = new Pose(24, -3.5, 1.5);
                 parkPos = new Pose(47.5, -35, 3 * Math.PI / 2);
                 break;
             default:

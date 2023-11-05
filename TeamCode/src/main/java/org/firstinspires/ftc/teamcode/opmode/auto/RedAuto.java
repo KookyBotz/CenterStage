@@ -112,8 +112,8 @@ public class RedAuto extends CommandOpMode {
                 parkPos = new Pose(49, 35, -3 * Math.PI / 2);
                 break;
             case LEFT:
-                yellowScorePos = new Pose(33, 26.25, -1.5 );
-                purpleScorePos = new Pose(25, 4.5, -1.5);
+                yellowScorePos = new Pose(33, 26, -1.5 );
+                purpleScorePos = new Pose(26, 5.5, -1.5);
                 parkPos = new Pose(47.5, 35, -3 * Math.PI / 2);
                 break;
             default:

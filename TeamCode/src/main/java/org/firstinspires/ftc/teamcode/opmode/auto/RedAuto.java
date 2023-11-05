@@ -102,19 +102,19 @@ public class RedAuto extends CommandOpMode {
 
         switch (side) {
             case RIGHT:
-                yellowScorePos = new Pose(21, 26.25, -1.5);
+                yellowScorePos = new Pose(21, 26.15, -1.5);
                 purpleScorePos = new Pose(28, 25, -1.5);
-                parkPos = new Pose(50, 35, -3 * Math.PI / 2);
+                parkPos = new Pose(6, 31, -3 * Math.PI / 2);
                 break;
             case CENTER:
                 yellowScorePos = new Pose(27, 26.25, -1.5);
                 purpleScorePos = new Pose(36.5, 19.5, -1.5);
-                parkPos = new Pose(49, 35, -3 * Math.PI / 2);
+                parkPos = new Pose(5, 31, -3 * Math.PI / 2);
                 break;
             case LEFT:
                 yellowScorePos = new Pose(33, 26, -1.5 );
                 purpleScorePos = new Pose(26, 5.5, -1.5);
-                parkPos = new Pose(47.5, 35, -3 * Math.PI / 2);
+                parkPos = new Pose(3.5, 31, -3 * Math.PI / 2);
                 break;
             default:
                 // your mom

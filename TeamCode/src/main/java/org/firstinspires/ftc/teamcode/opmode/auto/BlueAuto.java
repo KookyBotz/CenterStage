@@ -102,17 +102,17 @@ public class BlueAuto extends CommandOpMode {
             case LEFT:
                 yellowScorePos = new Pose(21, -26.65, 1.5);
                 purpleScorePos = new Pose(26.5, -24.75, 1.5);
-                parkPos = new Pose(50, -35, 3 * Math.PI / 2);
+                parkPos = new Pose(6, -31, 3 * Math.PI / 2);
                 break;
             case CENTER:
                 yellowScorePos = new Pose(27, -26.5, 1.5);
                 purpleScorePos = new Pose(35, -18, 1.5);
-                parkPos = new Pose(49, -35, 3 * Math.PI / 2);
+                parkPos = new Pose(5, -31, 3 * Math.PI / 2);
                 break;
             case RIGHT:
                 yellowScorePos = new Pose(33.5, -26.25, 1.5);
                 purpleScorePos = new Pose(24, -5.5, 1.5);
-                parkPos = new Pose(46, -35, 3 * Math.PI / 2);
+                parkPos = new Pose(2, -31, 3 * Math.PI / 2);
                 break;
             default:
                 // your mom

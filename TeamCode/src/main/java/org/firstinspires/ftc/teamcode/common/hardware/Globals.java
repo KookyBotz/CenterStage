@@ -4,6 +4,7 @@ import org.firstinspires.ftc.teamcode.common.centerstage.Side;
 
 public class Globals {
 
+    public static Side COLOR = Side.RED;
     /**
      * Match constants.
      */

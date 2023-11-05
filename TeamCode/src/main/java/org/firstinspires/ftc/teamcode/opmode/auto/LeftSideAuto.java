@@ -46,6 +46,7 @@ public class LeftSideAuto extends CommandOpMode {
         Globals.IS_AUTO = true;
         Globals.IS_USING_IMU = false;
         Globals.USING_DASHBOARD = true;
+        Globals.COLOR = Side.RED;
 
         robot.init(hardwareMap, telemetry);
         robot.enabled = true;
@@ -67,12 +68,11 @@ public class LeftSideAuto extends CommandOpMode {
 
         localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
-        // asdasdasdasd
         Side side = Side.LEFT;
 
         Pose yellowScorePos = new Pose();
         Pose purpleScorePos = new Pose();
-        Pose parkPos = new Pose(50, -35, 3 * Math.PI / 2);
+        Pose parkPos = new Pose();
 
 
         // 0.3, 300
@@ -81,14 +81,17 @@ public class LeftSideAuto extends CommandOpMode {
             case LEFT:
                 yellowScorePos = new Pose(21, -26, 1.5);
                 purpleScorePos = new Pose(27, -24, 1.5);
+                parkPos = new Pose(50, -35, 3 * Math.PI / 2);
                 break;
             case CENTER:
                 yellowScorePos = new Pose(27, -26, 1.5);
-                purpleScorePos = new Pose(36, -18, 1.5);
+                purpleScorePos = new Pose(34.5, -19, 1.5);
+                parkPos = new Pose(49, -35, 3 * Math.PI / 2);
                 break;
             case RIGHT:
                 yellowScorePos = new Pose(33, -26, 1.5);
-                purpleScorePos = new Pose(27, -4, 1.5);
+                purpleScorePos = new Pose(25, -4.5, 1.5);
+                parkPos = new Pose(47.5, -35, 3 * Math.PI / 2);
                 break;
             default:
                 // your mom
@@ -106,7 +109,7 @@ public class LeftSideAuto extends CommandOpMode {
                         new InstantCommand(() -> extension.setFlip(false)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.34)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(320)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(315)),
                         new WaitCommand(750),
                         // open claw boi
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
@@ -130,9 +133,9 @@ public class LeftSideAuto extends CommandOpMode {
                                 )
                         ),
 
-                        new WaitCommand(250),
+                        new WaitCommand(400),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
-                        new WaitCommand(200),
+                        new WaitCommand(300),
 
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),

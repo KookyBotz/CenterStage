@@ -100,19 +100,19 @@ public class BlueAuto extends CommandOpMode {
 
         switch (side) {
             case LEFT:
-                yellowScorePos = new Pose(21, -26, 1.5);
-                purpleScorePos = new Pose(27, -24, 1.5);
+                yellowScorePos = new Pose(21, -26.65, 1.5);
+                purpleScorePos = new Pose(26.5, -24.75, 1.5);
                 parkPos = new Pose(50, -35, 3 * Math.PI / 2);
                 break;
             case CENTER:
-                yellowScorePos = new Pose(27, -26, 1.5);
+                yellowScorePos = new Pose(27, -26.5, 1.5);
                 purpleScorePos = new Pose(35, -18, 1.5);
                 parkPos = new Pose(49, -35, 3 * Math.PI / 2);
                 break;
             case RIGHT:
-                yellowScorePos = new Pose(33.5, -25.75, 1.5);
-                purpleScorePos = new Pose(24, -3.5, 1.5);
-                parkPos = new Pose(47.5, -35, 3 * Math.PI / 2);
+                yellowScorePos = new Pose(33.5, -26.25, 1.5);
+                purpleScorePos = new Pose(24, -5.5, 1.5);
+                parkPos = new Pose(46, -35, 3 * Math.PI / 2);
                 break;
             default:
                 // your mom
@@ -129,7 +129,7 @@ public class BlueAuto extends CommandOpMode {
                         new InstantCommand(() -> extension.setScoring(true)),
                         new InstantCommand(() -> extension.setFlip(false)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.34)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.36)),
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(315)),
                         new WaitCommand(750),
                         // open claw boi

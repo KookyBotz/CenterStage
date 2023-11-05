@@ -33,8 +33,8 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Autonomous(name = "LeftSideAuto")
-public class Red extends CommandOpMode {
+@Autonomous(name = "RedAuto")
+public class RedAuto extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
     private WSubsystem drivetrain;

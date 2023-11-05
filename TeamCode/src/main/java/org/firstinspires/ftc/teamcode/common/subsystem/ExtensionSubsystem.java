@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 public class ExtensionSubsystem extends WSubsystem {
 
     private final RobotHardware robot;
-    private int backdropHeight = 1;
+    private int backdropHeight = 0;
     private boolean scoring = false;
     private boolean updated = false;
     private boolean flip = false;
@@ -104,7 +104,7 @@ public class ExtensionSubsystem extends WSubsystem {
     }
 
     public void incrementBackdropHeight(int amount) {
-        this.backdropHeight = (int) MathUtils.clamp(getBackdropHeight() + amount, 1, 10);
+        this.backdropHeight = (int) MathUtils.clamp(getBackdropHeight() + amount, 0, 11);
         updated = false;
     }
 

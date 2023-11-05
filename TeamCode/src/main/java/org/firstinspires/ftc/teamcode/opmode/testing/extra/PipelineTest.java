@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.centerstage.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.opencv.core.Scalar;
 
 @Autonomous(name = "PipelineTest")
 public class PipelineTest extends LinearOpMode {
@@ -36,8 +37,11 @@ public class PipelineTest extends LinearOpMode {
 
         FtcDashboard.getInstance().startCameraStream(propPipeline, 30);
 
+        Scalar scale = new Scalar(1/1000000.0,1/1000000.0,1/1000000.0);
         while (opModeInInit()) {
             telemetry.addData("Location", propPipeline.getLocation());
+            telemetry.addData("leftZone", propPipeline.left.mul(scale).toString());
+            telemetry.addData("centerZone", propPipeline.center.mul(scale).toString());
             telemetry.addData("leftZone", propPipeline.leftColor);
             telemetry.addData("centerZone", propPipeline.centerColor);
             telemetry.update();

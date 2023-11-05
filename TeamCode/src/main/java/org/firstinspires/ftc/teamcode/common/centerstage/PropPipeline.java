@@ -42,17 +42,17 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
 
     private Mat finalMat = new Mat();
 
-    public static int redLeftX = 800;
-    public static int redLeftY = 550;
+    public static int blueLeftX = 800;
+    public static int blueLeftY = 550;
 
-    public static int redCenterX = 1175;
-    public static int redCenterY = 175;
+    public static int blueCenterX = 1175;
+    public static int blueCenterY = 175;
 
-    public static int blueLeftX = 900;
-    public static int blueLeftY = 525;
+    public static int redLeftX = 900;
+    public static int redLeftY = 525;
 
-    public static int blueCenterX = 1325;
-    public static int blueCenterY = 100;
+    public static int redCenterX = 1325;
+    public static int redCenterY = 100;
 
     public static int width = 125;
     public static int height = 125;
@@ -103,12 +103,12 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
         leftColor = left.val[0] / 1000000.0;
         centerColor = center.val[0] / 1000000.0;
 
-        if(Globals.COLOR == Side.RED){
-            if (leftColor > threshold) {
+        if(Globals.COLOR == Side.BLUE){
+            if (leftColor < threshold) {
                 // left zone has it
                 location = Side.LEFT;
                 Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255));
-            } else if (centerColor > threshold) {
+            } else if (centerColor < threshold) {
                 // center zone has it
                 location = Side.CENTER;
                 Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255));
@@ -118,11 +118,11 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
                 Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255));
             }
         }else{
-            if (leftColor < threshold) {
+            if (leftColor > threshold) {
                 // left zone has it
                 location = Side.CENTER;
                 Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255));
-            } else if (centerColor < threshold) {
+            } else if (centerColor > threshold) {
                 // center zone has it
                 location = Side.RIGHT;
                 Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255));

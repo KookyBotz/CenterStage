@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import android.util.Size;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -10,10 +12,12 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
+import org.firstinspires.ftc.teamcode.common.centerstage.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
 import org.firstinspires.ftc.teamcode.common.commandbase.auto.PositionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.state.ClawCommand;
@@ -26,16 +30,21 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
 @Autonomous(name = "LeftSideAuto")
-public class LeftSideAuto extends CommandOpMode {
+public class Red extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
     private WSubsystem drivetrain;
     private ThreeWheelLocalizer localizer;
     private ExtensionSubsystem extension;
     private IntakeSubsystem intake;
+
+    private PropPipeline propPipeline;
+    private VisionPortal portal;
+
 
     private double loopTime = 0.0;
 
@@ -55,6 +64,17 @@ public class LeftSideAuto extends CommandOpMode {
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
 
+        propPipeline = new PropPipeline();
+        portal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
+                .setCameraResolution(new Size(1920, 1080))
+                .setCamera(BuiltinCameraDirection.BACK)
+                .addProcessor(propPipeline)
+//                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .enableLiveView(true)
+                .setAutoStopLiveView(true)
+                .build();
+
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
 
         robot.addSubsystem(drivetrain, extension, intake);
@@ -68,7 +88,8 @@ public class LeftSideAuto extends CommandOpMode {
 
         localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
-        Side side = Side.LEFT;
+        Side side = propPipeline.getLocation();
+        portal.close();
 
         Pose yellowScorePos = new Pose();
         Pose purpleScorePos = new Pose();

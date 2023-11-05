@@ -105,6 +105,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
         return 0.0;
     }
 
+    @Override
     public void setPoseEstimate(Pose2d pose) {
         super.setPoseEstimate(pose);
     }

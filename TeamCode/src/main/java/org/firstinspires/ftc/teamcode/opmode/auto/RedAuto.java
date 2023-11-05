@@ -106,7 +106,7 @@ public class RedAuto extends CommandOpMode {
                 break;
             case CENTER:
                 yellowScorePos = new Pose(27, -26, 1.5);
-                purpleScorePos = new Pose(34.5, -19, 1.5);
+                purpleScorePos = new Pose(35, -18, 1.5);
                 parkPos = new Pose(49, -35, 3 * Math.PI / 2);
                 break;
             case RIGHT:
@@ -162,9 +162,9 @@ public class RedAuto extends CommandOpMode {
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                         new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475)),
 
                         new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
+                                .alongWith(new WaitCommand(200).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
                 )
         );
     }

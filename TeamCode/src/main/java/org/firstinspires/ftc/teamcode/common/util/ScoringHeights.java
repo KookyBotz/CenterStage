@@ -15,7 +15,7 @@ public class ScoringHeights {
 //            new Pair(2.2, 381),
 //            new Pair(2.2, 455),
 //            new Pair(2.2, 527)};
-            new Pair(2.92, 300),
+            new Pair(2.95, 300),
             new Pair(2.87, 300),
             new Pair(2.72, 300),
             new Pair(2.63, 300),

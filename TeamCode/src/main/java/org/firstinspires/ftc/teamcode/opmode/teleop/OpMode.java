@@ -45,7 +45,7 @@ public class OpMode extends CommandOpMode {
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
 
-    public static double targetpos = 0.0475;
+    public static double targetpos = 0;
 
     public boolean aButton = true;
 
@@ -93,7 +93,7 @@ public class OpMode extends CommandOpMode {
                         new WaitCommand(250),
                         new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))
+                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))
                   )
                 );
 
@@ -114,25 +114,15 @@ public class OpMode extends CommandOpMode {
                                                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
                                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))),
+                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))),
                                         () -> extension.getScoring())
 
 
                                 );
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new InstantCommand(() -> aButton = false),
-                                new InstantCommand(() -> extension.setScoring(false)),
-                                new InstantCommand(() -> extension.setFlip(false)),
-                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.05)),
-                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
-                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.495)),
-                                new WaitCommand(250),
-                                new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
-                        ),
+                .whenPressed(
+
                         new SequentialCommandGroup(
                                 new InstantCommand(() -> aButton = true),
                                 new InstantCommand(() -> extension.setScoring(false)),
@@ -140,12 +130,10 @@ public class OpMode extends CommandOpMode {
                                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.05)),
                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
                                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
-                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.495)), // 0.515
+                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.46)), // 0.515
                                 new WaitCommand(250),
                                 new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
-                        ),
-                        () -> aButton
-                ));
+                        ));
 
         // RETRACT
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
@@ -159,7 +147,7 @@ public class OpMode extends CommandOpMode {
                                         new WaitCommand(250),
                                         new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))),
+                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))),
                                 new WaitCommand(1),
                                 () -> extension.getScoring())
 

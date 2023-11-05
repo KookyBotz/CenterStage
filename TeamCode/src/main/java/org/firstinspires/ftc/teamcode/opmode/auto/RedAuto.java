@@ -164,7 +164,7 @@ public class RedAuto extends CommandOpMode {
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
 
                         new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
-                                .alongWith(new WaitCommand(200).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
+                                .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
                 )
         );
     }

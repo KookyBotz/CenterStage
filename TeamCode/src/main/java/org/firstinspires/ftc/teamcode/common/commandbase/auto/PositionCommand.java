@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -42,6 +43,7 @@ public class PositionCommand extends CommandBase {
 
     private RobotHardware robot = RobotHardware.getInstance();
 
+    private ElapsedTime timer;
     public PositionCommand(Drivetrain drivetrain, Localizer localizer, Pose targetPose) {
         this.drivetrain = drivetrain;
         this.localizer = localizer;
@@ -53,6 +55,8 @@ public class PositionCommand extends CommandBase {
      */
     @Override
     public void execute() {
+        if(timer == null) timer = new ElapsedTime();
+
         Pose robotPose = localizer.getPos();
 
         Pose powers = getPower(robotPose);
@@ -65,8 +69,9 @@ public class PositionCommand extends CommandBase {
         Pose delta = targetPose.subtract(robotPose);
         System.out.println(delta.toVec2D().magnitude() + " " + delta.heading);
 
-        return delta.toVec2D().magnitude() < ALLOWED_TRANSLATIONAL_ERROR
-                && Math.abs(delta.heading) < ALLOWED_HEADING_ERROR;
+        return (delta.toVec2D().magnitude() < ALLOWED_TRANSLATIONAL_ERROR
+                && Math.abs(delta.heading) < ALLOWED_HEADING_ERROR)
+                || timer.milliseconds() > 5000;
     }
 
     public Pose getPower(Pose robotPose) {

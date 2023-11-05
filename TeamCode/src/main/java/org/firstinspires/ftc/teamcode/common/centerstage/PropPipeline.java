@@ -42,17 +42,23 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
 
     private Mat finalMat = new Mat();
 
-    public static int leftX = 800;
-    public static int leftY = 550;
+    public static int redLeftX = 800;
+    public static int redLeftY = 550;
 
-    public static int centerX = 1175;
-    public static int centerY = 175;
+    public static int redCenterX = 1175;
+    public static int redCenterY = 175;
+
+    public static int blueLeftX = 900;
+    public static int blueLeftY = 525;
+
+    public static int blueCenterX = 1325;
+    public static int blueCenterY = 100;
 
     public static int width = 125;
     public static int height = 125;
 
     public static double redThreshold = 2.5;
-    public static double blueThreshold = 0.5;
+    public static double blueThreshold = 0.2;
     public static double threshold = 0;
 
     public double leftColor = 0.0;
@@ -85,8 +91,8 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
         Imgproc.GaussianBlur(finalMat, finalMat, new Size(5, 5), 0.0);
 
 
-        leftZoneArea = new Rect(leftX, leftY, width, height);
-        centerZoneArea = new Rect(centerX, centerY, width, height);
+        leftZoneArea = new Rect(Globals.COLOR == Side.RED? redLeftX : blueLeftX, Globals.COLOR == Side.RED? redLeftY : blueLeftY, width, height);
+        centerZoneArea = new Rect(Globals.COLOR == Side.RED?redCenterX:blueCenterX, Globals.COLOR == Side.RED?redCenterY:blueCenterY, width, height);
 
         Mat leftZone = finalMat.submat(leftZoneArea);
         Mat centerZone = finalMat.submat(centerZoneArea);
@@ -114,15 +120,15 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
         }else{
             if (leftColor < threshold) {
                 // left zone has it
-                location = Side.LEFT;
+                location = Side.CENTER;
                 Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255));
             } else if (centerColor < threshold) {
                 // center zone has it
-                location = Side.CENTER;
+                location = Side.RIGHT;
                 Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255));
             } else {
                 // right zone has it
-                location = Side.RIGHT;
+                location = Side.LEFT;
                 Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255));
             }
         }

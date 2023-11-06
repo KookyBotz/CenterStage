@@ -132,7 +132,7 @@ public class RedAuto extends CommandOpMode {
                         new InstantCommand(() -> extension.setFlip(false)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.36)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(315)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(330)),
                         new WaitCommand(750),
                         // open claw boi
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),

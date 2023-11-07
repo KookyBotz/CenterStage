@@ -129,7 +129,6 @@ public class RobotHardware {
 
         voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
 
-
         this.subsystems = new ArrayList<>();
 
         modules = hardwareMap.getAll(LynxModule.class);
@@ -245,5 +244,13 @@ public class RobotHardware {
 
     public double getVoltage() {
         return voltage;
+    }
+
+    public void log(String data) {
+        telemetry.addLine(data);
+    }
+
+    public void log(String data, Object input) {
+        telemetry.addData(data, input.toString());
     }
 }

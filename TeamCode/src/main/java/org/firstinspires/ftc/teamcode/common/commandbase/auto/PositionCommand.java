@@ -20,30 +20,32 @@ public class PositionCommand extends CommandBase {
     Drivetrain drivetrain;
     Pose targetPose;
 
-    public static double xP = 0.025;
-    public static double xD = 0.04;
+    public static double xP = 0.15;
+    public static double xD = 0;
     public static double xF = 0.0;
 
-    public static double yP = 0.025;
-    public static double yD = 0.04;
+    public static double yP = 0.15;
+    public static double yD = 0;
     public static double yF = 0.0;
 
     public static double hP = 0.75;
     public static double hD = 0.02;
     public static double hF = 0;
 
-    public static double kStatic = 0.06;
+    public static double kStatic = 0;
 
     public static PIDFController xController = new PIDFController(xP, 0.0, xD, xF);
     public static PIDFController yController = new PIDFController(yP, 0.0, yD, yF);
     public static PIDFController hController = new PIDFController(hP, 0.0, hD, hF);
 
-    public static double ALLOWED_TRANSLATIONAL_ERROR = 1; // inches
+    public static double ALLOWED_TRANSLATIONAL_ERROR = 0.5; // inches
     public static double ALLOWED_HEADING_ERROR = 0.04; // radians
 
     private RobotHardware robot = RobotHardware.getInstance();
 
     private ElapsedTime timer;
+    private ElapsedTime stable;
+
     public PositionCommand(Drivetrain drivetrain, Localizer localizer, Pose targetPose) {
         this.drivetrain = drivetrain;
         this.localizer = localizer;
@@ -55,7 +57,8 @@ public class PositionCommand extends CommandBase {
      */
     @Override
     public void execute() {
-        if(timer == null) timer = new ElapsedTime();
+        if (timer == null) timer = new ElapsedTime();
+        if (stable == null) stable = new ElapsedTime();
 
         Pose robotPose = localizer.getPos();
 
@@ -69,13 +72,19 @@ public class PositionCommand extends CommandBase {
         Pose delta = targetPose.subtract(robotPose);
         System.out.println(delta.toVec2D().magnitude() + " " + delta.heading);
 
-        return (delta.toVec2D().magnitude() < ALLOWED_TRANSLATIONAL_ERROR
-                && Math.abs(delta.heading) < ALLOWED_HEADING_ERROR)
-                || timer.milliseconds() > 5000;
+        if (delta.toVec2D().magnitude() > ALLOWED_TRANSLATIONAL_ERROR
+                || Math.abs(delta.heading) > ALLOWED_HEADING_ERROR) {
+            stable.reset();
+        }
+
+        return timer.milliseconds() > 5000 || stable.milliseconds() > 150;
     }
 
     public Pose getPower(Pose robotPose) {
         Pose delta = targetPose.subtract(robotPose);
+
+        delta.x = Math.signum(delta.x) * Math.sqrt(Math.abs(delta.x));
+        delta.y = Math.signum(delta.y) * Math.sqrt(Math.abs(delta.y));
 
         double xPower = xController.calculate(0, delta.x);
         double yPower = yController.calculate(0, delta.y);
@@ -91,15 +100,13 @@ public class PositionCommand extends CommandBase {
         if (Math.abs(hPower) < 0.01) hPower = 0;
         else hPower += kStatic * Math.signum(hPower);
 
-        x_rotated = Range.clip(x_rotated, -0.5, 0.5);
-        y_rotated = Range.clip(y_rotated, -0.5, 0.5);
 
         // todo replace first 12 with voltage
-        return new Pose((y_rotated / robot.getVoltage() * 12.5) / (Math.sqrt(2)/2), x_rotated / robot.getVoltage() * 12.5, hPower / robot.getVoltage() * 12.5);
+        return new Pose((y_rotated / robot.getVoltage() * 12.5) / (Math.sqrt(2) / 2), x_rotated / robot.getVoltage() * 12.5, hPower / robot.getVoltage() * 12.5);
     }
 
     @Override
-    public void end (boolean interrupted){
+    public void end(boolean interrupted) {
         drivetrain.set(new Pose());
     }
 }

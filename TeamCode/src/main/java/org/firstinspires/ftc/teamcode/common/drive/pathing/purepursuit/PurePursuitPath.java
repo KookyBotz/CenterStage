@@ -1,0 +1,79 @@
+package org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit;
+
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Point;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
+
+import java.util.Collections;
+import java.util.LinkedList;
+
+public class PurePursuitPath {
+    private LinkedList<Waypoint> waypoints = new LinkedList<>();
+    private int targetIdx = 1;
+    private boolean finished;
+
+    public PurePursuitPath(Waypoint... ws) {
+        if (ws.length < 2) throw new IllegalArgumentException();
+        Collections.addAll(waypoints, ws);
+        if(waypoints.getLast().getType() != Waypoint.Type.POSE) throw new IllegalArgumentException();
+    }
+
+    public Pose update(Pose robot) {
+        Waypoint prev = waypoints.get(targetIdx - 1);
+        Waypoint target = waypoints.get(targetIdx);
+
+        double distance = robot.distanceTo(target.getPoint());
+
+        if(distance > target.getRadius()){
+            Point intersection = PurePursuitUtil.lineCircleIntersection(
+                    prev.getPoint(), target.getPoint(), robot, target.getRadius());
+
+            System.out.println("prev " + prev.getPoint());
+            System.out.println("to " + target.getPoint());
+            System.out.println("curr " + robot);
+            System.out.println("target " + intersection);
+
+
+            Pose targetPose;
+
+            if(target.getType() == Waypoint.Type.POSE){
+                targetPose = new Pose(intersection, ((Pose)target.getPoint()).heading);
+            }else{
+                double robotAngle = AngleUnit.normalizeRadians(robot.heading);
+                double forwardAngle = intersection.subtract(robot).atan() - (Math.PI/2);
+                System.out.println(forwardAngle);
+//                double backwardsAngle = AngleUnit.normalizeRadians(forwardAngle + Math.PI);
+
+//                double autoAngle =
+//                        AngleUnit.normalizeRadians(robotAngle - forwardAngle) <
+//                                AngleUnit.normalizeRadians(robotAngle - backwardsAngle) ?
+//                                forwardAngle : backwardsAngle;
+
+                targetPose = new Pose(intersection, forwardAngle);
+            }
+
+            return targetPose;
+        }else{
+            if(targetIdx == waypoints.size() - 1){
+                finished = true;
+                return getEndPose();
+            }else{
+                targetIdx++;
+                return update(robot);
+            }
+        }
+    }
+
+    public boolean isFinished(){
+        return finished;
+    }
+
+    public Pose getEndPose(){
+        return (Pose) waypoints.getLast().getPoint();
+    }
+
+    public double getRadius(){
+        return waypoints.get(targetIdx).getRadius();
+    }
+}

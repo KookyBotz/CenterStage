@@ -28,13 +28,6 @@ public class PurePursuitPath {
         if(distance > target.getRadius()){
             Point intersection = PurePursuitUtil.lineCircleIntersection(
                     prev.getPoint(), target.getPoint(), robot, target.getRadius());
-
-            System.out.println("prev " + prev.getPoint());
-            System.out.println("to " + target.getPoint());
-            System.out.println("curr " + robot);
-            System.out.println("target " + intersection);
-
-
             Pose targetPose;
 
             if(target.getType() == Waypoint.Type.POSE){
@@ -42,15 +35,14 @@ public class PurePursuitPath {
             }else{
                 double robotAngle = AngleUnit.normalizeRadians(robot.heading);
                 double forwardAngle = intersection.subtract(robot).atan() - (Math.PI/2);
-                System.out.println(forwardAngle);
-//                double backwardsAngle = AngleUnit.normalizeRadians(forwardAngle + Math.PI);
+                double backwardsAngle = AngleUnit.normalizeRadians(forwardAngle + Math.PI);
 
-//                double autoAngle =
-//                        AngleUnit.normalizeRadians(robotAngle - forwardAngle) <
-//                                AngleUnit.normalizeRadians(robotAngle - backwardsAngle) ?
-//                                forwardAngle : backwardsAngle;
+                double autoAngle =
+                        Math.abs(AngleUnit.normalizeRadians(robotAngle - forwardAngle)) <
+                                Math.abs(AngleUnit.normalizeRadians(robotAngle - backwardsAngle)) ?
+                                forwardAngle : backwardsAngle;
 
-                targetPose = new Pose(intersection, forwardAngle);
+                targetPose = new Pose(intersection, autoAngle);
             }
 
             return targetPose;

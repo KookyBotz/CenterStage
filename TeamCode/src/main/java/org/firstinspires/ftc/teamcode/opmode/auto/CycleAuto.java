@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Point;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.PurePursuitConfig;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.PurePursuitPath;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.Waypoint;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -79,9 +80,9 @@ public class CycleAuto extends CommandOpMode {
         localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
         PurePursuitPath path = new PurePursuitPath(
-                new Waypoint(new Pose(), 10),
-                new Waypoint(new Point(50, -18), 20),
-                new Waypoint(new Pose(76, -18, 0), 10)
+                new Waypoint(new Pose(), 20),
+                new Waypoint(new Point(20, -18), 20),
+                new Waypoint(new Pose(78, -17, 0), 20)
         );
 
         PurePursuitCommand command = new PurePursuitCommand((Drivetrain) drivetrain, localizer, path);

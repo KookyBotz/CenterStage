@@ -20,17 +20,19 @@ public class PurePursuitCommand extends CommandBase {
     private boolean PID = false;
     private boolean finished = false;
 
-    public static double xP = 0.05;
-    public static double xD = 0.5;
+    public static double xP = 0.025;
+    public static double xD = 0;
     public static double xF = 0;
 
-    public static double yP = 0.05;
-    public static double yD = 0.5;
-    public static double yF = 0.0;
+    public static double yP = 0.025;
+    public static double yD = 0;
+    public static double yF = 0;
 
     public static double hP = 0.75;
     public static double hD = 0.02;
     public static double hF = 0;
+
+    public static double kStatic = 0.03;
 
     public static PIDFController xController = new PIDFController(xP, 0.0, xD, xF);
     public static PIDFController yController = new PIDFController(yP, 0.0, yD, yF);
@@ -60,18 +62,21 @@ public class PurePursuitCommand extends CommandBase {
         double hPower = -hController.calculate(0, delta.heading);
 
         if (PID) {
-            delta.x = Math.signum(delta.x) * Math.sqrt(Math.abs(delta.x));
-            delta.y = Math.signum(delta.y) * Math.sqrt(Math.abs(delta.y));
+//            delta.x = Math.signum(delta.x) * Math.sqrt(Math.abs(delta.x));
+//            delta.y = Math.signum(delta.y) * Math.sqrt(Math.abs(delta.y));
             double xPower = xController.calculate(0, x_rotated);
             double yPower = yController.calculate(0, y_rotated);
 
-            System.out.println(new Pose(xPower / (Math.sqrt(2) / 2), yPower, hPower));
+            if (Math.abs(xPower) < 0.01) xPower = 0;
+            else xPower += kStatic * Math.signum(xPower);
+            if (Math.abs(yPower) < 0.01) yPower = 0;
+            else yPower += kStatic * Math.signum(yPower);
+
             drivetrain.set(new Pose(xPower / (Math.sqrt(2) / 2), yPower, hPower));
         } else {
             double xPercentage = x_rotated / purePursuitPath.getRadius() * PurePursuitConfig.FOLLOW_SPEED;
             double yPercentage = y_rotated / purePursuitPath.getRadius() * PurePursuitConfig.FOLLOW_SPEED;
 
-            System.out.println(new Pose(xPercentage / (Math.sqrt(2) / 2), yPercentage, hPower));
             drivetrain.set(new Pose(xPercentage / (Math.sqrt(2) / 2), yPercentage, hPower));
         }
     }

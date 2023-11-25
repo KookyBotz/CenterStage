@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.commandbase.auto;
+package org.firstinspires.ftc.teamcode.common.commandbase.drivecommand;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDriveConstants;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.Localizer;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Vector2D;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.path.GVFPathFollower;

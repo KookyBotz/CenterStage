@@ -1,18 +1,15 @@
-package org.firstinspires.ftc.teamcode.common.commandbase.auto;
+package org.firstinspires.ftc.teamcode.common.commandbase.drivecommand;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.Localizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Config
 public class PositionCommand extends CommandBase {
@@ -20,23 +17,20 @@ public class PositionCommand extends CommandBase {
     Drivetrain drivetrain;
     Pose targetPose;
 
-    public static double xP = 0.15;
-    public static double xD = 0;
-    public static double xF = 0.0;
+    public static double xP = 0.0385;
+    public static double xD = 0.005;
 
-    public static double yP = 0.15;
-    public static double yD = 0;
-    public static double yF = 0.0;
+    public static double yP = 0.0385;
+    public static double yD = 0.005;
 
     public static double hP = 0.75;
     public static double hD = 0.02;
-    public static double hF = 0;
 
-    public static double kStatic = 0;
+    public static double kStatic = 0.05;
 
-    public static PIDFController xController = new PIDFController(xP, 0.0, xD, xF);
-    public static PIDFController yController = new PIDFController(yP, 0.0, yD, yF);
-    public static PIDFController hController = new PIDFController(hP, 0.0, hD, hF);
+    public static PIDFController xController = new PIDFController(xP, 0.0, xD, 0);
+    public static PIDFController yController = new PIDFController(yP, 0.0, yD, 0);
+    public static PIDFController hController = new PIDFController(hP, 0.0, hD, 0);
 
     public static double ALLOWED_TRANSLATIONAL_ERROR = 0.5; // inches
     public static double ALLOWED_HEADING_ERROR = 0.04; // radians
@@ -70,7 +64,6 @@ public class PositionCommand extends CommandBase {
     public boolean isFinished() {
         Pose robotPose = localizer.getPos();
         Pose delta = targetPose.subtract(robotPose);
-        System.out.println(delta.toVec2D().magnitude() + " " + delta.heading);
 
         if (delta.toVec2D().magnitude() > ALLOWED_TRANSLATIONAL_ERROR
                 || Math.abs(delta.heading) > ALLOWED_HEADING_ERROR) {
@@ -83,11 +76,8 @@ public class PositionCommand extends CommandBase {
     public Pose getPower(Pose robotPose) {
         Pose delta = targetPose.subtract(robotPose);
 
-        delta.x = Math.signum(delta.x) * Math.sqrt(Math.abs(delta.x));
-        delta.y = Math.signum(delta.y) * Math.sqrt(Math.abs(delta.y));
-
-        double xPower = xController.calculate(0, delta.x);
-        double yPower = yController.calculate(0, delta.y);
+        double xPower = xController.calculate(robotPose.x, targetPose.x);
+        double yPower = yController.calculate(robotPose.y, targetPose.y);
         double hPower = -hController.calculate(0, delta.heading);
 
         double x_rotated = xPower * Math.cos(robotPose.heading) - yPower * Math.sin(robotPose.heading);
@@ -100,9 +90,7 @@ public class PositionCommand extends CommandBase {
         if (Math.abs(hPower) < 0.01) hPower = 0;
         else hPower += kStatic * Math.signum(hPower);
 
-
-        // todo replace first 12 with voltage
-        return new Pose((y_rotated / robot.getVoltage() * 12.5) / (Math.sqrt(2) / 2), x_rotated / robot.getVoltage() * 12.5, hPower / robot.getVoltage() * 12.5);
+        return new Pose((y_rotated / robot.getVoltage() * 12.5) *1.6, x_rotated / robot.getVoltage() * 12.5, hPower / robot.getVoltage() * 12.5);
     }
 
     @Override

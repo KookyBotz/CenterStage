@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.commandbase.state;
+package org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 

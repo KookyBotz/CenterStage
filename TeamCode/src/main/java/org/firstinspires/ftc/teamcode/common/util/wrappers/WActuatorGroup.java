@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.DoubleSupplier;
 
 public class WActuatorGroup {
     public enum FeedforwardMode {
@@ -31,6 +32,7 @@ public class WActuatorGroup {
     private ProfileConstraints constraints;
     private ProfileState state;
     private PIDController controller;
+    private DoubleSupplier voltage;
     public ElapsedTime timer;
     private RobotHardware robot = RobotHardware.getInstance();
 
@@ -102,10 +104,10 @@ public class WActuatorGroup {
                     this.power += currentFeedforward * Math.signum((targetPosition + targetPositionOffset) - position);
                     break;
                 case ANGLE_BASED:
-                    this.power += Math.cos(position) * currentFeedforward;
+                    this.power += Math.cos(targetPosition + targetPositionOffset) * currentFeedforward;
                     break;
                 case ANGLE_BASED_SIN:
-                    this.power += Math.sin(position) * currentFeedforward;
+                    this.power += Math.sin(targetPosition + targetPositionOffset) * currentFeedforward;
                     break;
                 default:
             }
@@ -123,7 +125,9 @@ public class WActuatorGroup {
         int i = 0;
         for (HardwareDevice device : devices.values()) {
             if (device instanceof DcMotor) {
-                ((DcMotor) device).setPower(power);
+                double correction = 1.0;
+                if (voltage != null) correction = 12.0 / voltage.getAsDouble();
+                ((DcMotor) device).setPower(power * correction);
             } else if (device instanceof Servo) {
                 ((Servo) device).setPosition(targetPosition);
             }
@@ -138,7 +142,7 @@ public class WActuatorGroup {
      * @param targetPosition
      */
     public void setTargetPosition(double targetPosition) {
-       this.targetPosition = targetPosition;
+        this.targetPosition = targetPosition;
     }
 
     public void setOffset(double offset) {
@@ -150,10 +154,16 @@ public class WActuatorGroup {
         this.timer.reset();
     }
 
+    public WActuatorGroup setVoltageSupplier(DoubleSupplier voltage) {
+        this.voltage = voltage;
+        return this;
+    }
+
     /**
      * Saves the value passed in for the new motion profile.
+     * <p>
+     * //     * @param profile The new asymmetrical motion profile
      *
-//     * @param profile The new asymmetrical motion profile
      * @return
      */
     public WActuatorGroup setMotionProfile(double targetPosition, ProfileConstraints constraints) {
@@ -243,6 +253,7 @@ public class WActuatorGroup {
 
     /**
      * Gets the current target position for the actuation group.
+     *
      * @return double
      */
     public double getTargetPosition() {

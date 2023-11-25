@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 
 
 @TeleOp(name = "arm")
-@Disabled
 public class Arm extends OpMode {
     public AbsoluteAnalogEncoder extensionPitchEncoder;
     public AnalogInput extensionPitchEnc;
@@ -32,7 +31,7 @@ public class Arm extends OpMode {
     @Override
     public void loop() {
         telemetry.addData("position", extensionPitchEncoder.getCurrentPosition());
-        telemetry.addData("position 2", extensionEncoder.getPosition() - (50 * extensionPitchEncoder.getCurrentPosition() / Math.PI));
+        telemetry.addData("position 2", extensionEncoder.getPosition());
         telemetry.update();
     }
 

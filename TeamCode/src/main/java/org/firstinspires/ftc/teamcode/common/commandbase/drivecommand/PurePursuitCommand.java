@@ -22,10 +22,10 @@ public class PurePursuitCommand extends CommandBase {
     private boolean finished = false;
 
     public static double xP = 0.0385;
-    public static double xD = 0.005;
+    public static double xD = 0.006;
 
     public static double yP = 0.0385;
-    public static double yD = 0.005;
+    public static double yD = 0.006;
 
     public static double hP = 0.75;
     public static double hD = 0.02;

@@ -54,15 +54,18 @@ public class BlueCycleAuto extends CommandOpMode {
     private double loopTime = 0.0;
 
     private Pose[] DEPOSIT_POSITIONS = new Pose[]{
-            new Pose(33.75, -22.5, 1.5)
+            new Pose(32.5, -22, 1.5),
+            new Pose(33, -22, 1.5)
     };
 
     private Pose[] INTERMEDIATE_POSES = new Pose[]{
             new Pose(47, 0, 1.5),
+            new Pose(47, 15, 1.5),
     };
 
     private Pose[] INTAKE_POSITIONS = new Pose[]{
-            new Pose(45, 48, 1.5)
+            new Pose(41, 48, 1.51),
+            new Pose(41, 48, 1.51)
     };
 
     private double[] PITCH_INTAKE_POSITIONS = new double[]{
@@ -136,6 +139,24 @@ public class BlueCycleAuto extends CommandOpMode {
                 new Waypoint(INTAKE_POSITIONS[0], 20)
         );
 
+        PurePursuitPath deposit1 = new PurePursuitPath(
+                new Waypoint(INTAKE_POSITIONS[0], 20),
+                new Waypoint(INTERMEDIATE_POSES[1], 20),
+                new Waypoint(DEPOSIT_POSITIONS[0], 20)
+        );
+
+        PurePursuitPath intake2 = new PurePursuitPath(
+                new Waypoint(DEPOSIT_POSITIONS[0], 20),
+                new Waypoint(INTERMEDIATE_POSES[0], 20),
+                new Waypoint(INTAKE_POSITIONS[1], 20)
+        );
+
+        PurePursuitPath deposit2 = new PurePursuitPath(
+                new Waypoint(INTAKE_POSITIONS[1], 20),
+                new Waypoint(INTERMEDIATE_POSES[1], 20),
+                new Waypoint(DEPOSIT_POSITIONS[1], 20)
+        );
+
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         // go to yellow pixel scoring pos
@@ -150,7 +171,6 @@ public class BlueCycleAuto extends CommandOpMode {
 //                        new YellowPixelRetractCommand(robot, extension, intake),
 
                         // go to purple pixel scoring pos
-                        new WaitUntilCommand(()->gamepad1.a),
                         new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos),
 //                                .alongWith(new PurplePixelExtendCommand(robot, extension, intake)),
 
@@ -162,17 +182,13 @@ public class BlueCycleAuto extends CommandOpMode {
 //                        new PurplePixelRetractCommand(robot, extension, intake),
 
                         // first cycle intake position
-                        new WaitUntilCommand(()->gamepad1.a),
-                        new ParallelCommandGroup(
-                                new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake1)
-//                                new SequentialCommandGroup(
-//                                        new InstantCommand(()->robot.pitchActuator.setTargetPosition(PITCH_INTAKE_POSITIONS[0])),
-//                                        new WaitCommand(1000),
-//                                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
-//                                        new InstantCommand(()->robot.extensionActuator.setMotionProfileTargetPosition(LIFT_INTAKE_POSITION))
-//                                )
-                        )
-
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake1),
+                        new WaitCommand(500),
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit1),
+                        new WaitCommand(500),
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake2),
+                        new WaitCommand(500),
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit2)
                 )
         );
     }

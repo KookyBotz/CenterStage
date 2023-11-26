@@ -175,8 +175,8 @@ public class RobotHardware {
                 .setErrorTolerance(20);
 
         this.pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
-                .setPIDController(new PIDController(5, 0, 0))
-                .setMotionProfile(0, new ProfileConstraints(6, 5, 5))
+                .setPIDController(new PIDController(4, 0, 0.05))
+                .setMotionProfile(0, new ProfileConstraints(6, 6, 5))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.07, 0.2)
                 .setErrorTolerance(0.03);
 

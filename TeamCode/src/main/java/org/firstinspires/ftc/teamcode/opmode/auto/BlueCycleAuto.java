@@ -20,6 +20,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoDepositExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoDepositRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoStackExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
@@ -56,18 +58,18 @@ public class BlueCycleAuto extends CommandOpMode {
     private double loopTime = 0.0;
 
     private Pose[] DEPOSIT_POSITIONS = new Pose[]{
-            new Pose(32.5, -22, 1.5),
-            new Pose(33, -22, 1.5)
+            new Pose(32.5, -21, 1.5),
+            new Pose(33, -21, 1.5)
     };
 
     private Pose[] INTERMEDIATE_POSES = new Pose[]{
-            new Pose(47, 0, 1.5),
-            new Pose(47, 15, 1.5),
+            new Pose(46, 0, 1.46),
+            new Pose(46, 15, 1.46),
     };
 
     private Pose[] INTAKE_POSITIONS = new Pose[]{
-            new Pose(43.5, 47, 1.5),
-            new Pose(43.5, 47, 1.5)
+            new Pose(41.5, 47, 1.46),
+            new Pose(41.5, 47, 1.46)
     };
 
     private double[] PITCH_INTAKE_POSITIONS = new double[]{
@@ -76,6 +78,8 @@ public class BlueCycleAuto extends CommandOpMode {
     };
 
     private final double LIFT_INTAKE_POSITION = 560;
+    private final double LIFT_DEPOSIT_POSITION = 543;
+    private final double ARM_DEPOSIT_POSITION = 0.32;
 
 
     @Override
@@ -116,7 +120,7 @@ public class BlueCycleAuto extends CommandOpMode {
 
         switch (side) {
             case LEFT:
-                yellowScorePos = new Pose(21, -26.65, 1.5);
+                yellowScorePos = new Pose(22, -26.65, 1.5);
                 purpleScorePos = new Pose(30, -24.75, 1.5);
                 parkPos = new Pose(6, -31, 3 * Math.PI / 2);
                 break;
@@ -167,7 +171,7 @@ public class BlueCycleAuto extends CommandOpMode {
 
                         // score yellow pixel
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
-                        new WaitCommand(500),
+                        new WaitCommand(200),
 
                         // retract
                         new YellowPixelRetractCommand(robot, extension, intake),
@@ -177,9 +181,9 @@ public class BlueCycleAuto extends CommandOpMode {
                                 .alongWith(new PurplePixelExtendCommand(robot, extension, intake)),
 
                         // score purple pixel
-                        new WaitCommand(500),
+                        new WaitCommand(350),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
-                        new WaitCommand(500),
+                        new WaitCommand(350),
 
                         // retract
                         new PurplePixelRetractCommand(robot, extension, intake),
@@ -189,7 +193,18 @@ public class BlueCycleAuto extends CommandOpMode {
                                 .alongWith(new AutoStackExtendCommand(robot, extension, intake, LIFT_INTAKE_POSITION, PITCH_INTAKE_POSITIONS[0])),
 
                         new AutoStackGrabCommand(robot, extension, intake),
+
                         new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit1)
+                                .alongWith(new AutoDepositExtendCommand(robot, extension, intake, LIFT_DEPOSIT_POSITION, ARM_DEPOSIT_POSITION)),
+
+                        new WaitCommand(500),
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
+                        new WaitCommand(500),
+
+                        new AutoDepositRetractCommand(robot, extension, intake)
+
+
+
 //                        new WaitCommand(500),
 //                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake2),
 //                        new WaitCommand(500),

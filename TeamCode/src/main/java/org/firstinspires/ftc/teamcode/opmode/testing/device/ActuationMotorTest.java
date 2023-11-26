@@ -61,8 +61,8 @@ public class ActuationMotorTest extends OpMode {
         extensionPitchEncoder.setWraparound(true);
 
         pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
-                .setPIDController(new PIDController(5, 0, 0))
-                .setMotionProfile(0, new ProfileConstraints(6, 5, 5))
+                .setPIDController(new PIDController(2.5, 0, 0.075))
+                .setMotionProfile(0, new ProfileConstraints(20, 20, 20))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.07, 0.2)
                 .setErrorTolerance(0.03);
 

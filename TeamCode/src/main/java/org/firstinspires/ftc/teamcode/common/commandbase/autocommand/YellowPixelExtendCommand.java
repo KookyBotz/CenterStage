@@ -15,9 +15,9 @@ public class YellowPixelExtendCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> extension.setScoring(true)),
                 new InstantCommand(() -> extension.setFlip(false)),
                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.36)),
+                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.22)),
                 new WaitCommand(350),
-                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
+                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(330)),
                 new WaitUntilCommand(() -> robot.pitchActuator.hasReached() && robot.extensionActuator.hasReached())
         );
     }

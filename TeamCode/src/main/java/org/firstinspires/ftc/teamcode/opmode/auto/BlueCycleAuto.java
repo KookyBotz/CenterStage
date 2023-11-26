@@ -20,6 +20,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoStackExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.YellowPixelExtendCommand;
@@ -64,13 +66,13 @@ public class BlueCycleAuto extends CommandOpMode {
     };
 
     private Pose[] INTAKE_POSITIONS = new Pose[]{
-            new Pose(41, 48, 1.51),
-            new Pose(41, 48, 1.51)
+            new Pose(43.5, 47, 1.5),
+            new Pose(43.5, 47, 1.5)
     };
 
     private double[] PITCH_INTAKE_POSITIONS = new double[]{
-            3.309,
-            3.233
+            3.2075,
+            3.24
     };
 
     private final double LIFT_INTAKE_POSITION = 560;
@@ -160,35 +162,38 @@ public class BlueCycleAuto extends CommandOpMode {
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         // go to yellow pixel scoring pos
-                        new PositionCommand((Drivetrain) drivetrain, localizer, yellowScorePos),
-//                                .alongWith(new YellowPixelExtendCommand(robot, extension, intake)),
+                        new PositionCommand((Drivetrain) drivetrain, localizer, yellowScorePos)
+                                .alongWith(new YellowPixelExtendCommand(robot, extension, intake)),
 
-//                        // score yellow pixel
-//                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
-//                        new WaitCommand(200),
-//
-//                        // retract
-//                        new YellowPixelRetractCommand(robot, extension, intake),
-
-                        // go to purple pixel scoring pos
-                        new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos),
-//                                .alongWith(new PurplePixelExtendCommand(robot, extension, intake)),
-
-                        // score purple pixel
-//                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
-//                        new WaitCommand(300),
+                        // score yellow pixel
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
+                        new WaitCommand(500),
 
                         // retract
-//                        new PurplePixelRetractCommand(robot, extension, intake),
+                        new YellowPixelRetractCommand(robot, extension, intake),
+
+                        // go to purple pixel scoring pos
+                        new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos)
+                                .alongWith(new PurplePixelExtendCommand(robot, extension, intake)),
+
+                        // score purple pixel
+                        new WaitCommand(500),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
+                        new WaitCommand(500),
+
+                        // retract
+                        new PurplePixelRetractCommand(robot, extension, intake),
 
                         // first cycle intake position
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake1),
-                        new WaitCommand(500),
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit1),
-                        new WaitCommand(500),
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake2),
-                        new WaitCommand(500),
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit2)
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake1)
+                                .alongWith(new AutoStackExtendCommand(robot, extension, intake, LIFT_INTAKE_POSITION, PITCH_INTAKE_POSITIONS[0])),
+
+                        new AutoStackGrabCommand(robot, extension, intake),
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit1)
+//                        new WaitCommand(500),
+//                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake2),
+//                        new WaitCommand(500),
+//                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit2)
                 )
         );
     }

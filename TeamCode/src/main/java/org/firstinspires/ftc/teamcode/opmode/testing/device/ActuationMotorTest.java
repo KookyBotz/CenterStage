@@ -35,21 +35,11 @@ public class ActuationMotorTest extends OpMode {
 
     private double loopTime = 0.0;
 
-    public static double v = 0.0;
-    public static double a1 = 0.0;
-    public static double a2 = 0.0;
-
-    public static double P = 0.0;
+    public static double P = 5;
     public static double I = 0.0;
     public static double D = 0.0;
-    private double p = 0.0;
-    private double i = 0.0;
-    private double d = 0.0;
-    public static double F_MIN = 0.0;
-    public static double F_MAX = 0.0;
-    public static double armTargetPosition = 1.57;
-    public static double newTargetPos = 0;
-    private double liftTargetPosition = 0.0;
+    public static double F = 0.07;
+    public static double armTargetPosition = 1;
 
     @Override
     public void init() {
@@ -71,11 +61,10 @@ public class ActuationMotorTest extends OpMode {
         extensionPitchEncoder.setWraparound(true);
 
         pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
-                .setPIDController(new PIDController(1, 0.1, 0.05))
-                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED,  0.07)
-                .setErrorTolerance(0.01);
-
-        pitchActuator.setTargetPosition(Math.PI / 2);
+                .setPIDController(new PIDController(5, 0, 0))
+                .setMotionProfile(0, new ProfileConstraints(6, 5, 5))
+                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.07, 0.2)
+                .setErrorTolerance(0.03);
 
         telemetry.addLine("here");
         telemetry.update();
@@ -83,6 +72,8 @@ public class ActuationMotorTest extends OpMode {
 
     @Override
     public void loop() {
+        pitchActuator.setPID(P, I, D);
+        pitchActuator.setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, F);
 
         pitchActuator.read();
         pitchActuator.read();
@@ -94,7 +85,7 @@ public class ActuationMotorTest extends OpMode {
 
 
 
-        if(gamepad1.a) pitchActuator.setTargetPosition(armTargetPosition);
+        if(gamepad1.a) pitchActuator.setMotionProfileTargetPosition(armTargetPosition);
 
 
         pitchActuator.periodic();
@@ -119,7 +110,7 @@ public class ActuationMotorTest extends OpMode {
 //        telemetry.addData("voltage", extensionEncoder.getVoltage());
         telemetry.addData("power", pitchActuator.getPower());
         telemetry.addData("targetPosition", armTargetPosition);
-        telemetry.addData("targetPositionLift", pitchActuator.getTargetPosition());
+        telemetry.addData("targetPositionLift", pitchActuator.getState().x);
         telemetry.addData("currentPosition", pitchActuator.getPosition());
         telemetry.addData("reached", pitchActuator.hasReached());
 //        ProfileState state = pitchActuator.getState();

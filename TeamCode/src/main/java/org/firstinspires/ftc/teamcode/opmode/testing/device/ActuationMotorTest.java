@@ -83,8 +83,6 @@ public class ActuationMotorTest extends OpMode {
         pitchActuator.read();
         pitchActuator.read();
 
-
-
         if(gamepad1.a) pitchActuator.setMotionProfileTargetPosition(armTargetPosition);
 
 

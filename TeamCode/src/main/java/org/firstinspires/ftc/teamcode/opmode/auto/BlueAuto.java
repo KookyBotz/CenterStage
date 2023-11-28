@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Autonomous(name = "Blue Auto")
+@Autonomous(name = "Blue Auto PRELOAD")
 public class BlueAuto extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
@@ -83,12 +83,14 @@ public class BlueAuto extends CommandOpMode {
         robot.read();
         while (!isStarted()) {
             telemetry.addLine("auto in init");
+            telemetry.addData("POS", propPipeline.getLocation());
             telemetry.update();
         }
 
         localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
-        Side side = propPipeline.getLocation();
+//        Side side = propPipeline.getLocation();
+        Side side = Side.CENTER;
         portal.close();
 
         Pose yellowScorePos = new Pose();
@@ -100,18 +102,18 @@ public class BlueAuto extends CommandOpMode {
 
         switch (side) {
             case LEFT:
-                yellowScorePos = new Pose(21, -26.65, 1.5);
-                purpleScorePos = new Pose(26.5, -24.75, 1.5);
+                yellowScorePos = new Pose(21.5, -22.25, 1.52);
+                purpleScorePos = new Pose(36.5, -25, 1.5);
                 parkPos = new Pose(6, -31, 3 * Math.PI / 2);
                 break;
             case CENTER:
-                yellowScorePos = new Pose(27, -26.5, 1.5);
-                purpleScorePos = new Pose(35, -18, 1.5);
+                yellowScorePos = new Pose(28, -22.25, 1.52);
+                purpleScorePos = new Pose(36.5, -18, 1.52);
                 parkPos = new Pose(5, -31, 3 * Math.PI / 2);
                 break;
             case RIGHT:
-                yellowScorePos = new Pose(33.5, -26.25, 1.5);
-                purpleScorePos = new Pose(24, -5.5, 1.5);
+                yellowScorePos = new Pose(34, -22.25, 1.52);
+                purpleScorePos = new Pose(26.5, -5.5, 1.5);
                 parkPos = new Pose(2, -31, 3 * Math.PI / 2);
                 break;
             default:
@@ -129,14 +131,14 @@ public class BlueAuto extends CommandOpMode {
                         new InstantCommand(() -> extension.setScoring(true)),
                         new InstantCommand(() -> extension.setFlip(false)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.36)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(315)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.172)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(435)),
                         new WaitCommand(750),
-                        // open claw boi
+//                        // open claw boi
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
                         new WaitCommand(200),
-
-                        // retract
+//
+//                        // retract
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                         new WaitCommand(50),
                         new InstantCommand(() -> extension.setScoring(false)),
@@ -144,7 +146,7 @@ public class BlueAuto extends CommandOpMode {
                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475)),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT)),
                         new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(Math.PI)),
-
+//
                         new ParallelCommandGroup(
                                 new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos),
                                 new SequentialCommandGroup(
@@ -153,18 +155,18 @@ public class BlueAuto extends CommandOpMode {
                                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515))
                                 )
                         ),
-
-                        new WaitCommand(400),
+//
+                        new WaitCommand(2000),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
-                        new WaitCommand(300),
-
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
-
-                        new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
-                                .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
+                        new WaitCommand(300)
+//
+//                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+//                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+//                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
+//                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+//
+//                        new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
+//                                .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
                 )
         );
     }

@@ -14,7 +14,6 @@
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
-apply plugin: 'org.team11260.fast-load-plugin'
 
 buildscript {
     repositories {
@@ -22,9 +21,6 @@ buildscript {
         maven {
             url = 'https://www.matthewo.tech/maven/'
         }
-    }
-    dependencies {
-        classpath 'org.team11260:fast-load-plugin:0.1.1'
     }
 }
 
@@ -48,5 +44,4 @@ dependencies {
     implementation 'org.ftclib.ftclib:core:2.1.1'
     implementation 'org.apache.commons:commons-math3:3.6.1'
     implementation 'com.acmerobotics.roadrunner:core:0.5.5'
-    implementation 'org.team11260:fast-load:0.1.1'
 }

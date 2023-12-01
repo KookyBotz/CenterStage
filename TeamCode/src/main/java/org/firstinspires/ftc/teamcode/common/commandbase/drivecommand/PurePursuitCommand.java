@@ -27,7 +27,7 @@ public class PurePursuitCommand extends CommandBase {
     public static double yP = 0.0335;
     public static double yD = 0.006;
 
-    public static double hP = 0.5;
+    public static double hP = 1;
     public static double hD = 0.03;
 
     public static double kStatic = 0.05;

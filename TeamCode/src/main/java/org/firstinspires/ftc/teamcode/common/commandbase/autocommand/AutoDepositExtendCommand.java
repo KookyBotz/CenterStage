@@ -12,12 +12,12 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class AutoDepositExtendCommand extends SequentialCommandGroup {
     public AutoDepositExtendCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake, double length, double angle) {
         super(
-                new WaitCommand(650),
+                new WaitCommand(1500),
                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(angle)),
                 new WaitCommand(850),
                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(length)),
-                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.3)),
-                new WaitUntilCommand(() -> robot.pitchActuator.hasReached() && robot.extensionActuator.hasReached())
+                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.35)),
+                new WaitUntilCommand(()->robot.extensionActuator.hasReached())
         );
     }
 }

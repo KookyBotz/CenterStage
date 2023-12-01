@@ -12,14 +12,14 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class AutoDepositRetractCommand extends SequentialCommandGroup {
     public AutoDepositRetractCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake) {
         super(
-                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                new WaitCommand(200),
-                new InstantCommand(() -> extension.setScoring(false)),
-                new InstantCommand(() -> extension.setFlip(false)),
-                new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT)),
-                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(Math.PI)),
-                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
-                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515))
+                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0))
+//                new WaitCommand(200),
+//                new InstantCommand(() -> extension.setScoring(false)),
+//                new InstantCommand(() -> extension.setFlip(false)),
+//                new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT)),
+//                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(Math.PI)),
+//                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
+//                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515))
         );
     }
 }

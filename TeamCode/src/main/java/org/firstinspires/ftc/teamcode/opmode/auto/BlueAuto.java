@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -90,7 +91,7 @@ public class BlueAuto extends CommandOpMode {
         localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
 //        Side side = propPipeline.getLocation();
-        Side side = Side.CENTER;
+        Side side = Side.RIGHT;
         portal.close();
 
         Pose yellowScorePos = new Pose();
@@ -103,17 +104,17 @@ public class BlueAuto extends CommandOpMode {
         switch (side) {
             case LEFT:
                 yellowScorePos = new Pose(21.5, -22.25, 1.52);
-                purpleScorePos = new Pose(36.5, -25, 1.5);
+                purpleScorePos = new Pose(36.5, -24, 1.52);
                 parkPos = new Pose(6, -31, 3 * Math.PI / 2);
                 break;
             case CENTER:
                 yellowScorePos = new Pose(28, -22.25, 1.52);
-                purpleScorePos = new Pose(36.5, -18, 1.52);
+                purpleScorePos = new Pose(36, -18, 1.52);
                 parkPos = new Pose(5, -31, 3 * Math.PI / 2);
                 break;
             case RIGHT:
-                yellowScorePos = new Pose(34, -22.25, 1.52);
-                purpleScorePos = new Pose(26.5, -5.5, 1.5);
+                yellowScorePos = new Pose(34, -22.2, 1.52);
+                purpleScorePos = new Pose(26.5, -4.5, 1.52);
                 parkPos = new Pose(2, -31, 3 * Math.PI / 2);
                 break;
             default:
@@ -155,15 +156,16 @@ public class BlueAuto extends CommandOpMode {
                                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515))
                                 )
                         ),
-//
-                        new WaitCommand(2000),
+
+                        new WaitUntilCommand(() -> robot.pitchActuator.hasReached()),
+                        new WaitCommand(200),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
-                        new WaitCommand(300)
-//
-//                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
-//                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-//                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
-//                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                        new WaitCommand(500),
+
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT))
 //
 //                        new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
 //                                .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))

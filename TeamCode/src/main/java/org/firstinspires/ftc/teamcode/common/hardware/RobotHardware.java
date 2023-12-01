@@ -87,7 +87,7 @@ public class RobotHardware {
      * Voltage timer and voltage value.
      */
     private ElapsedTime voltageTimer = new ElapsedTime();
-    private double voltage = 0.0;
+    private double voltage = 12.0;
 
     /**
      * Singleton variables.

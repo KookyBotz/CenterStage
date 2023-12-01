@@ -12,12 +12,10 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class YellowPixelExtendCommand extends SequentialCommandGroup {
     public YellowPixelExtendCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake) {
         super(
-                new InstantCommand(() -> extension.setScoring(true)),
-                new InstantCommand(() -> extension.setFlip(false)),
-                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.22)),
+                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.35)),
+                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.21)),
                 new WaitCommand(350),
-                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(330)),
+                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(440)),
                 new WaitUntilCommand(() -> robot.pitchActuator.hasReached() && robot.extensionActuator.hasReached())
         );
     }

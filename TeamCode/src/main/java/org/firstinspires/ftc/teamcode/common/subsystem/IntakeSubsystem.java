@@ -115,7 +115,7 @@ public class IntakeSubsystem extends WSubsystem {
         if (pivotState == PivotState.SCORING) {
 
             double targetAngle = ((robot.pitchActuator.getPosition()) - ((((robot.pitchActuator.getPosition() < Math.PI / 2) ? 1 : 2) * Math.PI) / 3));
-            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(0 + MathUtils.map(targetAngle, 0, Math.PI / 2, 0.47, 0.96), 0.075, 0.96));
+            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2, 0.47, 0.96), 0.075, 0.96));
         }
     }
 
@@ -171,11 +171,11 @@ public class IntakeSubsystem extends WSubsystem {
             case RIGHT:
                 switch (state) {
                     case CLOSED:
-                        return 0.52;
+                        return 0.505;
                     case INTERMEDIATE:
-                        return 0.61; // 0.54
+                        return 0.6; // 0.54
                     case OPEN:
-                        return 0.91;
+                        return 0.9;
                     default:
                         return 0.0;
                 }

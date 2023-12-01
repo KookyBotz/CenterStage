@@ -20,12 +20,20 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoStackExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelRetractCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.YellowPixelExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.YellowPixelRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PurePursuitCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.PurePursuitPath;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.Waypoint;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
@@ -34,7 +42,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Autonomous(name = "Blue Auto PRELOAD")
+@Autonomous(name = "Blue Auto")
 public class BlueAuto extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
@@ -48,6 +56,30 @@ public class BlueAuto extends CommandOpMode {
 
 
     private double loopTime = 0.0;
+
+    private Pose[] DEPOSIT_POSITIONS = new Pose[]{
+            new Pose(32.5, -21, 1.5),
+            new Pose(33, -21, 1.5)
+    };
+
+    private Pose[] INTERMEDIATE_POSES = new Pose[]{
+            new Pose(48, -10, 1.5),
+            new Pose(48, 15, 1.5),
+    };
+
+    private Pose[] INTAKE_POSITIONS = new Pose[]{
+            new Pose(40.75, 65.25, 1.51),
+            new Pose(40.75, 43.5, 1.51)
+    };
+
+    private double[] PITCH_INTAKE_POSITIONS = new double[]{
+            3.3,
+            3.24
+    };
+
+    private final double LIFT_INTAKE_POSITION = 65;
+    private final double LIFT_DEPOSIT_POSITION = 543;
+    private final double ARM_DEPOSIT_POSITION = 0.32;
 
     @Override
     public void initialize() {
@@ -76,7 +108,7 @@ public class BlueAuto extends CommandOpMode {
                 .setAutoStopLiveView(true)
                 .build();
 
-        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         robot.addSubsystem(drivetrain, extension, intake);
         intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
@@ -91,7 +123,7 @@ public class BlueAuto extends CommandOpMode {
         localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
 //        Side side = propPipeline.getLocation();
-        Side side = Side.RIGHT;
+        Side side = Side.LEFT;
         portal.close();
 
         Pose yellowScorePos = new Pose();
@@ -103,17 +135,17 @@ public class BlueAuto extends CommandOpMode {
 
         switch (side) {
             case LEFT:
-                yellowScorePos = new Pose(21.5, -22.25, 1.52);
-                purpleScorePos = new Pose(36.5, -24, 1.52);
+                yellowScorePos = new Pose(21.5, -22.5, 1.52);
+                purpleScorePos = new Pose(27, -25, 1.52);
                 parkPos = new Pose(6, -31, 3 * Math.PI / 2);
                 break;
             case CENTER:
-                yellowScorePos = new Pose(28, -22.25, 1.52);
+                yellowScorePos = new Pose(28, -22.5, 1.52);
                 purpleScorePos = new Pose(36, -18, 1.52);
                 parkPos = new Pose(5, -31, 3 * Math.PI / 2);
                 break;
             case RIGHT:
-                yellowScorePos = new Pose(34, -22.2, 1.52);
+                yellowScorePos = new Pose(35, -22.5, 1.52);
                 purpleScorePos = new Pose(26.5, -4.5, 1.52);
                 parkPos = new Pose(2, -31, 3 * Math.PI / 2);
                 break;
@@ -123,49 +155,43 @@ public class BlueAuto extends CommandOpMode {
 
         }
 
+        PurePursuitPath intake1 = new PurePursuitPath(
+                new Waypoint(purpleScorePos, 20),
+                new Waypoint(INTERMEDIATE_POSES[0], 20),
+                new Waypoint(INTAKE_POSITIONS[0], 20)
+        );
+
+
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        // scoring pos
-                        new PositionCommand((Drivetrain) drivetrain, localizer, yellowScorePos),
+                        // go to yellow pixel scoring pos
+                        new PositionCommand((Drivetrain) drivetrain, localizer, yellowScorePos)
+                                .alongWith(new YellowPixelExtendCommand(robot, extension, intake)),
 
-                        // extend
-                        new InstantCommand(() -> extension.setScoring(true)),
-                        new InstantCommand(() -> extension.setFlip(false)),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.172)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(435)),
-                        new WaitCommand(750),
-//                        // open claw boi
+                        // score yellow pixel
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
                         new WaitCommand(200),
-//
-//                        // retract
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                        new WaitCommand(50),
-                        new InstantCommand(() -> extension.setScoring(false)),
-                        new InstantCommand(() -> extension.setFlip(false)),
-                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475)),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(Math.PI)),
-//
-                        new ParallelCommandGroup(
-                                new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos),
-                                new SequentialCommandGroup(
-                                        new WaitCommand(250),
-                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
-                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.515))
-                                )
-                        ),
 
-                        new WaitUntilCommand(() -> robot.pitchActuator.hasReached()),
-                        new WaitCommand(200),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
+                        // retract
+                        new YellowPixelRetractCommand(robot, extension, intake),
+
+                        // go to purple pixel scoring pos
+                        new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos)
+                                .alongWith(new PurplePixelExtendCommand(robot, extension, intake)),
+
+                        // score purple pixel
                         new WaitCommand(500),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
+                        new WaitCommand(350),
 
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT))
+                        new PurplePixelRetractCommand(robot, extension, intake),
+
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake1)
+                                .alongWith(new AutoStackExtendCommand(robot, extension, intake, LIFT_INTAKE_POSITION, PITCH_INTAKE_POSITIONS[0])),
+
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT)
+
+
 //
 //                        new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
 //                                .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
@@ -175,16 +201,14 @@ public class BlueAuto extends CommandOpMode {
 
     @Override
     public void run() {
-
         robot.read();
-
         super.run();
         robot.periodic();
         localizer.periodic();
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("voltage", robot.getVoltage());
+        telemetry.addLine(localizer.getPos().toString());
         loopTime = loop;
         telemetry.update();
 

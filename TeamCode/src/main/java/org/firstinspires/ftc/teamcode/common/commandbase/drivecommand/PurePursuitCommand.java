@@ -21,14 +21,14 @@ public class PurePursuitCommand extends CommandBase {
     private boolean PID = false;
     private boolean finished = false;
 
-    public static double xP = 0.0385;
+    public static double xP = 0.0335;
     public static double xD = 0.006;
 
-    public static double yP = 0.0385;
+    public static double yP = 0.0335;
     public static double yD = 0.006;
 
-    public static double hP = 1;
-    public static double hD = 0.04;
+    public static double hP = 0.5;
+    public static double hD = 0.03;
 
     public static double kStatic = 0.05;
 
@@ -71,7 +71,6 @@ public class PurePursuitCommand extends CommandBase {
             if (Math.abs(y_rotated) < 0.01) y_rotated = 0;
             else y_rotated += kStatic * Math.signum(y_rotated);
             if (Math.abs(hPower) < 0.01) hPower = 0;
-            else hPower += kStatic * Math.signum(hPower);
 
             drivetrain.set(new Pose((y_rotated / robot.getVoltage() * 12.5) *1.6, x_rotated / robot.getVoltage() * 12.5, hPower / robot.getVoltage() * 12.5));
         } else {

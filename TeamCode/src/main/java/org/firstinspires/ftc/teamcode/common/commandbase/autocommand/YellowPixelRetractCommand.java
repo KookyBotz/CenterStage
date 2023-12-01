@@ -18,7 +18,7 @@ public class YellowPixelRetractCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> extension.setScoring(false)),
                 new InstantCommand(() -> extension.setFlip(false)),
                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475)),
-                new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT))
+                new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT))
         );
     }
 }

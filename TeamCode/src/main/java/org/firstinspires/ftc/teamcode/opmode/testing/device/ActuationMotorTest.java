@@ -25,31 +25,31 @@ public class ActuationMotorTest extends OpMode {
     public AbsoluteAnalogEncoder extensionPitchEncoder;
     public AnalogInput extensionPitchEnc;
 
-    public DcMotorEx extensionMotor;
     public DcMotorEx armMotor;
 
-    public WEncoder extensionEncoder;
 
     public WActuatorGroup pitchActuator;
     public WActuatorGroup extensionActuator;
 
     private double loopTime = 0.0;
 
-    public static double P = 5;
+    public static double P = 1;
     public static double I = 0.0;
-    public static double D = 0.0;
+    public static double D = 0.045;
     public static double F = 0.07;
+
+    public static double A = 10;
+    public static double DA = 10;
+    public static double V = 10;
+
     public static double armTargetPosition = 1;
 
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        extensionMotor = hardwareMap.get(DcMotorEx.class, "extensionMotor");
         armMotor = hardwareMap.get(DcMotorEx.class, "extensionPitchMotor");
         armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        extensionEncoder = new WEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
 
         // a, lift, went up with 0.1
         // b, arm, went down with 0.1
@@ -61,9 +61,9 @@ public class ActuationMotorTest extends OpMode {
         extensionPitchEncoder.setWraparound(true);
 
         pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
-                .setPIDController(new PIDController(2.5, 0, 0.075))
-                .setMotionProfile(0, new ProfileConstraints(20, 20, 20))
-                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.07, 0.2)
+                .setPIDController(new PIDController(1, 0, 0.045))
+                .setMotionProfile(0, new ProfileConstraints(5, 100, 100))
+                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.04)
                 .setErrorTolerance(0.03);
 
         telemetry.addLine("here");
@@ -72,19 +72,22 @@ public class ActuationMotorTest extends OpMode {
 
     @Override
     public void loop() {
-        pitchActuator.setPID(P, I, D);
-        pitchActuator.setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, F);
+//        pitchActuator.setPID(P, I, D);
+//        pitchActuator.setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, F);
 
         pitchActuator.read();
-        pitchActuator.read();
-        pitchActuator.read();
-        pitchActuator.read();
-        pitchActuator.read();
-        pitchActuator.read();
-        pitchActuator.read();
 
-        if(gamepad1.a) pitchActuator.setMotionProfileTargetPosition(armTargetPosition);
 
+        if(gamepad1.a) pitchActuator.setMotionProfileTargetPosition(0);
+        if(gamepad1.b) pitchActuator.setMotionProfileTargetPosition(3);
+//        if(gamepad1.x) pitchActuator.setMotionProfile(0.2, new ProfileConstraints(V, A, DA));
+
+
+        try {
+            Thread.sleep(5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         pitchActuator.periodic();
 

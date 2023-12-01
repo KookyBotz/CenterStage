@@ -16,7 +16,7 @@ public class AutoStackGrabCommand extends SequentialCommandGroup {
         super(
                 new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
                 new WaitCommand(200),
-                new InstantCommand(()->robot.pitchActuator.setMotionProfileTargetPosition(Math.PI)),
+                new InstantCommand(()->robot.pitchActuator.setMotionProfileTargetPosition(3)),
                 new WaitCommand(100),
                 new InstantCommand(()->robot.extensionActuator.setMotionProfileTargetPosition(0))
 

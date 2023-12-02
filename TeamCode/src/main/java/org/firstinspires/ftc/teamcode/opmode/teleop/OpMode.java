@@ -45,7 +45,6 @@ public class OpMode extends CommandOpMode {
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
 
-    public static double targetpos = 0;
     public int height = 0;
 
     public boolean aButton = true;
@@ -67,7 +66,7 @@ public class OpMode extends CommandOpMode {
         intake = new IntakeSubsystem();
         robot.addSubsystem(drivetrain, extension, intake);
 
-        robot.intakePivotActuator.setTargetPosition(targetpos);
+        robot.intakePivotActuator.setTargetPosition(0);
         robot.intakePivotActuator.write();
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
@@ -89,7 +88,7 @@ public class OpMode extends CommandOpMode {
                     new SequentialCommandGroup(
                         new InstantCommand(() -> extension.setScoring(false)),
                         new InstantCommand(() -> extension.setFlip(false)),
-                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.06)),
                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                         new WaitCommand(250),
                         new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
@@ -112,7 +111,7 @@ public class OpMode extends CommandOpMode {
                                                 new InstantCommand(() -> extension.setFlip(false)),
                                                 new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                                                 new WaitCommand(250),
-                                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.06)),
                                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
                                                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))),
@@ -143,7 +142,7 @@ public class OpMode extends CommandOpMode {
                                 new SequentialCommandGroup(
                                         new InstantCommand(() -> extension.setScoring(false)),
                                         new InstantCommand(() -> extension.setFlip(false)),
-                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(-0.06)),
                                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                         new WaitCommand(250),
                                         new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),

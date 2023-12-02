@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class PurplePixelRetractCommand extends SequentialCommandGroup {
     public PurplePixelRetractCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake) {
         super(
-                new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT)
+                new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT)
         );
     }
 }

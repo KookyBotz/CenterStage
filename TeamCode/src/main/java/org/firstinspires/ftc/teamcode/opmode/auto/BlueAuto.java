@@ -61,28 +61,31 @@ public class BlueAuto extends CommandOpMode {
     private double loopTime = 0.0;
 
     private Pose[] DEPOSIT_POSITIONS = new Pose[]{
-            new Pose(30, -22, 1.52),
-            new Pose(30, -22, 1.52)
+            new Pose(30, -21.5, 1.52),
+            new Pose(30, -21.5, 1.52)
     };
 
     private Pose[] INTERMEDIATE_POSES = new Pose[]{
             new Pose(48, -10, 1.5),
-            new Pose(48, 15, 1.5),
+            new Pose(48, 0, 1.52),
+            new Pose(50, -10, 1.53)
     };
 
     private Pose[] INTAKE_POSITIONS = new Pose[]{
-            new Pose(40.75, 63, 1.51),
-            new Pose(40.75, 43.5, 1.51)
+            new Pose(40, 63.25, 1.5),
+            new Pose(40.75, 58.25, 1.5)
     };
 
     private double[] PITCH_INTAKE_POSITIONS = new double[]{
             3.3,
-            3.24
+            3.3
     };
 
     private final double LIFT_INTAKE_POSITION = 100;
-    private final double LIFT_DEPOSIT_POSITION = 555;
-    private final double ARM_DEPOSIT_POSITION = 0.34;
+    private final double LIFT_INTAKE_POSITION_2 = 260;
+
+    private final double LIFT_DEPOSIT_POSITION = 570;
+    private final double ARM_DEPOSIT_POSITION = 0.37;
 
     @Override
     public void initialize() {
@@ -170,6 +173,18 @@ public class BlueAuto extends CommandOpMode {
                 new Waypoint(DEPOSIT_POSITIONS[0], 20)
         );
 
+        PurePursuitPath intake2 = new PurePursuitPath(
+                new Waypoint(DEPOSIT_POSITIONS[0], 20),
+                new Waypoint(INTERMEDIATE_POSES[0], 20),
+                new Waypoint(INTAKE_POSITIONS[1], 20)
+        );
+
+        PurePursuitPath deposit2 = new PurePursuitPath(
+                new Waypoint(INTAKE_POSITIONS[1], 20),
+                new Waypoint(INTERMEDIATE_POSES[2], 20),
+                new Waypoint(DEPOSIT_POSITIONS[1], 20)
+        );
+
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
@@ -207,7 +222,23 @@ public class BlueAuto extends CommandOpMode {
                         new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
                         new WaitCommand(500),
 
-                        new AutoDepositRetractCommand(robot, extension, intake)
+                        new AutoDepositRetractCommand(robot, extension, intake),
+
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake2)
+                                .alongWith(new AutoStackExtendCommand(robot, extension, intake, LIFT_INTAKE_POSITION_2, PITCH_INTAKE_POSITIONS[1])),
+
+                        new AutoStackGrabCommand(robot, extension, intake),
+
+                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit2)
+                                .alongWith(new AutoDepositExtendCommand(robot, extension, intake, LIFT_DEPOSIT_POSITION, ARM_DEPOSIT_POSITION)),
+
+                        new WaitCommand(500),
+                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
+                        new WaitCommand(500),
+
+                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
+                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT))
+
 
 
 //

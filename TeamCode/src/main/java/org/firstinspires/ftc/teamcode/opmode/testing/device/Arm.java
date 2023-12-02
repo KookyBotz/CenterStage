@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.testing.device;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -19,6 +21,8 @@ public class Arm extends OpMode {
 
     @Override
     public void init() {
+
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         extensionEncoder = new WEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
 
         this.extensionPitchEnc = hardwareMap.get(AnalogInput.class, "extensionPitchEncoder");

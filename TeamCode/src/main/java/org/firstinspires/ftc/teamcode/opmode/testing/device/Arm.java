@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 
-
+@Disabled
 @TeleOp(name = "arm")
 public class Arm extends OpMode {
     public AbsoluteAnalogEncoder extensionPitchEncoder;

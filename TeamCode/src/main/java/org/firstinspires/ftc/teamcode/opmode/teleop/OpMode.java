@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Config
-@TeleOp(name = "OpMode")
+@TeleOp(name = "teleop")
 public class OpMode extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();

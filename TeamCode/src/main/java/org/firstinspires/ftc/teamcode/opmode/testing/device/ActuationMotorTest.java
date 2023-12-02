@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 
+@Disabled
 @Config
 @TeleOp(name = "ActuationMotorTest")
 public class ActuationMotorTest extends OpMode {

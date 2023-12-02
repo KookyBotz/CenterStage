@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
+@Disabled
 @Config
 @TeleOp(name = "TuningOpMode")
 public class TuningOpMode extends CommandOpMode {

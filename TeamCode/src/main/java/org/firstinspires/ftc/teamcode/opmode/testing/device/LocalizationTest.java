@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
+@Disabled
 @Autonomous(name = "LocalizationTest")
 public class LocalizationTest extends CommandOpMode {
 

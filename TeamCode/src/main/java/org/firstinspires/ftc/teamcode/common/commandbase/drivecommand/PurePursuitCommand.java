@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.common.commandbase.drivecommand;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.Localizer;
@@ -38,6 +39,8 @@ public class PurePursuitCommand extends CommandBase {
 
     private RobotHardware robot = RobotHardware.getInstance();
 
+    private ElapsedTime timer;
+
     public PurePursuitCommand(Drivetrain drivetrain, Localizer localizer, PurePursuitPath purePursuitPath) {
         this.drivetrain = drivetrain;
         this.localizer = localizer;
@@ -51,6 +54,10 @@ public class PurePursuitCommand extends CommandBase {
 
         Pose robotPose = localizer.getPos();
         Pose targetPose = purePursuitPath.update(robotPose);
+
+        if(PID && timer == null){
+            timer = new ElapsedTime();
+        }
 
         if (PID && targetPose.subt(robotPose).toVec2D().magnitude() < PurePursuitConfig.ALLOWED_TRANSLATIONAL_ERROR
                 && Math.abs(targetPose.subt(robotPose).heading) < PurePursuitConfig.ALLOWED_HEADING_ERROR) finished = true;
@@ -88,7 +95,7 @@ public class PurePursuitCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return PID && finished;
+        return PID && finished || (timer != null && timer.milliseconds() > 2000);
     }
 
     @Override

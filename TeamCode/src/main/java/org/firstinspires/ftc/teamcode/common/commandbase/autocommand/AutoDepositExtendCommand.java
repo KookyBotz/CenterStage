@@ -16,7 +16,7 @@ public class AutoDepositExtendCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(angle)),
                 new WaitCommand(850),
                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(length)),
-                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.36)),
+                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.33)),
                 new WaitUntilCommand(()->robot.extensionActuator.hasReached())
         );
     }

@@ -8,13 +8,13 @@ public class InverseKinematics {
         double distance_sensor_input = 3;
         double backdrop_front = 1.41;
         double perp_backdrop_distance = 0.0;
-        double height_backdrop_distance = 0.0;
+        double height_backdrop_distance = 1.75;
         double ticks_per_inch = 26;
 
         double d_retracted = 11.7416379163791637916379;
         double d_extended = 33.44;
 
-        double t_y = (7.25 + 22.5 * ((target_backdrop_height) / 10.0)) + perp_backdrop_distance * Math.sin(Math.PI / 6) + height_backdrop_distance * Math.sin(2 * Math.PI / 3) + (18/25.4);
+        double t_y = (5 + 22.5 * ((target_backdrop_height) / 10.0)) + perp_backdrop_distance * Math.sin(Math.PI / 6) + height_backdrop_distance * Math.sin(2 * Math.PI / 3);
         double t_x = -(((20.125 * t_y) / 30.0) - backdrop_front + distance_sensor_input + perp_backdrop_distance * Math.cos(Math.PI / 6) + height_backdrop_distance * Math.cos(2 * Math.PI / 3));
 
         double x_c = 2.48; // gear center_x

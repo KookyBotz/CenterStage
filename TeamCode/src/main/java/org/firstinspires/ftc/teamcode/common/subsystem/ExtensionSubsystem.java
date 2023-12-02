@@ -99,7 +99,7 @@ public class ExtensionSubsystem extends WSubsystem {
 
     }
 
-    public double getBackdropHeight() {
+    public int getBackdropHeight() {
         return backdropHeight;
     }
 

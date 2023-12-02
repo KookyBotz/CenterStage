@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
@@ -13,12 +15,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ScoreCommand;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Config
@@ -42,6 +46,7 @@ public class OpMode extends CommandOpMode {
     private boolean lastJoystickDown = false;
 
     public static double targetpos = 0;
+    public int height = 0;
 
     public boolean aButton = true;
 
@@ -49,7 +54,7 @@ public class OpMode extends CommandOpMode {
     public void initialize() {
         CommandScheduler.getInstance().reset();
 
-//        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         Globals.IS_AUTO = false;
         Globals.IS_USING_IMU = true;
 
@@ -154,40 +159,64 @@ public class OpMode extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
                         .whenPressed(new SequentialCommandGroup(
                                 new InstantCommand(() -> extension.setScoring(true)),
-                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+                                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(InverseKinematics.t_angle)),
                                 new WaitCommand(200),
                                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
                                 new WaitCommand(400),
-                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())))
-                        );
+                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(InverseKinematics.t_extension))
+                        ));
 
         // INCREASE HEIGHT
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                .whenPressed(new SequentialCommandGroup(
+//                        new InstantCommand(() -> extension.incrementBackdropHeight(1)),
+//                        new InstantCommand(() -> InverseKinematics.calculateTarget(10, height)),
+//                        new ConditionalCommand(
+//                                new SequentialCommandGroup(
+//                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+//                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+//                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue()))
+//                                ),
+//                                new WaitCommand(1),
+//                                () -> extension.getScoring()
+//                        )));
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                        .whenPressed(new SequentialCommandGroup(
+                                new InstantCommand(() -> height += 1),
+                                new InstantCommand(() -> InverseKinematics.calculateTarget(5, height)),
+                                new ConditionalCommand(
+                                        new ScoreCommand(robot, 3, height), // Technically there are redundant calculations being done here.
+                                        new WaitCommand(1),
+                                        () -> extension.getScoring()
+                                )
+                        ));
+//
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
                 .whenPressed(new SequentialCommandGroup(
-                        new InstantCommand(() -> extension.incrementBackdropHeight(1)),
+                        new InstantCommand(() -> height -= 1),
                         new ConditionalCommand(
-                                new SequentialCommandGroup(
-                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
-                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue()))
-                                ),
+                                new ScoreCommand(robot, 5, height),
                                 new WaitCommand(1),
                                 () -> extension.getScoring()
-                        )));
-
-        // DECREASE HEIGHT
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new SequentialCommandGroup(
-                        new InstantCommand(() -> extension.incrementBackdropHeight(-1)),
-                        new ConditionalCommand(
-                                new SequentialCommandGroup(
-                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
-                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue()))
-                                ),
-                                new WaitCommand(1),
-                                () -> extension.getScoring()
-                        )));
+                        )
+                ));
+//
+//
+//
+//        // DECREASE HEIGHT
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//                .whenPressed(new SequentialCommandGroup(
+//                        new InstantCommand(() -> extension.incrementBackdropHeight(-1)),
+//                        new ConditionalCommand(
+//                                new SequentialCommandGroup(
+//                                        new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
+//                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+//                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue()))
+//                                ),
+//                                new WaitCommand(1),
+//                                () -> extension.getScoring()
+//                        )));
 
         robot.read();
         while (opModeInInit()) {
@@ -206,24 +235,29 @@ public class OpMode extends CommandOpMode {
         boolean currentJoystickDown = gamepad2.right_stick_y > 0.5;
         if (currentJoystickUp && !lastJoystickUp) {
             // height go upp
-            extension.incrementBackdropHeight(1);
             CommandScheduler.getInstance().schedule(
                     new SequentialCommandGroup(
-                            new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
-                            new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                            new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())))
-            );
+                            new InstantCommand(() -> extension.incrementBackdropHeight(1)),
+                            new ConditionalCommand(
+                                    new ScoreCommand(robot, 3, extension.getBackdropHeight()),
+                                    new WaitCommand(1),
+                                    () -> extension.getScoring()
+                            )
+            ));
         }
 
         if (currentJoystickDown && !lastJoystickDown) {
             // gheight go dwodn
-            extension.incrementBackdropHeight(-1);
             CommandScheduler.getInstance().schedule(
                     new SequentialCommandGroup(
-                            new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(((Double) extension.getPair().first).doubleValue())),
-                            new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                            new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(((Integer) extension.getPair().second).doubleValue())))
-            );
+                            new InstantCommand(() -> extension.incrementBackdropHeight(-1)),
+                            new InstantCommand(() -> InverseKinematics.calculateTarget(3, extension.getBackdropHeight())),
+                            new ConditionalCommand(
+                                    new ScoreCommand(robot, 3, extension.getBackdropHeight()),
+                                    new WaitCommand(1),
+                                    () -> extension.getScoring()
+                            )
+                    ));
         }
         lastJoystickUp = currentJoystickUp;
         lastJoystickDown = currentJoystickDown;
@@ -234,10 +268,12 @@ public class OpMode extends CommandOpMode {
 
         lastRightStickGreat = rightStickGreat;
 
-//        telemetry.addData("extension", robot.extensionActuator.getPosition());
-//        telemetry.addData("angle", robot.pitchActuator.getPosition());
-//        telemetry.
+        telemetry.addData("extension", robot.extensionActuator.getPosition());
+        telemetry.addData("angle", robot.pitchActuator.getPosition());
         telemetry.addData("LEVEL", extension.getBackdropHeight());
+        telemetry.addData("Textension", InverseKinematics.t_extension);
+        telemetry.addData("Tangle", InverseKinematics.t_angle);
+
 //        telemetry.addData("targetAngle", extension.t_angle);
 //        telemetry.addData("targetExtension", robot.extensionActuator.getTargetPosition());
 //        telemetry.addData("diffX", extension.diff_x);

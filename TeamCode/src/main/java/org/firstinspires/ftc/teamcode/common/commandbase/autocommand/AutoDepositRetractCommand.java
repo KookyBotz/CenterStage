@@ -17,10 +17,11 @@ public class AutoDepositRetractCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(3.3)),
                 new InstantCommand(() -> extension.setScoring(false)),
                 new InstantCommand(() -> extension.setFlip(false)),
-                new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT)),
                 new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.35)),
-                new WaitCommand(1000)
+                new WaitCommand(500),
+                new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT)),
+                new WaitCommand(500)
         );
     }
 }

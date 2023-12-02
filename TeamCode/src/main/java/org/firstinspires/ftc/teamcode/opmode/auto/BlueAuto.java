@@ -67,16 +67,17 @@ public class BlueAuto extends CommandOpMode {
     };
 
     private Pose[] INTERMEDIATE_POSES = new Pose[]{
-            new Pose(48, -10, 1.5),
-            new Pose(48, 0, 1.52),
+            new Pose(48, -10, 1.49),
+            new Pose(48, 0, 1.49),
+
             new Pose(50, -10, 1.53),
             new Pose(52, -10, 1.53)
     };
 
     private Pose[] INTAKE_POSITIONS = new Pose[]{
-            new Pose(40, 63.25, 1.5),
-            new Pose(41, 58, 1.5),
-            new Pose(41.5, 55.25, 1.5)
+            new Pose(40, 63.25, 1.49),
+            new Pose(40.75, 58, 1.49),
+            new Pose(41.5, 55.25, 1.49)
     };
 
     private double[] PITCH_INTAKE_POSITIONS = new double[]{

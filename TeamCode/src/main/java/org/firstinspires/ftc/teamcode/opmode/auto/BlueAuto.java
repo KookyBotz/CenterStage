@@ -60,38 +60,6 @@ public class BlueAuto extends CommandOpMode {
 
     private double loopTime = 0.0;
 
-    private Pose[] DEPOSIT_POSITIONS = new Pose[]{
-            new Pose(30, -21.5, 1.52),
-            new Pose(30, -20.75, 1.52),
-            new Pose(30, -20.5, 1.52)
-    };
-
-    private Pose[] INTERMEDIATE_POSES = new Pose[]{
-            new Pose(48, -10, 1.49),
-            new Pose(48, 0, 1.49),
-
-            new Pose(50, -10, 1.53),
-            new Pose(52, -10, 1.53)
-    };
-
-    private Pose[] INTAKE_POSITIONS = new Pose[]{
-            new Pose(40, 63.25, 1.49),
-            new Pose(40.75, 58, 1.49),
-            new Pose(41.5, 55.25, 1.49)
-    };
-
-    private double[] PITCH_INTAKE_POSITIONS = new double[]{
-            3.3,
-            3.3,
-            3.3
-    };
-
-    private final double LIFT_INTAKE_POSITION = 100;
-    private final double LIFT_INTAKE_POSITION_2 = 260;
-    private final double LIFT_INTAKE_POSITION_3 = 340;
-
-    private final double LIFT_DEPOSIT_POSITION = 580;
-    private final double ARM_DEPOSIT_POSITION = 0.36;
 
     @Override
     public void initialize() {
@@ -134,8 +102,7 @@ public class BlueAuto extends CommandOpMode {
 
         localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
-//        Side side = propPipeline.getLocation();
-        Side side = Side.LEFT;
+        Side side = propPipeline.getLocation();
         portal.close();
 
         Pose yellowScorePos = new Pose();
@@ -152,56 +119,19 @@ public class BlueAuto extends CommandOpMode {
                 parkPos = new Pose(6, -31, 3 * Math.PI / 2);
                 break;
             case CENTER:
-                yellowScorePos = new Pose(27.5, -22.5, 1.52);
+                yellowScorePos = new Pose(27.75, -22.5, 1.52);
                 purpleScorePos = new Pose(36, -18, 1.52);
-                parkPos = new Pose(5, -31, 3 * Math.PI / 2);
+                parkPos = new Pose(6, -31, 3 * Math.PI / 2);
                 break;
             case RIGHT:
-                yellowScorePos = new Pose(33.5, -22.5, 1.52);
-                purpleScorePos = new Pose(26.5, -4.5, 1.52);
-                parkPos = new Pose(2, -31, 3 * Math.PI / 2);
+                yellowScorePos = new Pose(34.25, -22.5, 1.52);
+                purpleScorePos = new Pose(26, -5, 1.52);
+                parkPos = new Pose(6, -31, 3 * Math.PI / 2);
                 break;
             default:
-                // your mom
                 break;
 
         }
-
-        PurePursuitPath intake1 = new PurePursuitPath(
-                new Waypoint(purpleScorePos, 20),
-                new Waypoint(INTERMEDIATE_POSES[0], 20),
-                new Waypoint(INTAKE_POSITIONS[0], 20)
-        );
-
-        PurePursuitPath deposit1 = new PurePursuitPath(
-                new Waypoint(INTAKE_POSITIONS[0], 20),
-                new Waypoint(INTERMEDIATE_POSES[1], 20),
-                new Waypoint(DEPOSIT_POSITIONS[0], 20)
-        );
-
-        PurePursuitPath intake2 = new PurePursuitPath(
-                new Waypoint(DEPOSIT_POSITIONS[0], 20),
-                new Waypoint(INTERMEDIATE_POSES[0], 20),
-                new Waypoint(INTAKE_POSITIONS[1], 20)
-        );
-
-        PurePursuitPath deposit2 = new PurePursuitPath(
-                new Waypoint(INTAKE_POSITIONS[1], 20),
-                new Waypoint(INTERMEDIATE_POSES[2], 20),
-                new Waypoint(DEPOSIT_POSITIONS[1], 20)
-        );
-
-        PurePursuitPath intake3 = new PurePursuitPath(
-                new Waypoint(DEPOSIT_POSITIONS[1], 20),
-                new Waypoint(INTERMEDIATE_POSES[0], 20),
-                new Waypoint(INTAKE_POSITIONS[2], 20)
-        );
-
-        PurePursuitPath deposit3 = new PurePursuitPath(
-                new Waypoint(INTAKE_POSITIONS[2], 20),
-                new Waypoint(INTERMEDIATE_POSES[3], 20),
-                new Waypoint(DEPOSIT_POSITIONS[2], 20)
-        );
 
 
         CommandScheduler.getInstance().schedule(
@@ -215,7 +145,7 @@ public class BlueAuto extends CommandOpMode {
                         new WaitCommand(200),
 
                         // retract
-                        new YellowPixelRetractCommand(robot, extension, intake),
+                        new YellowPixelRetractCommand(robot, extension, intake, ClawSide.RIGHT),
 
                         // go to purple pixel scoring pos
                         new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos)
@@ -226,56 +156,10 @@ public class BlueAuto extends CommandOpMode {
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT)),
                         new WaitCommand(350),
 
-                        new PurplePixelRetractCommand(robot, extension, intake),
+                        new PurplePixelRetractCommand(robot, extension, intake, ClawSide.LEFT),
 
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake1)
-                                .alongWith(new AutoStackExtendCommand(robot, extension, intake, LIFT_INTAKE_POSITION, PITCH_INTAKE_POSITIONS[0])),
-
-                        new AutoStackGrabCommand(robot, extension, intake),
-
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit1)
-                                .alongWith(new AutoDepositExtendCommand(robot, extension, intake, LIFT_DEPOSIT_POSITION, ARM_DEPOSIT_POSITION)),
-
-                        new WaitCommand(500),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
-                        new WaitCommand(500),
-
-                        new AutoDepositRetractCommand(robot, extension, intake),
-
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake2)
-                                .alongWith(new AutoStackExtendCommand(robot, extension, intake, LIFT_INTAKE_POSITION_2, PITCH_INTAKE_POSITIONS[1])),
-
-                        new AutoStackGrabCommand(robot, extension, intake),
-
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit2)
-                                .alongWith(new AutoDepositExtendCommand(robot, extension, intake, LIFT_DEPOSIT_POSITION, ARM_DEPOSIT_POSITION)),
-
-                        new WaitCommand(500),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
-                        new WaitCommand(500),
-
-                        new AutoDepositRetractCommand(robot, extension, intake),
-
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, intake3)
-                                .alongWith(new AutoStackExtendCommand(robot, extension, intake, LIFT_INTAKE_POSITION_3, PITCH_INTAKE_POSITIONS[2])),
-
-                        new AutoStackGrabCommand(robot, extension, intake),
-
-                        new PurePursuitCommand((Drivetrain) drivetrain, localizer, deposit3)
-                                .alongWith(new AutoDepositExtendCommand(robot, extension, intake, LIFT_DEPOSIT_POSITION, ARM_DEPOSIT_POSITION)),
-
-                        new WaitCommand(500),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
-                        new WaitCommand(500),
-
-                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT))
-
-
-
-//
-//                        new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
-//                                .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
+                        new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
+                                .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
                 )
         );
     }

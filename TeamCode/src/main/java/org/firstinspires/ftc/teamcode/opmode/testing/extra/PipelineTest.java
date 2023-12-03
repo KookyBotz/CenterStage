@@ -24,7 +24,7 @@ public class PipelineTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Globals.COLOR = Side.BLUE;
+        Globals.COLOR = Side.RED;
 
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()

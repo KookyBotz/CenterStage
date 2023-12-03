@@ -160,11 +160,11 @@ public class IntakeSubsystem extends WSubsystem {
             case LEFT:
                 switch (state) {
                     case CLOSED:
-                        return 0.09;
+                        return 0.08;
                     case INTERMEDIATE:
-                        return 0.13;
+                        return 0.12;
                     case OPEN:
-                        return 0.4;
+                        return 0.39;
                     default:
                         return 0.0;
                 }

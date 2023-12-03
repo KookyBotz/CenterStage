@@ -165,6 +165,13 @@ public class OpMode extends CommandOpMode {
                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(InverseKinematics.t_extension))
                         ));
 
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                        .whenPressed(new InstantCommand(() -> extension.setBackdropHeight(6)
+                        ));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new InstantCommand(() -> extension.setBackdropHeight(0)
+                ));
+
         // INCREASE HEIGHT
 //        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
 //                .whenPressed(new SequentialCommandGroup(
@@ -180,26 +187,26 @@ public class OpMode extends CommandOpMode {
 //                                () -> extension.getScoring()
 //                        )));
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                        .whenPressed(new SequentialCommandGroup(
-                                new InstantCommand(() -> height += 1),
-                                new InstantCommand(() -> InverseKinematics.calculateTarget(5, height)),
-                                new ConditionalCommand(
-                                        new ScoreCommand(robot, 3, height), // Technically there are redundant calculations being done here.
-                                        new WaitCommand(1),
-                                        () -> extension.getScoring()
-                                )
-                        ));
-//
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                .whenPressed(new SequentialCommandGroup(
-                        new InstantCommand(() -> height -= 1),
-                        new ConditionalCommand(
-                                new ScoreCommand(robot, 5, height),
-                                new WaitCommand(1),
-                                () -> extension.getScoring()
-                        )
-                ));
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                        .whenPressed(new SequentialCommandGroup(
+//                                new InstantCommand(() -> height += 1),
+//                                new InstantCommand(() -> InverseKinematics.calculateTarget(5, height)),
+//                                new ConditionalCommand(
+//                                        new ScoreCommand(robot, 3, height), // Technically there are redundant calculations being done here.
+//                                        new WaitCommand(1),
+//                                        () -> extension.getScoring()
+//                                )
+//                        ));
+////
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                .whenPressed(new SequentialCommandGroup(
+//                        new InstantCommand(() -> height -= 1),
+//                        new ConditionalCommand(
+//                                new ScoreCommand(robot, 5, height),
+//                                new WaitCommand(1),
+//                                () -> extension.getScoring()
+//                        )
+//                ));
 //
 //
 //
@@ -237,8 +244,10 @@ public class OpMode extends CommandOpMode {
             CommandScheduler.getInstance().schedule(
                     new SequentialCommandGroup(
                             new InstantCommand(() -> extension.incrementBackdropHeight(1)),
+                            new InstantCommand(() -> InverseKinematics.calculateTarget(5, extension.getBackdropHeight())),
+                            new InstantCommand(() -> System.out.println(extension.getBackdropHeight())),
                             new ConditionalCommand(
-                                    new ScoreCommand(robot, 3, extension.getBackdropHeight()),
+                                    new ScoreCommand(robot, 5, extension.getBackdropHeight()),
                                     new WaitCommand(1),
                                     () -> extension.getScoring()
                             )
@@ -250,7 +259,7 @@ public class OpMode extends CommandOpMode {
             CommandScheduler.getInstance().schedule(
                     new SequentialCommandGroup(
                             new InstantCommand(() -> extension.incrementBackdropHeight(-1)),
-                            new InstantCommand(() -> InverseKinematics.calculateTarget(3, extension.getBackdropHeight())),
+                            new InstantCommand(() -> InverseKinematics.calculateTarget(5, extension.getBackdropHeight())),
                             new ConditionalCommand(
                                     new ScoreCommand(robot, 3, extension.getBackdropHeight()),
                                     new WaitCommand(1),

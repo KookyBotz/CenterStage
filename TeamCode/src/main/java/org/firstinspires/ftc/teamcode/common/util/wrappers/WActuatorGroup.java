@@ -56,9 +56,8 @@ public class WActuatorGroup {
      * @param devices
      */
     public WActuatorGroup(HardwareDevice... devices) {
-        int i = 0;
         for (HardwareDevice device : devices) {
-            this.devices.put(device.getDeviceName() + " " + i++, device);
+            this.devices.put(device.getDeviceName(), device);
         }
         read();
     }

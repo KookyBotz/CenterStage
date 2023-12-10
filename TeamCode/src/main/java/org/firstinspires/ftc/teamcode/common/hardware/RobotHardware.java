@@ -76,14 +76,14 @@ public class RobotHardware {
     private BNO055IMU imu;
     public List<LynxModule> modules;
 
-    private ArrayList<WSubsystem> subsystems;
-
     private double imuAngle ;
 
-    private IntakeSubsystem intake;
-    private ExtensionSubsystem extension;
-    private MecanumDrivetrain drivetrain;
-    private ThreeWheelLocalizer localizer;
+    private ArrayList<WSubsystem> subsystems;
+
+    public IntakeSubsystem intake;
+    public ExtensionSubsystem extension;
+    public MecanumDrivetrain drivetrain;
+    public ThreeWheelLocalizer localizer;
 
     public static RobotHardware getInstance() {
         if (instance == null) {
@@ -109,9 +109,9 @@ public class RobotHardware {
 
         subsystems = new ArrayList<>();
         drivetrain = new MecanumDrivetrain();
-        localizer = new ThreeWheelLocalizer();
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
+        if (Globals.IS_AUTO) localizer = new ThreeWheelLocalizer();
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
@@ -178,9 +178,8 @@ public class RobotHardware {
     }
 
     public void read() {
-        for (WSubsystem subsystem : subsystems) {
-            subsystem.read();
-        }
+        intake.read();
+        extension.read();
     }
 
     public void write() {
@@ -195,9 +194,10 @@ public class RobotHardware {
             voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
         }
 
-        for (WSubsystem subsystem : subsystems) {
-            subsystem.periodic();
-        }
+        intake.periodic();
+        extension.periodic();
+        drivetrain.periodic();
+        if (Globals.IS_AUTO) localizer.periodic();
     }
 
     public void reset() {

@@ -6,11 +6,10 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
-import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
 public class YellowPixelExtendCommand extends SequentialCommandGroup {
-    public YellowPixelExtendCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake) {
+
+    public YellowPixelExtendCommand(RobotHardware robot) {
         super(
                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.35)),
                 new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(0.22)),

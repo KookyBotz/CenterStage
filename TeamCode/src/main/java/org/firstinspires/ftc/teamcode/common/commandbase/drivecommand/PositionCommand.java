@@ -40,9 +40,9 @@ public class PositionCommand extends CommandBase {
     private ElapsedTime timer;
     private ElapsedTime stable;
 
-    public PositionCommand(Drivetrain drivetrain, Localizer localizer, Pose targetPose) {
-        this.drivetrain = drivetrain;
-        this.localizer = localizer;
+    public PositionCommand(Pose targetPose) {
+        this.drivetrain = robot.drivetrain;
+        this.localizer = robot.localizer;
         this.targetPose = targetPose;
     }
 

@@ -127,28 +127,28 @@ public class RedAuto extends CommandOpMode {
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         // go to yellow pixel scoring pos
-                        new PositionCommand((Drivetrain) drivetrain, localizer, yellowScorePos)
-                                .alongWith(new YellowPixelExtendCommand(robot, extension, intake)),
+                        new PositionCommand(yellowScorePos)
+                                .alongWith(new YellowPixelExtendCommand(robot)),
 
                         // score yellow pixel
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
                         new WaitCommand(200),
 
                         // retract
-                        new YellowPixelRetractCommand(robot, extension, intake, ClawSide.LEFT),
+                        new YellowPixelRetractCommand(robot, ClawSide.LEFT),
 
                         // go to purple pixel scoring pos
-                        new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos)
-                                .alongWith(new PurplePixelExtendCommand(robot, extension, intake)),
+                        new PositionCommand(purpleScorePos)
+                                .alongWith(new PurplePixelExtendCommand(robot)),
 
                         // score purple pixel
                         new WaitCommand(500),
                         new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT)),
                         new WaitCommand(350),
 
-                        new PurplePixelRetractCommand(robot, extension, intake, ClawSide.RIGHT),
+                        new PurplePixelRetractCommand(robot, ClawSide.RIGHT),
 
-                        new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
+                        new PositionCommand(parkPos)
                                 .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
                 )
         );
@@ -159,7 +159,6 @@ public class RedAuto extends CommandOpMode {
         robot.read();
         super.run();
         robot.periodic();
-        localizer.periodic();
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

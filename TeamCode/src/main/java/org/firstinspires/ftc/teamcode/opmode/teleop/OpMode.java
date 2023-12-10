@@ -28,9 +28,6 @@ import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 public class OpMode extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
-    private MecanumDrivetrain drivetrain;
-    private ExtensionSubsystem extension;
-    private IntakeSubsystem intake;
 
     private GamepadEx gamepadEx;
     private GamepadEx gamepadEx2;
@@ -57,10 +54,6 @@ public class OpMode extends CommandOpMode {
         gamepadEx2 = new GamepadEx(gamepad2);
 
         robot.init(hardwareMap, telemetry);
-        drivetrain = new MecanumDrivetrain();
-        extension = new ExtensionSubsystem();
-        intake = new IntakeSubsystem();
-        robot.addSubsystem(drivetrain, extension, intake);
 
         robot.intakePivotActuator.setTargetPosition(0);
         robot.intakePivotActuator.write();
@@ -68,16 +61,16 @@ public class OpMode extends CommandOpMode {
         // G1 - Claw Control
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                         .whenPressed(new ConditionalCommand(
-                                new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT),
-                                new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
-                                () -> (intake.leftClaw == (IntakeSubsystem.ClawState.CLOSED))
+                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT),
+                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
+                                () -> (robot.intake.leftClaw == (IntakeSubsystem.ClawState.CLOSED))
                         ));
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new ConditionalCommand(
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT),
-                        new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
-                        () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED))
+                        new ClawCommand(robot.intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT),
+                        new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
+                        () -> (robot.intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED))
                 ));
 
         // G1 - Retract deposit
@@ -89,8 +82,8 @@ public class OpMode extends CommandOpMode {
                                         new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(-0.06)),
                                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                         new WaitCommand(250),
-                                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                                        new ClawCommand(robot.intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                                        new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.STORED)),
                                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))
                                 ),
                                 new WaitCommand(1),
@@ -104,18 +97,18 @@ public class OpMode extends CommandOpMode {
                         .whenPressed(
                                 new ConditionalCommand(
                                         new ConditionalCommand(
-                                                new ClawCommand(intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
-                                                new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
-                                                () -> (intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (intake.leftClaw == IntakeSubsystem.ClawState.CLOSED))
+                                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
+                                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
+                                                () -> (robot.intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (robot.intake.leftClaw == IntakeSubsystem.ClawState.CLOSED))
                                         ),
                                         new SequentialCommandGroup(
                                                 new InstantCommand(() -> aButton = true),
                                                 new InstantCommand(() -> Globals.retract()),
-                                                new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                                                 new WaitCommand(250),
                                                 new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(-0.06)),
                                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                                                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                                                new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.STORED)),
                                                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))),
                                         () -> Globals.IS_SCORING)
                                 );
@@ -129,10 +122,10 @@ public class OpMode extends CommandOpMode {
                                 new InstantCommand(() -> Globals.retract()),
                                 new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(-0.06)),
                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
-                                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
+                                new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.FLAT)),
                                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.46)), // 0.515
                                 new WaitCommand(250),
-                                new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
+                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
                         ));
 
         // G2 - Retract from Depositing
@@ -144,8 +137,8 @@ public class OpMode extends CommandOpMode {
                                         new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(-0.06)),
                                         new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                                         new WaitCommand(250),
-                                        new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                                        new ClawCommand(robot.intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                                        new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.STORED)),
                                         new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))),
                                 new WaitCommand(1),
                                 () -> Globals.IS_SCORING)
@@ -157,17 +150,17 @@ public class OpMode extends CommandOpMode {
                                 new InstantCommand(() -> Globals.startScoring()),
                                 new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(InverseKinematics.t_angle)),
                                 new WaitCommand(200),
-                                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.SCORING)),
+                                new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.SCORING)),
                                 new WaitCommand(400),
                                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(InverseKinematics.t_extension))
                         ));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                        .whenPressed(new InstantCommand(() -> extension.setBackdropHeight(6)
+                        .whenPressed(new InstantCommand(() -> robot.extension.setBackdropHeight(6)
                         ));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new InstantCommand(() -> extension.setBackdropHeight(0)
+                .whenPressed(new InstantCommand(() -> robot.extension.setBackdropHeight(0)
                 ));
 
         robot.read();
@@ -181,7 +174,7 @@ public class OpMode extends CommandOpMode {
     public void run() {
         robot.read();
 
-        drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
+        robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
 
         boolean currentJoystickUp = gamepad2.right_stick_y < -0.5;
         boolean currentJoystickDown = gamepad2.right_stick_y > 0.5;
@@ -189,11 +182,11 @@ public class OpMode extends CommandOpMode {
             // height go upp
             CommandScheduler.getInstance().schedule(
                     new SequentialCommandGroup(
-                            new InstantCommand(() -> extension.incrementBackdropHeight(1)),
-                            new InstantCommand(() -> InverseKinematics.calculateTarget(5, extension.getBackdropHeight())),
-                            new InstantCommand(() -> System.out.println(extension.getBackdropHeight())),
+                            new InstantCommand(() -> robot.extension.incrementBackdropHeight(1)),
+                            new InstantCommand(() -> InverseKinematics.calculateTarget(5, robot.extension.getBackdropHeight())),
+                            new InstantCommand(() -> System.out.println(robot.extension.getBackdropHeight())),
                             new ConditionalCommand(
-                                    new ScoreCommand(robot, 5, extension.getBackdropHeight()),
+                                    new ScoreCommand(robot, 5, robot.extension.getBackdropHeight()),
                                     new WaitCommand(1),
                                     () -> Globals.IS_SCORING
                             )
@@ -204,10 +197,10 @@ public class OpMode extends CommandOpMode {
             // gheight go dwodn
             CommandScheduler.getInstance().schedule(
                     new SequentialCommandGroup(
-                            new InstantCommand(() -> extension.incrementBackdropHeight(-1)),
-                            new InstantCommand(() -> InverseKinematics.calculateTarget(5, extension.getBackdropHeight())),
+                            new InstantCommand(() -> robot.extension.incrementBackdropHeight(-1)),
+                            new InstantCommand(() -> InverseKinematics.calculateTarget(5, robot.extension.getBackdropHeight())),
                             new ConditionalCommand(
-                                    new ScoreCommand(robot, 3, extension.getBackdropHeight()),
+                                    new ScoreCommand(robot, 3, robot.extension.getBackdropHeight()),
                                     new WaitCommand(1),
                                     () -> Globals.IS_SCORING
                             )

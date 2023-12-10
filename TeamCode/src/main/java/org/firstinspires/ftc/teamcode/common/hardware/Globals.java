@@ -19,8 +19,4 @@ public class Globals {
     public static boolean SWERVE_X = false;
     public static boolean IS_ON_PATH = true;
     public static boolean IS_PATHFINDING = false;
-
-    //TODO tune these values
-    public static double INTAKE_CLAW_OPEN = 0.0;
-    public static double INTAKE_CLAW_CLOSED = 0.0;
 }

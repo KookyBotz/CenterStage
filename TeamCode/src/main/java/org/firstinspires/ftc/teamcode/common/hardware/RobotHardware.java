@@ -35,9 +35,6 @@ import javax.annotation.Nonnegative;
 @Config
 public class RobotHardware {
 
-    public static double servoOffset = -0.13;
-
-    // TODO DONE:
     //drivetrain
     public DcMotorEx dtFrontLeftMotor;
     public DcMotorEx dtFrontRightMotor;
@@ -57,20 +54,10 @@ public class RobotHardware {
     public WActuatorGroup extensionActuator;
     public WActuatorGroup intakePivotActuator;
 
-    // OLD
     public WServo intakeClawLeftServo;
     public WServo intakeClawRightServo;
-    public AbsoluteAnalogEncoder intakeClawLeftEncoder;
-    public AbsoluteAnalogEncoder intakeClawRightEncoder;
     public WServo intakePivotLeftServo;
     public WServo intakePivotRightServo;
-    public AbsoluteAnalogEncoder intakePivotEncoder;
-
-    public DigitalChannel intakeClawLeftBottom, intakeClawLeftTop,
-            intakeClawRightBottom, intakeClawRightTop;
-
-    //TODO: Add 4x wall distance sensors
-    //TODO: Add 2x Cameras
 
     /**
      * Odometry pod encoders.
@@ -103,6 +90,7 @@ public class RobotHardware {
     private ArrayList<WSubsystem> subsystems;
 
     private double imuAngle ;
+
 
     /**
      * Creating the singleton the first time, instantiating.
@@ -170,7 +158,6 @@ public class RobotHardware {
         extensionPitchEncoder.setInverted(true);
         extensionPitchEncoder.setWraparound(true);
 
-        // TODO: tune extension, motion profile, feedforward, and error tolerance
         this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
                 .setPIDController(new PIDController(0.02, 0.0, 0.001))
                 .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
@@ -190,7 +177,7 @@ public class RobotHardware {
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
-        intakePivotRightServo.setOffset(servoOffset);
+        intakePivotRightServo.setOffset(-0.13);
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
 
@@ -240,8 +227,6 @@ public class RobotHardware {
         this.subsystems.addAll(Arrays.asList(subsystems));
     }
 
-    // TODO add offset
-    // imuAngle - imuOffset;
     @Nonnegative
     public double getAngle() {
         return imuAngle;

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode.testing.device;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -50,11 +49,11 @@ public class IVKTest extends OpMode {
 //        super.run();
         robot.periodic();
 
-        telemetry.addData("armAngle", robot.pitchActuator.getPosition());
+        telemetry.addData("armAngle", robot.armActuator.getPosition());
         telemetry.addData("extensionPosition", robot.extensionActuator.getPosition());
 
 //        double targetAngle = (2 * Math.PI / 3) + (Math.PI - robot.pitchActuator.getPosition());
-        double targetAngle = (robot.pitchActuator.getPosition() - ((2 * Math.PI) / 3));
+        double targetAngle = (robot.armActuator.getPosition() - ((2 * Math.PI) / 3));
 //        telemetry.addData("targetAngle", targetAngle);
 //        telemetry.addData("servo pos", MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2, 0.47, 0.96), 0.075, 0.96));
 //        robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2, 0.47, 0.96), 0.075, 0.96));

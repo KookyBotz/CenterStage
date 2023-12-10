@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.common.util.wrappers;
 
-import com.qualcomm.robotcore.hardware.HardwareDevice;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoController;
 

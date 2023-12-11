@@ -39,10 +39,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 public class RedAuto extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
-    private WSubsystem drivetrain;
-    private ThreeWheelLocalizer localizer;
-    private ExtensionSubsystem extension;
-    private IntakeSubsystem intake;
 
     private PropPipeline propPipeline;
     private VisionPortal portal;
@@ -62,10 +58,6 @@ public class RedAuto extends CommandOpMode {
 
         robot.init(hardwareMap, telemetry);
         robot.enabled = true;
-        drivetrain = new MecanumDrivetrain();
-        localizer = new ThreeWheelLocalizer();
-        extension = new ExtensionSubsystem();
-        intake = new IntakeSubsystem();
 
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()
@@ -73,15 +65,13 @@ public class RedAuto extends CommandOpMode {
                 .setCameraResolution(new Size(1920, 1080))
                 .setCamera(BuiltinCameraDirection.BACK)
                 .addProcessor(propPipeline)
-//                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
                 .setAutoStopLiveView(true)
                 .build();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        robot.addSubsystem(drivetrain, extension, intake);
-        intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
+        robot.intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
 
         robot.read();
         while (!isStarted()) {
@@ -90,7 +80,7 @@ public class RedAuto extends CommandOpMode {
             telemetry.update();
         }
 
-        localizer.setPoseEstimate(new Pose2d(0, 0, 0));
+        robot.localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
         Side side = propPipeline.getLocation();
         portal.close();
@@ -98,9 +88,6 @@ public class RedAuto extends CommandOpMode {
         Pose yellowScorePos = new Pose();
         Pose purpleScorePos = new Pose();
         Pose parkPos = new Pose();
-
-
-        // 0.3, 300
 
         switch (side) {
             case RIGHT:
@@ -131,7 +118,7 @@ public class RedAuto extends CommandOpMode {
                                 .alongWith(new YellowPixelExtendCommand(robot)),
 
                         // score yellow pixel
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
+                        new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT)),
                         new WaitCommand(200),
 
                         // retract
@@ -143,7 +130,7 @@ public class RedAuto extends CommandOpMode {
 
                         // score purple pixel
                         new WaitCommand(500),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT)),
+                        new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT)),
                         new WaitCommand(350),
 
                         new PurplePixelRetractCommand(robot, ClawSide.RIGHT),
@@ -162,7 +149,7 @@ public class RedAuto extends CommandOpMode {
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addLine(localizer.getPos().toString());
+        telemetry.addLine(robot.localizer.getPos().toString());
         loopTime = loop;
         telemetry.update();
 

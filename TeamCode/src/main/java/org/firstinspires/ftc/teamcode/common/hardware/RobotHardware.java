@@ -85,6 +85,8 @@ public class RobotHardware {
     public MecanumDrivetrain drivetrain;
     public ThreeWheelLocalizer localizer;
 
+    public Sensors sensors;
+
     public static RobotHardware getInstance() {
         if (instance == null) {
             instance = new RobotHardware();
@@ -101,6 +103,7 @@ public class RobotHardware {
      */
     public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
+        this.sensors = new Sensors(hardwareMap);
         if (Globals.USING_DASHBOARD) {
             this.telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         } else {
@@ -178,6 +181,7 @@ public class RobotHardware {
     }
 
     public void read() {
+        sensors.read();
         intake.read();
         extension.read();
     }

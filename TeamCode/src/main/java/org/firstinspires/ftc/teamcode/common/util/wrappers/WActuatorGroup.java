@@ -38,6 +38,7 @@ public class WActuatorGroup {
 
     private double position = 0.0;
     private double targetPosition = 0.0;
+    private double overallTargetPosition = 0.0;
     private double power = 0.0;
     private double tolerance = 0.0;
     private double feedforwardMin = 0.0;
@@ -143,6 +144,7 @@ public class WActuatorGroup {
      */
     public void setTargetPosition(double targetPosition) {
         this.targetPosition = targetPosition;
+        this.overallTargetPosition = targetPosition;
     }
 
     public void setOffset(double offset) {
@@ -150,6 +152,7 @@ public class WActuatorGroup {
     }
 
     public void setMotionProfileTargetPosition(double targetPosition) {
+        this.overallTargetPosition = targetPosition;
         this.profile = new AsymmetricMotionProfile(getTargetPosition(), targetPosition, constraints);
         this.timer.reset();
     }
@@ -258,6 +261,10 @@ public class WActuatorGroup {
      */
     public double getTargetPosition() {
         return targetPosition;
+    }
+
+    public double getOverallTargetPosition() {
+        return overallTargetPosition;
     }
 
     public double getPower() {

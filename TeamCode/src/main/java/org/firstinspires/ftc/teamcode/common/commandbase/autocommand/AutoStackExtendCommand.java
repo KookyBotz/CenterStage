@@ -17,7 +17,7 @@ public class AutoStackExtendCommand extends SequentialCommandGroup {
                 new InstantCommand(()->robot.armActuator.setMotionProfileTargetPosition(angle)),
                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.55)),
                 new WaitCommand(1000),
-                new ClawCommand(intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
+                new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
                 new InstantCommand(()->robot.extensionActuator.setMotionProfileTargetPosition(length)),
                 new WaitUntilCommand(()->robot.extensionActuator.hasReached() && robot.armActuator.hasReached())
         );

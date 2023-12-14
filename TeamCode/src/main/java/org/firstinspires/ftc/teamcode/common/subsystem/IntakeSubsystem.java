@@ -122,4 +122,9 @@ public class IntakeSubsystem extends WSubsystem {
                 return 0.0;
         }
     }
+
+    public ClawState getClawState(ClawSide side) {
+        if (side == ClawSide.BOTH) return (robot.intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (robot.intake.leftClaw == IntakeSubsystem.ClawState.CLOSED)) ? ClawState.CLOSED : ClawState.OPEN;
+        return (side == ClawSide.LEFT) ? leftClaw : rightClaw;
+    }
 }

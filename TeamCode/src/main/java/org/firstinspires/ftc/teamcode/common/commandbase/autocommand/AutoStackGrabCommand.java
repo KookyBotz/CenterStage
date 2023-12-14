@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class AutoStackGrabCommand extends SequentialCommandGroup {
     public AutoStackGrabCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake) {
         super(
-                new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
+                new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.LEFT),
                 new WaitCommand(200),
                 new InstantCommand(()->robot.armActuator.setMotionProfileTargetPosition(3)),
                 new WaitCommand(100),

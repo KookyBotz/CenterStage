@@ -12,17 +12,16 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ScoreCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.ClawToggleCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositRetractionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.HeightChangeCommand;
-import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
@@ -38,8 +37,6 @@ public class OpMode extends CommandOpMode {
     private double loopTime = 0.0;
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
-
-    public boolean aButton = true;
 
     @Override
     public void initialize() {
@@ -59,107 +56,38 @@ public class OpMode extends CommandOpMode {
 
         // G1 - Claw Control
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                        .whenPressed(new ConditionalCommand(
-                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT),
-                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT),
-                                () -> (robot.intake.leftClaw == (IntakeSubsystem.ClawState.CLOSED))
-                        ));
-
+                .whenPressed(new ClawToggleCommand(robot, ClawSide.LEFT));
         gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(new ConditionalCommand(
-                        new ClawCommand(robot.intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT),
-                        new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
-                        () -> (robot.intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED))
-                ));
+                .whenPressed(new ClawToggleCommand(robot, ClawSide.RIGHT));
 
         // G1 - Retract deposit
         gamepadEx.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new SequentialCommandGroup(
-                                        new InstantCommand(() -> Globals.retract()),
-                                        new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(-0.06)),
-                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                                        new WaitCommand(250),
-                                        new ClawCommand(robot.intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                                        new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))
-                                ),
-                                new WaitCommand(1),
-                                () -> Globals.IS_SCORING
-                        )
-
-                );
+                .whenPressed(new DepositRetractionCommand());
 
         // G1 - Claw control for scoring, retraction for when intaking
         gamepadEx.getGamepadButton(GamepadKeys.Button.A)
                         .whenPressed(
                                 new ConditionalCommand(
                                         new ConditionalCommand(
-                                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
-                                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
+                                                new ClawCommand(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
+                                                new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
                                                 () -> (robot.intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (robot.intake.leftClaw == IntakeSubsystem.ClawState.CLOSED))
                                         ),
-                                        new SequentialCommandGroup(
-                                                new InstantCommand(() -> aButton = true),
-                                                new InstantCommand(() -> Globals.retract()),
-                                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                                                new WaitCommand(250),
-                                                new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(-0.06)),
-                                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                                                new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))),
+                                        new IntakeRetractCommand(),
                                         () -> Globals.IS_SCORING)
                                 );
 
         // G2 - Intake Sequence
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(
-                        new SequentialCommandGroup(
-                                new InstantCommand(() -> aButton = true),
-                                new InstantCommand(() -> Globals.retract()),
-                                new ArmCommand(-0.06),
-                                new ExtensionCommand(350),
-                                new PivotCommand(IntakeSubsystem.PivotState.FLAT)),
-                                new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.46)), // 0.515
-                                new WaitCommand(250),
-                                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
-                        );
+                .whenPressed(new IntakeExtendCommand(350));
 
         // G2 - Retract from Depositing
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new SequentialCommandGroup(
-                                        new InstantCommand(() -> Globals.retract()),
-                                        new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(-0.06)),
-                                        new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                                        new WaitCommand(250),
-                                        new ClawCommand(robot.intake, IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                                        new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.STORED)),
-                                        new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0))),
-                                new WaitCommand(1),
-                                () -> Globals.IS_SCORING)
-                );
+                .whenPressed(new DepositRetractionCommand());
 
         // G2 - Begin Scoring Sequence
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
-                        .whenPressed(new SequentialCommandGroup(
-                                new InstantCommand(() -> Globals.startScoring()),
-                                new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(InverseKinematics.t_angle)),
-                                new WaitCommand(200),
-                                new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.SCORING)),
-                                new WaitCommand(400),
-                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(InverseKinematics.t_extension))
-                        ));
-
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                        .whenPressed(new InstantCommand(() -> robot.extension.setBackdropHeight(6)
-                        ));
-
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new InstantCommand(() -> robot.extension.setBackdropHeight(0)
-                ));
+                        .whenPressed(new DepositExtendCommand());
 
         robot.read();
         while (opModeInInit()) {

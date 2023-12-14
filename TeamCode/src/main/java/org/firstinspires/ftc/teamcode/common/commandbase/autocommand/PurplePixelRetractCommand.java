@@ -17,7 +17,7 @@ public class PurplePixelRetractCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
                 new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.STORED)),
                 new WaitCommand(250),
-                new ClawCommand(robot.intake, IntakeSubsystem.ClawState.CLOSED, clawSide)
+                new ClawCommand(IntakeSubsystem.ClawState.CLOSED, clawSide)
         );
     }
 }

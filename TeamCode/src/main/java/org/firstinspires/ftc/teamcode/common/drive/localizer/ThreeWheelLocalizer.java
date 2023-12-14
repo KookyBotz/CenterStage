@@ -37,7 +37,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        positionLeft = () -> robot.doubleSubscriber(.SensorType.POD_LEFT);
+        positionLeft = () -> robot.doubleSubscriber(Sensors.SensorType.POD_LEFT);
         positionRight = () -> robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT);
         positionFront = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_FRONT);
 //        imuAngle = robot::getAngle;

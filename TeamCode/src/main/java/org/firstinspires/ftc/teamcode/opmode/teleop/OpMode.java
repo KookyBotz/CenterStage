@@ -12,8 +12,12 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ScoreCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.HeightChangeCommand;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -28,15 +32,10 @@ import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 public class OpMode extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
-
     private GamepadEx gamepadEx;
     private GamepadEx gamepadEx2;
 
     private double loopTime = 0.0;
-
-    private final boolean rightStickGreat = false;
-    private boolean lastRightStickGreat = false;
-
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
 
@@ -47,8 +46,8 @@ public class OpMode extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = false;
-        Globals.IS_USING_IMU = true;
-        Globals.USING_DASHBOARD = true;
+        Globals.IS_USING_IMU = false;
+        Globals.USING_DASHBOARD = false;
 
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
@@ -116,17 +115,16 @@ public class OpMode extends CommandOpMode {
         // G2 - Intake Sequence
         gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
                 .whenPressed(
-
                         new SequentialCommandGroup(
                                 new InstantCommand(() -> aButton = true),
                                 new InstantCommand(() -> Globals.retract()),
-                                new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(-0.06)),
-                                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(350)),
-                                new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.FLAT)),
+                                new ArmCommand(-0.06),
+                                new ExtensionCommand(350),
+                                new PivotCommand(IntakeSubsystem.PivotState.FLAT)),
                                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.46)), // 0.515
                                 new WaitCommand(250),
                                 new ClawCommand(robot.intake, IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
-                        ));
+                        );
 
         // G2 - Retract from Depositing
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
@@ -176,43 +174,19 @@ public class OpMode extends CommandOpMode {
 
         robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
 
+        // Change Height
         boolean currentJoystickUp = gamepad2.right_stick_y < -0.5;
         boolean currentJoystickDown = gamepad2.right_stick_y > 0.5;
-        if (currentJoystickUp && !lastJoystickUp) {
-            // height go upp
-            CommandScheduler.getInstance().schedule(
-                    new SequentialCommandGroup(
-                            new InstantCommand(() -> robot.extension.incrementBackdropHeight(1)),
-                            new InstantCommand(() -> InverseKinematics.calculateTarget(5, robot.extension.getBackdropHeight())),
-                            new InstantCommand(() -> System.out.println(robot.extension.getBackdropHeight())),
-                            new ConditionalCommand(
-                                    new ScoreCommand(robot, 5, robot.extension.getBackdropHeight()),
-                                    new WaitCommand(1),
-                                    () -> Globals.IS_SCORING
-                            )
-            ));
-        }
-
         if (currentJoystickDown && !lastJoystickDown) {
-            // gheight go dwodn
-            CommandScheduler.getInstance().schedule(
-                    new SequentialCommandGroup(
-                            new InstantCommand(() -> robot.extension.incrementBackdropHeight(-1)),
-                            new InstantCommand(() -> InverseKinematics.calculateTarget(5, robot.extension.getBackdropHeight())),
-                            new ConditionalCommand(
-                                    new ScoreCommand(robot, 3, robot.extension.getBackdropHeight()),
-                                    new WaitCommand(1),
-                                    () -> Globals.IS_SCORING
-                            )
-                    ));
+            CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, -1));
+        } else if (currentJoystickUp && !lastJoystickUp) {
+            CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, 1));
         }
         lastJoystickUp = currentJoystickUp;
         lastJoystickDown = currentJoystickDown;
 
         super.run();
         robot.periodic();
-
-        lastRightStickGreat = rightStickGreat;
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

@@ -88,14 +88,6 @@ public class RobotHardware {
 
     private HashMap<Sensors.SensorType, Object> values;
 
-    public enum SensorType {
-        EXTENSION_ENCODER,
-        ARM_ENCODER,
-        POD_LEFT,
-        POD_FRONT,
-        POD_RIGHT
-    }
-
     public static RobotHardware getInstance() {
         if (instance == null) {
             instance = new RobotHardware();
@@ -155,13 +147,14 @@ public class RobotHardware {
         armPitchEncoder.setInverted(true);
         armPitchEncoder.setWraparound(true);
 
-        this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
+        this.extensionActuator = new WActuatorGroup(
+                () -> intSubscriber(Sensors.SensorType.EXTENSION_ENCODER), extensionMotor)
                 .setPIDController(new PIDController(0.02, 0.0, 0.001))
                 .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(20);
 
         this.armActuator = new WActuatorGroup(
-                () -> doubleSubscriber(ARM) armMotor)
+                () -> doubleSubscriber(Sensors.SensorType.ARM_ENCODER), armMotor)
                 .setPIDController(new PIDController(4, 0, 0.05))
                 .setMotionProfile(0, new ProfileConstraints(6, 6, 5))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.07, 0.2)
@@ -232,7 +225,7 @@ public class RobotHardware {
 
     public void clearBulkCache() {
         modules.get(0).clearBulkCache();
-        modules.get(1).clearBulkCache();
+//        modules.get(1).clearBulkCache();
     }
 
     public void addSubsystem(WSubsystem... subsystems) {

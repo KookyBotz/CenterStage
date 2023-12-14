@@ -31,8 +31,6 @@ public class ExtensionSubsystem extends WSubsystem {
 
     @Override
     public void read() {
-        robot.armActuator.read();
-        robot.extensionActuator.read();
     }
 
     @Override

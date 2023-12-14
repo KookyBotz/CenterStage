@@ -23,15 +23,10 @@ import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixel
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.YellowPixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.YellowPixelRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
-import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
@@ -42,7 +37,6 @@ public class RedAuto extends CommandOpMode {
 
     private PropPipeline propPipeline;
     private VisionPortal portal;
-
 
     private double loopTime = 0.0;
 

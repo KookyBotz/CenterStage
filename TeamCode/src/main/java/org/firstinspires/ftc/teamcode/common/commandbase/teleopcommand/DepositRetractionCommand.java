@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.Extensi
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
-import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
 public class DepositRetractionCommand extends ConditionalCommand {

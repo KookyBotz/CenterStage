@@ -6,17 +6,6 @@ import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.DoubleConsumer;
-
-/**
- * Parts List:
- * <ul>
- *     <li>2x Micro+ (Left/Right)</li>
- *     <li>1x Micro+ Pivot</li>
- *     <li>1x Servo Pivot</li>
- *     <li>4x Digital Sensor(2 Left, 2 Right)</li>
- * </ul>
- */
 public class IntakeSubsystem extends WSubsystem {
 
     private final RobotHardware robot;
@@ -25,8 +14,6 @@ public class IntakeSubsystem extends WSubsystem {
 
     public ClawState leftClaw = ClawState.CLOSED;
     public ClawState rightClaw = ClawState.CLOSED;
-
-
 
     public enum ClawState {
         CLOSED,
@@ -72,7 +59,6 @@ public class IntakeSubsystem extends WSubsystem {
 
     @Override
     public void periodic() {
-
         if (pivotState == PivotState.SCORING) {
             double targetAngle = ((robot.armActuator.getPosition()) - ((((robot.armActuator.getPosition() < Math.PI / 2) ? 5 : 13) * Math.PI) / 18));
             robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2, 0.47, 0.96), 0.075, 0.96));
@@ -81,7 +67,6 @@ public class IntakeSubsystem extends WSubsystem {
 
     @Override
     public void read() {
-        robot.intakePivotActuator.read();
     }
 
     @Override

@@ -7,17 +7,8 @@ import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
-/**
- * Parts List:
- * <ul>
- *     <li>1x Motor Pitch</li>
- *     <li>1x Motor Extension</li>
- *     <li>1x Analog Encoder Pitch</li>
- * </ul>
- */
 @Config
 public class ExtensionSubsystem extends WSubsystem {
 
@@ -26,7 +17,7 @@ public class ExtensionSubsystem extends WSubsystem {
     private IntSupplier liftTicks;
 
     public ExtensionSubsystem() {
-        this.liftTicks = () -> robot.sensors.intSubscriber(Sensors.SensorType.EXTENSION_ENCODER);
+        this.liftTicks = () -> robot.intSubscriber(Sensors.SensorType.EXTENSION_ENCODER);
     }
 
     @Override

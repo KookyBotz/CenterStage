@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Nonnegative;
@@ -85,7 +86,15 @@ public class RobotHardware {
     public MecanumDrivetrain drivetrain;
     public ThreeWheelLocalizer localizer;
 
-    public Sensors sensors;
+    private HashMap<Sensors.SensorType, Object> values;
+
+    public enum SensorType {
+        EXTENSION_ENCODER,
+        ARM_ENCODER,
+        POD_LEFT,
+        POD_FRONT,
+        POD_RIGHT
+    }
 
     public static RobotHardware getInstance() {
         if (instance == null) {
@@ -103,12 +112,14 @@ public class RobotHardware {
      */
     public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
-        this.sensors = new Sensors(hardwareMap);
-        if (Globals.USING_DASHBOARD) {
-            this.telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
-        } else {
-            this.telemetry = telemetry;
-        }
+        this.values = new HashMap<>();
+        this.telemetry = (Globals.USING_DASHBOARD) ? new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry()) : telemetry;
+
+        values.put(Sensors.SensorType.EXTENSION_ENCODER, 0);
+        values.put(Sensors.SensorType.ARM_ENCODER, 0.0);
+        values.put(Sensors.SensorType.POD_LEFT, 0.0);
+        values.put(Sensors.SensorType.POD_FRONT, 0.0);
+        values.put(Sensors.SensorType.POD_RIGHT, 0.0);
 
         subsystems = new ArrayList<>();
         drivetrain = new MecanumDrivetrain();
@@ -149,7 +160,8 @@ public class RobotHardware {
                 .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(20);
 
-        this.armActuator = new WActuatorGroup(armMotor, armPitchEncoder)
+        this.armActuator = new WActuatorGroup(
+                () -> doubleSubscriber(ARM) armMotor)
                 .setPIDController(new PIDController(4, 0, 0.05))
                 .setMotionProfile(0, new ProfileConstraints(6, 6, 5))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.07, 0.2)
@@ -181,9 +193,17 @@ public class RobotHardware {
     }
 
     public void read() {
-        sensors.read();
-        intake.read();
-        extension.read();
+
+        // Read all hardware devices here
+        values.put(Sensors.SensorType.EXTENSION_ENCODER, extensionEncoder.getPosition());
+        values.put(Sensors.SensorType.ARM_ENCODER, armPitchEncoder.getCurrentPosition());
+        if (Globals.IS_AUTO) {
+            values.put(Sensors.SensorType.POD_LEFT, podLeft.getPosition());
+            values.put(Sensors.SensorType.POD_FRONT, podFront.getPosition());
+            values.put(Sensors.SensorType.POD_RIGHT, podRight.getPosition());
+        }
+
+        if (Globals.IS_USING_IMU); // read imu here
     }
 
     public void write() {
@@ -228,11 +248,15 @@ public class RobotHardware {
         return voltage;
     }
 
-    public void log(String data) {
-        telemetry.addLine(data);
+    public double doubleSubscriber(Sensors.SensorType topic) {
+        return (double) values.getOrDefault(topic, 0.0);
     }
 
-    public void log(String data, Object input) {
-        telemetry.addData(data, input.toString());
+    public int intSubscriber(Sensors.SensorType topic) {
+        return (int) values.getOrDefault(topic, 0);
+    }
+
+    public boolean boolSubscriber(Sensors.SensorType topic) {
+        return (boolean) values.getOrDefault(topic, 0);
     }
 }

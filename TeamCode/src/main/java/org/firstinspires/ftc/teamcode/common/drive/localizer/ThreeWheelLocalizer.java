@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.function.DoubleSupplier;
 @Config
 public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements Localizer {
 
-    private final RobotHardware robot;
+    private final RobotHardware robot = RobotHardware.getInstance();
 
     public static double TICKS_PER_REV = 4096;
     public static double WHEEL_RADIUS = 0.689;
@@ -36,19 +37,11 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        robot = RobotHardware.getInstance();
-
-        positionLeft = () -> robot.podLeft.getPosition();
-        positionRight = () -> robot.podRight.getPosition();
-        positionFront = () -> -robot.podFront.getPosition();
+        positionLeft = () -> robot.doubleSubscriber(Sensors.SensorType.POD_LEFT);
+        positionRight = () -> robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT);
+        positionFront = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_FRONT);
 //        imuAngle = robot::getAngle;
         imuAngle = () -> 0.0;
-
-//        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
-//        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
-//        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
-
-        // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
     }
 
     public static double encoderTicksToInches(double ticks) {

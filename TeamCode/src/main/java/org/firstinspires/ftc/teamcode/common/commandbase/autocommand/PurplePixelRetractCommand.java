@@ -11,13 +11,13 @@ import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
 public class PurplePixelRetractCommand extends SequentialCommandGroup {
-    public PurplePixelRetractCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake, ClawSide clawSide) {
+    public PurplePixelRetractCommand(RobotHardware robot, ClawSide clawSide) {
         super(
-                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(0.0)),
+                new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(0.0)),
                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(0)),
-                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.STORED)),
+                new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.STORED)),
                 new WaitCommand(250),
-                new ClawCommand(intake, IntakeSubsystem.ClawState.CLOSED, clawSide)
+                new ClawCommand(IntakeSubsystem.ClawState.CLOSED, clawSide)
         );
     }
 }

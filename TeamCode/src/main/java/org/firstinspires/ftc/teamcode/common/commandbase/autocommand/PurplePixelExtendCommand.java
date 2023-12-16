@@ -10,13 +10,13 @@ import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
 public class PurplePixelExtendCommand extends SequentialCommandGroup {
-    public PurplePixelExtendCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake) {
+    public PurplePixelExtendCommand(RobotHardware robot) {
         super(
-                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(3.3)),
+                new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(3.3)),
                 new WaitCommand(250),
-                new InstantCommand(() -> intake.updateState(IntakeSubsystem.PivotState.FLAT)),
+                new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.PivotState.FLAT)),
                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.35)),
-                new WaitUntilCommand(() -> robot.pitchActuator.hasReached() && robot.extensionActuator.hasReached())
+                new WaitUntilCommand(() -> robot.armActuator.hasReached() && robot.extensionActuator.hasReached())
         );
     }
 }

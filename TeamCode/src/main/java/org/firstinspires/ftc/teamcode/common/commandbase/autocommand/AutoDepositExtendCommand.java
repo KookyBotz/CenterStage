@@ -13,7 +13,7 @@ public class AutoDepositExtendCommand extends SequentialCommandGroup {
     public AutoDepositExtendCommand(RobotHardware robot, ExtensionSubsystem extension, IntakeSubsystem intake, double length, double angle) {
         super(
                 new WaitCommand(1650),
-                new InstantCommand(() -> robot.pitchActuator.setMotionProfileTargetPosition(angle)),
+                new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(angle)),
                 new WaitCommand(850),
                 new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(length)),
                 new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.33)),

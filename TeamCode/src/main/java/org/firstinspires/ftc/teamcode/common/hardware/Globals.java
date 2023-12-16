@@ -14,13 +14,23 @@ public class Globals {
     public static boolean USING_DASHBOARD = false;
 
     /**
-     * Robot state constants.
+     * Robot State Constants
      */
-    public static boolean SWERVE_X = false;
-    public static boolean IS_ON_PATH = true;
-    public static boolean IS_PATHFINDING = false;
+    public static boolean IS_SCORING = false;
+    public static boolean IS_INTAKING = false;
 
-    //TODO tune these values
-    public static double INTAKE_CLAW_OPEN = 0.0;
-    public static double INTAKE_CLAW_CLOSED = 0.0;
+    public static void startScoring() {
+        IS_SCORING = true;
+        IS_INTAKING = false;
+    }
+
+    public static void startIntaking() {
+        IS_SCORING = false;
+        IS_INTAKING = true;
+    }
+
+    public static void retract() {
+        IS_SCORING = false;
+        IS_INTAKING = false;
+    }
 }

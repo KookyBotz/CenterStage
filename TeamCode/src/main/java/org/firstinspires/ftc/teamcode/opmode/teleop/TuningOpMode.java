@@ -57,7 +57,7 @@ public class TuningOpMode extends CommandOpMode {
         super.run();
         robot.periodic();
 
-        telemetry.addData("armPosition", robot.pitchActuator.getPosition());
+        telemetry.addData("armPosition", robot.armActuator.getPosition());
         telemetry.addData("extensionPosition", robot.extensionActuator.getPosition());
         telemetry.addData("pivotPosition", robot.intakePivotActuator.getPosition());
 

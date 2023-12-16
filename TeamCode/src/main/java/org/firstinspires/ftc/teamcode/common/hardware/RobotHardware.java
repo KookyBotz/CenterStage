@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -17,9 +16,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.apache.commons.math3.analysis.function.Inverse;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
+import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
@@ -28,6 +30,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Nonnegative;
@@ -35,9 +38,6 @@ import javax.annotation.Nonnegative;
 @Config
 public class RobotHardware {
 
-    public static double servoOffset = -0.13;
-
-    // TODO DONE:
     //drivetrain
     public DcMotorEx dtFrontLeftMotor;
     public DcMotorEx dtFrontRightMotor;
@@ -45,68 +45,50 @@ public class RobotHardware {
     public DcMotorEx dtBackRightMotor;
 
     // extension
-    public AbsoluteAnalogEncoder extensionPitchEncoder;
-    public AnalogInput extensionPitchEnc;
+    public AbsoluteAnalogEncoder armPitchEncoder;
+    public AnalogInput armPitchEnc;
 
     public DcMotorEx extensionMotor;
     public DcMotorEx armMotor;
 
     public WEncoder extensionEncoder;
 
-    public WActuatorGroup pitchActuator;
+    public WActuatorGroup armActuator;
     public WActuatorGroup extensionActuator;
     public WActuatorGroup intakePivotActuator;
 
-    // OLD
     public WServo intakeClawLeftServo;
     public WServo intakeClawRightServo;
-    public AbsoluteAnalogEncoder intakeClawLeftEncoder;
-    public AbsoluteAnalogEncoder intakeClawRightEncoder;
     public WServo intakePivotLeftServo;
     public WServo intakePivotRightServo;
-    public AbsoluteAnalogEncoder intakePivotEncoder;
 
-    public DigitalChannel intakeClawLeftBottom, intakeClawLeftTop,
-            intakeClawRightBottom, intakeClawRightTop;
-
-    //TODO: Add 4x wall distance sensors
-    //TODO: Add 2x Cameras
-
-    /**
-     * Odometry pod encoders.
-     */
     public WEncoder podLeft;
     public WEncoder podRight;
     public WEncoder podFront;
 
-    /**
-     * HardwareMap storage.
-     */
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    /**
-     * Voltage timer and voltage value.
-     */
     private ElapsedTime voltageTimer = new ElapsedTime();
     private double voltage = 12.0;
 
-    /**
-     * Singleton variables.
-     */
     private static RobotHardware instance = null;
     public boolean enabled;
 
     private BNO055IMU imu;
     public List<LynxModule> modules;
 
-    private ArrayList<WSubsystem> subsystems;
-
     private double imuAngle ;
 
-    /**
-     * Creating the singleton the first time, instantiating.
-     */
+    private ArrayList<WSubsystem> subsystems;
+
+    public IntakeSubsystem intake;
+    public ExtensionSubsystem extension;
+    public MecanumDrivetrain drivetrain;
+    public ThreeWheelLocalizer localizer;
+
+    private HashMap<Sensors.SensorType, Object> values;
+
     public static RobotHardware getInstance() {
         if (instance == null) {
             instance = new RobotHardware();
@@ -123,24 +105,14 @@ public class RobotHardware {
      */
     public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
-        if (Globals.USING_DASHBOARD) {
-            this.telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
-        } else {
-            this.telemetry = telemetry;
-        }
+        this.values = new HashMap<>();
+        this.telemetry = (Globals.USING_DASHBOARD) ? new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry()) : telemetry;
 
-        voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-
-        this.subsystems = new ArrayList<>();
-
-        modules = hardwareMap.getAll(LynxModule.class);
-        modules.get(0).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-
-//        this.imu = hardwareMap.get(BNO055IMU.class, "imu");
-//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-//        imu.initialize(parameters);
+        values.put(Sensors.SensorType.EXTENSION_ENCODER, 0);
+        values.put(Sensors.SensorType.ARM_ENCODER, 0.0);
+        values.put(Sensors.SensorType.POD_LEFT, 0.0);
+        values.put(Sensors.SensorType.POD_FRONT, 0.0);
+        values.put(Sensors.SensorType.POD_RIGHT, 0.0);
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
@@ -164,19 +136,20 @@ public class RobotHardware {
 
         extensionEncoder = new WEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
 
-        this.extensionPitchEnc = hardwareMap.get(AnalogInput.class, "extensionPitchEncoder");
-        this.extensionPitchEncoder = new AbsoluteAnalogEncoder(extensionPitchEnc);
-        extensionPitchEncoder.zero(2.086);
-        extensionPitchEncoder.setInverted(true);
-        extensionPitchEncoder.setWraparound(true);
+        this.armPitchEnc = hardwareMap.get(AnalogInput.class, "extensionPitchEncoder");
+        this.armPitchEncoder = new AbsoluteAnalogEncoder(armPitchEnc);
+        armPitchEncoder.zero(2.086);
+        armPitchEncoder.setInverted(true);
+        armPitchEncoder.setWraparound(true);
 
-        // TODO: tune extension, motion profile, feedforward, and error tolerance
-        this.extensionActuator = new WActuatorGroup(extensionMotor, extensionEncoder)
+        this.extensionActuator = new WActuatorGroup(
+                () -> intSubscriber(Sensors.SensorType.EXTENSION_ENCODER), extensionMotor)
                 .setPIDController(new PIDController(0.02, 0.0, 0.001))
                 .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(20);
 
-        this.pitchActuator = new WActuatorGroup(armMotor, extensionPitchEncoder)
+        this.armActuator = new WActuatorGroup(
+                () -> doubleSubscriber(Sensors.SensorType.ARM_ENCODER), armMotor)
                 .setPIDController(new PIDController(4, 0, 0.05))
                 .setMotionProfile(0, new ProfileConstraints(6, 6, 5))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.07, 0.2)
@@ -190,7 +163,7 @@ public class RobotHardware {
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
-        intakePivotRightServo.setOffset(servoOffset);
+        intakePivotRightServo.setOffset(-0.13);
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
 
@@ -199,19 +172,38 @@ public class RobotHardware {
         this.podRight = new WEncoder(new MotorEx(hardwareMap, "dtBackLeftMotor").encoder);
 
         InverseKinematics.calculateTarget(3, 0);
+
+        modules = hardwareMap.getAll(LynxModule.class);
+        modules.get(0).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+
+        subsystems = new ArrayList<>();
+        drivetrain = new MecanumDrivetrain();
+        extension = new ExtensionSubsystem();
+        intake = new IntakeSubsystem();
+        if (Globals.IS_AUTO) localizer = new ThreeWheelLocalizer();
+
+        voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
     }
 
     public void read() {
-//        imuAngle = imu.getAngularOrientation().firstAngle;
-        for (WSubsystem subsystem : subsystems) {
-            subsystem.read();
+
+        // Read all hardware devices here
+        values.put(Sensors.SensorType.EXTENSION_ENCODER, extensionEncoder.getPosition());
+        values.put(Sensors.SensorType.ARM_ENCODER, armPitchEncoder.getCurrentPosition());
+        if (Globals.IS_AUTO) {
+            values.put(Sensors.SensorType.POD_LEFT, podLeft.getPosition());
+            values.put(Sensors.SensorType.POD_FRONT, podFront.getPosition());
+            values.put(Sensors.SensorType.POD_RIGHT, podRight.getPosition());
         }
+
+        if (Globals.IS_USING_IMU); // read imu here
     }
 
     public void write() {
-        for (WSubsystem subsystem : subsystems) {
-            subsystem.write();
-        }
+        extension.write();
+        intake.write();
+        drivetrain.write();
     }
 
     public void periodic() {
@@ -220,9 +212,10 @@ public class RobotHardware {
             voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
         }
 
-        for (WSubsystem subsystem : subsystems) {
-            subsystem.periodic();
-        }
+        intake.periodic();
+        extension.periodic();
+        drivetrain.periodic();
+        if (Globals.IS_AUTO) localizer.periodic();
     }
 
     public void reset() {
@@ -233,15 +226,13 @@ public class RobotHardware {
 
     public void clearBulkCache() {
         modules.get(0).clearBulkCache();
-        modules.get(1).clearBulkCache();
+//        modules.get(1).clearBulkCache();
     }
 
     public void addSubsystem(WSubsystem... subsystems) {
         this.subsystems.addAll(Arrays.asList(subsystems));
     }
 
-    // TODO add offset
-    // imuAngle - imuOffset;
     @Nonnegative
     public double getAngle() {
         return imuAngle;
@@ -251,11 +242,31 @@ public class RobotHardware {
         return voltage;
     }
 
-    public void log(String data) {
-        telemetry.addLine(data);
+    public double doubleSubscriber(Sensors.SensorType topic) {
+        Object value = values.getOrDefault(topic, 0.0);
+        if (value instanceof Integer) {
+            return ((Integer) value).doubleValue();
+        } else if (value instanceof Double) {
+            return (Double) value;
+        } else {
+            System.out.println("My name is Gustavo, but you can call me Gus.");
+            throw new ClassCastException("scam!");
+        }
     }
 
-    public void log(String data, Object input) {
-        telemetry.addData(data, input.toString());
+    public int intSubscriber(Sensors.SensorType topic) {
+        Object value = values.getOrDefault(topic, 0);
+        if (value instanceof Integer) {
+            return (Integer) value;
+        } else if (value instanceof Double) {
+            return ((Double) value).intValue();
+        } else {
+            System.out.println("My name is Gustavo, but you can call me Sus.");
+            throw new ClassCastException("scam!");
+        }
+    }
+
+    public boolean boolSubscriber(Sensors.SensorType topic) {
+        return (boolean) values.getOrDefault(topic, 0);
     }
 }

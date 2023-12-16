@@ -9,10 +9,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -20,28 +18,15 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoDepositExtendCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoDepositRetractCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoStackExtendCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.YellowPixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.YellowPixelRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PurePursuitCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
-import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.PurePursuitPath;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.Waypoint;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
@@ -49,10 +34,6 @@ import org.firstinspires.ftc.vision.VisionPortal;
 public class BlueAuto extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
-    private WSubsystem drivetrain;
-    private ThreeWheelLocalizer localizer;
-    private ExtensionSubsystem extension;
-    private IntakeSubsystem intake;
 
     private PropPipeline propPipeline;
     private VisionPortal portal;
@@ -72,10 +53,6 @@ public class BlueAuto extends CommandOpMode {
 
         robot.init(hardwareMap, telemetry);
         robot.enabled = true;
-        drivetrain = new MecanumDrivetrain();
-        localizer = new ThreeWheelLocalizer();
-        extension = new ExtensionSubsystem();
-        intake = new IntakeSubsystem();
 
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()
@@ -83,15 +60,13 @@ public class BlueAuto extends CommandOpMode {
                 .setCameraResolution(new Size(1920, 1080))
                 .setCamera(BuiltinCameraDirection.BACK)
                 .addProcessor(propPipeline)
-//                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
                 .setAutoStopLiveView(true)
                 .build();
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        robot.addSubsystem(drivetrain, extension, intake);
-        intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
+        robot.intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
 
         robot.read();
         while (!isStarted()) {
@@ -100,7 +75,7 @@ public class BlueAuto extends CommandOpMode {
             telemetry.update();
         }
 
-        localizer.setPoseEstimate(new Pose2d(0, 0, 0));
+        robot.localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
         Side side = propPipeline.getLocation();
         portal.close();
@@ -137,28 +112,28 @@ public class BlueAuto extends CommandOpMode {
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         // go to yellow pixel scoring pos
-                        new PositionCommand((Drivetrain) drivetrain, localizer, yellowScorePos)
-                                .alongWith(new YellowPixelExtendCommand(robot, extension, intake)),
+                        new PositionCommand(yellowScorePos)
+                                .alongWith(new YellowPixelExtendCommand(robot)),
 
                         // score yellow pixel
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
+                        new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.RIGHT)),
                         new WaitCommand(200),
 
                         // retract
-                        new YellowPixelRetractCommand(robot, extension, intake, ClawSide.RIGHT),
+                        new YellowPixelRetractCommand(robot, ClawSide.RIGHT),
 
                         // go to purple pixel scoring pos
-                        new PositionCommand((Drivetrain) drivetrain, localizer, purpleScorePos)
-                                .alongWith(new PurplePixelExtendCommand(robot, extension, intake)),
+                        new PositionCommand(purpleScorePos)
+                                .alongWith(new PurplePixelExtendCommand(robot)),
 
                         // score purple pixel
                         new WaitCommand(500),
-                        new InstantCommand(() -> intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT)),
+                        new InstantCommand(() -> robot.intake.updateState(IntakeSubsystem.ClawState.OPEN, ClawSide.LEFT)),
                         new WaitCommand(350),
 
-                        new PurplePixelRetractCommand(robot, extension, intake, ClawSide.LEFT),
+                        new PurplePixelRetractCommand(robot, ClawSide.LEFT),
 
-                        new PositionCommand((Drivetrain) drivetrain, localizer, parkPos)
+                        new PositionCommand(parkPos)
                                 .alongWith(new WaitCommand(400).andThen(new InstantCommand(() -> robot.intakePivotActuator.setTargetPosition(0.0475))))
                 )
         );
@@ -169,11 +144,10 @@ public class BlueAuto extends CommandOpMode {
         robot.read();
         super.run();
         robot.periodic();
-        localizer.periodic();
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addLine(localizer.getPos().toString());
+        telemetry.addLine(robot.localizer.getPos().toString());
         loopTime = loop;
         telemetry.update();
 

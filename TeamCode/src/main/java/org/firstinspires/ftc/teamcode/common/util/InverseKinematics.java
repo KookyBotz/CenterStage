@@ -32,7 +32,7 @@ public class InverseKinematics {
         double diff_x = t_x - y_t;
 
         t_angle = Math.atan2(diff_y, diff_x);
-        t_extension = MathUtils.clamp(Math.hypot(diff_x, diff_y), d_retracted, d_extended); //TODO replace 500 with the max distance in inches // 25 ticks per inch, 20 inches
+        t_extension = MathUtils.clamp(Math.hypot(diff_x, diff_y), d_retracted, d_extended);
 
         t_extension -= d_retracted;
         t_extension *= ticks_per_inch;

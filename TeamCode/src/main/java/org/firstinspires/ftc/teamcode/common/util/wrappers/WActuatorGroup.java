@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.Prof
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileState;
 import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class WActuatorGroup {
     public enum FeedforwardMode {
@@ -38,6 +40,7 @@ public class WActuatorGroup {
 
     private double position = 0.0;
     private double targetPosition = 0.0;
+    private double overallTargetPosition = 0.0;
     private double power = 0.0;
     private double tolerance = 0.0;
     private double feedforwardMin = 0.0;
@@ -50,12 +53,25 @@ public class WActuatorGroup {
 
     private FeedforwardMode mode = FeedforwardMode.NONE;
 
+    private Sensors.SensorType sensorType;
+    private Supplier<Object> topic;
+
     /**
      * Actuator constructor with varargs HardwareDevice parameter
      *
      * @param devices
      */
     public WActuatorGroup(HardwareDevice... devices) {
+        this.topic = null;
+        int i = 0;
+        for (HardwareDevice device : devices) {
+            this.devices.put(device.getDeviceName() + " " + i++, device);
+        }
+        read();
+    }
+
+    public WActuatorGroup(Supplier<Object> topic, HardwareDevice... devices) {
+        this.topic = topic;
         int i = 0;
         for (HardwareDevice device : devices) {
             this.devices.put(device.getDeviceName() + " " + i++, device);
@@ -69,6 +85,18 @@ public class WActuatorGroup {
      * a given actuation group.
      */
     public void read() {
+
+        if (topic != null) {
+            Object value = topic.get();
+            if (value instanceof Integer) {
+                this.position = (int) value;
+                return;
+            } else if (value instanceof  Double) {
+                this.position = (double) value;
+                return;
+            }
+        }
+
         for (HardwareDevice device : devices.values()) {
             if (device instanceof AbsoluteAnalogEncoder) {
                 this.position = ((AbsoluteAnalogEncoder) device).getCurrentPosition() + offset;
@@ -143,6 +171,7 @@ public class WActuatorGroup {
      */
     public void setTargetPosition(double targetPosition) {
         this.targetPosition = targetPosition;
+        this.overallTargetPosition = targetPosition;
     }
 
     public void setOffset(double offset) {
@@ -150,6 +179,7 @@ public class WActuatorGroup {
     }
 
     public void setMotionProfileTargetPosition(double targetPosition) {
+        this.overallTargetPosition = targetPosition;
         this.profile = new AsymmetricMotionProfile(getTargetPosition(), targetPosition, constraints);
         this.timer.reset();
     }
@@ -159,38 +189,22 @@ public class WActuatorGroup {
         return this;
     }
 
-    /**
-     * Saves the value passed in for the new motion profile.
-     * <p>
-     * //     * @param profile The new asymmetrical motion profile
-     *
-     * @return
-     */
     public WActuatorGroup setMotionProfile(double targetPosition, ProfileConstraints constraints) {
         this.constraints = constraints;
         this.profile = new AsymmetricMotionProfile(position, targetPosition, constraints);
         return this;
     }
 
-    /**
-     * Saves the value passed in for the new PID controller.
-     *
-     * @param controller
-     * @return
-     */
     public WActuatorGroup setPIDController(PIDController controller) {
         this.controller = controller;
         return this;
     }
 
-    /**
-     * Creates a new PIDController object based on the coefficients passed in.
-     *
-     * @param p Proportional constant
-     * @param i Integral Constant
-     * @param d Derivative Constant
-     * @return
-     */
+    public void setCurrentPosition(double position) {
+        this.position = position;
+
+    }
+
     public WActuatorGroup setPID(double p, double i, double d) {
         if (controller == null) {
             this.controller = new PIDController(p, i, d);
@@ -258,6 +272,10 @@ public class WActuatorGroup {
      */
     public double getTargetPosition() {
         return targetPosition;
+    }
+
+    public double getOverallTargetPosition() {
+        return overallTargetPosition;
     }
 
     public double getPower() {

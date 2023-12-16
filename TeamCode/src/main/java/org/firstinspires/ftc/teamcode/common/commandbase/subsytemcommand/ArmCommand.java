@@ -4,10 +4,10 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
-public class PivotCommand extends InstantCommand {
-    public PivotCommand(double position) {
+public class ArmCommand extends InstantCommand {
+    public ArmCommand(double target) {
         super(
-                () -> RobotHardware.getInstance().intakePivotActuator.setTargetPosition(position)
+                () -> RobotHardware.getInstance().armActuator.setMotionProfileTargetPosition(target)
         );
     }
 }

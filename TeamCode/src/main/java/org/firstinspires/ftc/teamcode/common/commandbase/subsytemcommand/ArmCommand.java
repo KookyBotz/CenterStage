@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 public class ArmCommand extends InstantCommand {
     public ArmCommand(double target) {
         super(
-                () -> RobotHardware.getInstance().armActuator.setMotionProfileTargetPosition(-0.06)
+                () -> RobotHardware.getInstance().armActuator.setMotionProfileTargetPosition(target)
         );
     }
 }

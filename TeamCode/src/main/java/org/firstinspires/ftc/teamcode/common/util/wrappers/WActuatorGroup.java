@@ -200,6 +200,11 @@ public class WActuatorGroup {
         return this;
     }
 
+    public void setCurrentPosition(double position) {
+        this.position = position;
+
+    }
+
     public WActuatorGroup setPID(double p, double i, double d) {
         if (controller == null) {
             this.controller = new PIDController(p, i, d);

@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.common.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
+import java.util.function.DoubleSupplier;
 import java.util.function.IntSupplier;
 
 @Config
@@ -14,10 +16,12 @@ public class ExtensionSubsystem extends WSubsystem {
 
     private final RobotHardware robot = RobotHardware.getInstance();
     private int backdropHeight = 0;
-    private IntSupplier liftTicks;
+    public IntSupplier liftTicks;
+    public DoubleSupplier armAngle;
 
     public ExtensionSubsystem() {
         this.liftTicks = () -> robot.intSubscriber(Sensors.SensorType.EXTENSION_ENCODER);
+        this.armAngle = () -> robot.doubleSubscriber(Sensors.SensorType.ARM_ENCODER);
     }
 
     @Override
@@ -25,12 +29,16 @@ public class ExtensionSubsystem extends WSubsystem {
         robot.armActuator.updateFeedforward(liftTicks.getAsInt() / 560.0);
         robot.extensionActuator.setOffset(-(robot.armActuator.getPosition() / Math.PI) * 50);
 
+        robot.armActuator.setCurrentPosition(armAngle.getAsDouble());
+        robot.extensionActuator.setCurrentPosition(liftTicks.getAsInt());
+
         robot.armActuator.periodic();
         robot.extensionActuator.periodic();
     }
 
     @Override
     public void read() {
+
     }
 
     @Override

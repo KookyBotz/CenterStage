@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -113,12 +114,6 @@ public class RobotHardware {
         values.put(Sensors.SensorType.POD_FRONT, 0.0);
         values.put(Sensors.SensorType.POD_RIGHT, 0.0);
 
-        subsystems = new ArrayList<>();
-        drivetrain = new MecanumDrivetrain();
-        extension = new ExtensionSubsystem();
-        intake = new IntakeSubsystem();
-        if (Globals.IS_AUTO) localizer = new ThreeWheelLocalizer();
-
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
         dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -182,6 +177,12 @@ public class RobotHardware {
         modules.get(0).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
 
+        subsystems = new ArrayList<>();
+        drivetrain = new MecanumDrivetrain();
+        extension = new ExtensionSubsystem();
+        intake = new IntakeSubsystem();
+        if (Globals.IS_AUTO) localizer = new ThreeWheelLocalizer();
+
         voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
     }
 
@@ -200,9 +201,9 @@ public class RobotHardware {
     }
 
     public void write() {
-        for (WSubsystem subsystem : subsystems) {
-            subsystem.write();
-        }
+        extension.write();
+        intake.write();
+        drivetrain.write();
     }
 
     public void periodic() {
@@ -242,11 +243,27 @@ public class RobotHardware {
     }
 
     public double doubleSubscriber(Sensors.SensorType topic) {
-        return (double) values.getOrDefault(topic, 0.0);
+        Object value = values.getOrDefault(topic, 0.0);
+        if (value instanceof Integer) {
+            return ((Integer) value).doubleValue();
+        } else if (value instanceof Double) {
+            return (Double) value;
+        } else {
+            System.out.println("My name is Gustavo, but you can call me Gus.");
+            throw new ClassCastException("scam!");
+        }
     }
 
     public int intSubscriber(Sensors.SensorType topic) {
-        return (int) values.getOrDefault(topic, 0);
+        Object value = values.getOrDefault(topic, 0);
+        if (value instanceof Integer) {
+            return (Integer) value;
+        } else if (value instanceof Double) {
+            return ((Double) value).intValue();
+        } else {
+            System.out.println("My name is Gustavo, but you can call me Sus.");
+            throw new ClassCastException("scam!");
+        }
     }
 
     public boolean boolSubscriber(Sensors.SensorType topic) {

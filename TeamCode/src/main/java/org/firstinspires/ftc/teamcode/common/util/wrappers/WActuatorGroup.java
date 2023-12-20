@@ -126,16 +126,17 @@ public class WActuatorGroup {
 
         if (controller != null) {
             this.power = controller.calculate(position, targetPosition + targetPositionOffset);
+            System.out.println(this.power);
 
             switch (mode) {
                 case CONSTANT:
-                    this.power += currentFeedforward * Math.signum((targetPosition + targetPositionOffset) - position);
+                    this.power -= currentFeedforward * Math.signum((targetPosition + targetPositionOffset) - position);
                     break;
                 case ANGLE_BASED:
-                    this.power += Math.cos(targetPosition + targetPositionOffset) * currentFeedforward;
+                    this.power -= Math.cos(targetPosition + targetPositionOffset) * currentFeedforward;
                     break;
                 case ANGLE_BASED_SIN:
-                    this.power += Math.sin(targetPosition + targetPositionOffset) * currentFeedforward;
+                    this.power -= Math.sin(targetPosition + targetPositionOffset) * currentFeedforward;
                     break;
                 default:
             }

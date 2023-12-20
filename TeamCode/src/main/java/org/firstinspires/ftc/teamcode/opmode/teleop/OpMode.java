@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.HangSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Config
@@ -130,7 +131,10 @@ public class OpMode extends CommandOpMode {
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         System.out.println(1000000000 / (loop - loopTime));
-        telemetry.addData("ticks", robot.extension.liftTicks.getAsInt());
+        telemetry.addData("currentAngle", robot.armActuator.getPosition());
+        telemetry.addData("angle", InverseKinematics.t_angle);
+        telemetry.addData("power", robot.armActuator.getPower());
+        telemetry.addData("feedforward", robot.armActuator.getCurrentFeedforward());
         loopTime = loop;
         telemetry.update();
         robot.write();

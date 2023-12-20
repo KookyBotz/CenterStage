@@ -157,8 +157,8 @@ public class RobotHardware {
 
         this.extensionActuator = new WActuatorGroup(
                 () -> intSubscriber(Sensors.SensorType.EXTENSION_ENCODER), extensionMotor)
-                .setPIDController(new PIDController(0.02, 0.0, 0.0))
-                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
+                .setPIDController(new PIDController(0.005, 0.0, 0.00035))
+//                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(20);
 
         this.armActuator = new WActuatorGroup(

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 public class HangSubsystem extends WSubsystem {
     private final RobotHardware robot = RobotHardware.getInstance();
 
-    private HangState hangState;
+    private HangState hangState = HangState.DISABLED;
 
     public enum HangState {
         ACTIVE,

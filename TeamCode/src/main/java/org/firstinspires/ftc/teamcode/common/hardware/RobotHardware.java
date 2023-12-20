@@ -100,7 +100,7 @@ public class RobotHardware {
     public HangSubsystem hang;
     public ThreeWheelLocalizer localizer;
 
-    private HashMap<Sensors.SensorType, Object> values;
+    public HashMap<Sensors.SensorType, Object> values;
 
     public static RobotHardware getInstance() {
         if (instance == null) {
@@ -157,15 +157,14 @@ public class RobotHardware {
 
         this.extensionActuator = new WActuatorGroup(
                 () -> intSubscriber(Sensors.SensorType.EXTENSION_ENCODER), extensionMotor)
-                .setPIDController(new PIDController(0.02, 0.0, 0.001))
+                .setPIDController(new PIDController(0.02, 0.0, 0.0))
                 .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(20);
 
         this.armActuator = new WActuatorGroup(
                 () -> doubleSubscriber(Sensors.SensorType.ARM_ENCODER), armMotor)
-                .setPIDController(new PIDController(4, 0, 0.05))
-                .setMotionProfile(0, new ProfileConstraints(6, 6, 5))
-                .setFeedforward(WActuatorGroup.FeedforwardMode.ANGLE_BASED, 0.07, 0.2)
+                .setPIDController(new PIDController(1.6379, 0, 0.05))
+                .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0)
                 .setErrorTolerance(0.03);
 
         // INTAKE

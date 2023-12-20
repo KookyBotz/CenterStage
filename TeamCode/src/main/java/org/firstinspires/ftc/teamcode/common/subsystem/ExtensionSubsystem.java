@@ -30,7 +30,6 @@ public class ExtensionSubsystem extends WSubsystem {
     public void periodic() {
         double kG = 0.16; // TODO empirically tune this
         double dist_cog_cor_max = 10.161;
-//        double arm_angle = armAngle.getAsDouble();
         double arm_reference_angle = robot.armActuator.getTargetPosition();
 
         double offset = -(robot.armActuator.getPosition() / Math.PI) * 50;
@@ -49,7 +48,7 @@ public class ExtensionSubsystem extends WSubsystem {
 
         double dist_ratio = dist_cog_cor / dist_cog_cor_max;
 
-        feedforward = kG * Math.cos(armAngle.getAsDouble()) * dist_ratio;
+        feedforward = kG * Math.cos(arm_reference_angle) * dist_ratio;
 
         robot.armActuator.updateFeedforward(feedforward);
         robot.extensionActuator.setOffset(-(robot.armActuator.getPosition() / Math.PI) * 50);

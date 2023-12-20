@@ -15,11 +15,11 @@ public class DepositExtendCommand extends SequentialCommandGroup {
     public DepositExtendCommand() {
         super(
                 new InstantCommand(() -> Globals.startScoring()),
-                new ArmCommand(InverseKinematics.t_angle),
+                new ArmCommand(InverseKinematics.getTAngle()),
                 new WaitCommand(200),
                 new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),
                 new WaitCommand(400),
-                new ExtensionCommand((int) InverseKinematics.t_extension)
+                new ExtensionCommand((int) InverseKinematics.getTExtension())
         );
     }
 }

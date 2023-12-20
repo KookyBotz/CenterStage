@@ -19,6 +19,8 @@ public class ExtensionSubsystem extends WSubsystem {
     public IntSupplier liftTicks;
     public DoubleSupplier armAngle;
 
+    public double feedforward = 0.0;
+
     public ExtensionSubsystem() {
         this.liftTicks = () -> robot.intSubscriber(Sensors.SensorType.EXTENSION_ENCODER);
         this.armAngle = () -> robot.doubleSubscriber(Sensors.SensorType.ARM_ENCODER);
@@ -26,7 +28,30 @@ public class ExtensionSubsystem extends WSubsystem {
 
     @Override
     public void periodic() {
-        robot.armActuator.updateFeedforward(liftTicks.getAsInt() / 560.0);
+        double kG = 0.16; // TODO empirically tune this
+        double dist_cog_cor_max = 10.161;
+//        double arm_angle = armAngle.getAsDouble();
+        double arm_reference_angle = robot.armActuator.getTargetPosition();
+
+        double offset = -(robot.armActuator.getPosition() / Math.PI) * 50;
+        double extension = (liftTicks.getAsInt() + offset) / 26.0;
+
+        double m_1 = 1.07;
+        double m_2 = 0.36;
+        double m_3 = 0.14;
+        double m_4 = 0.44;
+
+        double length_r = 1.3;
+        double length_last = 6.0;
+
+        double dist_cog = (m_2 * (extension + 1) + m_3 * (2 * extension - 1) + m_4 * (2 * extension + 0.5 * length_last)) / (m_1 + m_2 + m_3 + m_4);
+        double dist_cog_cor = Math.sqrt(Math.pow(dist_cog, 2) + Math.pow(length_r, 2));
+
+        double dist_ratio = dist_cog_cor / dist_cog_cor_max;
+
+        feedforward = kG * Math.cos(armAngle.getAsDouble()) * dist_ratio;
+
+        robot.armActuator.updateFeedforward(feedforward);
         robot.extensionActuator.setOffset(-(robot.armActuator.getPosition() / Math.PI) * 50);
 
         robot.armActuator.setCurrentPosition(armAngle.getAsDouble());

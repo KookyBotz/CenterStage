@@ -252,8 +252,8 @@ public class WActuatorGroup {
         this.controller.setPID(P, I, D);
     }
 
-    public void updateFeedforward(double percentage) {
-        this.currentFeedforward = feedforwardMin + (feedforwardMax - feedforwardMin) * percentage;
+    public void updateFeedforward(double ff) {
+        this.currentFeedforward = ff;
     }
 
     /**

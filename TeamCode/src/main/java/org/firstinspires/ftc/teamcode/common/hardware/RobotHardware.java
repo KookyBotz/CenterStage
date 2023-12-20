@@ -4,15 +4,18 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,7 +23,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
+import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystem.HangSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
@@ -66,6 +71,12 @@ public class RobotHardware {
     public WEncoder podRight;
     public WEncoder podFront;
 
+    public WServo droneActuator;
+    public WServo droneTrigger;
+
+    public CRServoImplEx leftHang;
+    public CRServoImplEx rightHang;
+
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
@@ -85,6 +96,8 @@ public class RobotHardware {
     public IntakeSubsystem intake;
     public ExtensionSubsystem extension;
     public MecanumDrivetrain drivetrain;
+    public DroneSubsystem drone;
+    public HangSubsystem hang;
     public ThreeWheelLocalizer localizer;
 
     private HashMap<Sensors.SensorType, Object> values;
@@ -171,6 +184,15 @@ public class RobotHardware {
         this.podFront = new WEncoder(new MotorEx(hardwareMap, "dtBackRightMotor").encoder);
         this.podRight = new WEncoder(new MotorEx(hardwareMap, "dtBackLeftMotor").encoder);
 
+//        this.droneActuator = new WServo(hardwareMap.get(Servo.class, "droneActuator"));
+//        this.droneTrigger = new WServo(hardwareMap.get(Servo.class, "droneTrigger"));
+
+        // TODO: Configure config names
+//        this.leftHang = hardwareMap.get(CRServoImplEx.class, "leftHang");
+//        this.leftHang.setPwmRange(new PwmControl.PwmRange(500, 2500));
+//        this.rightHang = hardwareMap.get(CRServoImplEx.class, "rightHang");
+//        this.rightHang.setPwmRange(new PwmControl.PwmRange(500, 2500));
+
         InverseKinematics.calculateTarget(3, 0);
 
         modules = hardwareMap.getAll(LynxModule.class);
@@ -182,6 +204,10 @@ public class RobotHardware {
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
         if (Globals.IS_AUTO) localizer = new ThreeWheelLocalizer();
+        else {
+            drone = new DroneSubsystem();
+            hang = new HangSubsystem();
+        }
 
         voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
     }

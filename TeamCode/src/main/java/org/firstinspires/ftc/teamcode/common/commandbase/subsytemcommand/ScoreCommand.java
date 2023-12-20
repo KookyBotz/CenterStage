@@ -10,8 +10,8 @@ public class ScoreCommand extends SequentialCommandGroup {
     public ScoreCommand(RobotHardware robot, double distance, int height) {
         super(
 //                new InstantCommand(() -> InverseKinematics.calculateTarget(5, height)),
-                new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(InverseKinematics.t_angle)),
-                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(InverseKinematics.t_extension))
+                new InstantCommand(() -> robot.armActuator.setMotionProfileTargetPosition(InverseKinematics.getTAngle())),
+                new InstantCommand(() -> robot.extensionActuator.setMotionProfileTargetPosition(InverseKinematics.getTExtension()))
         );
     }
 }

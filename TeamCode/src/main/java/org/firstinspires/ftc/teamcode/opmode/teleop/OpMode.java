@@ -10,15 +10,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.ActuateHangCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.ClawToggleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositRetractionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.EndgameStateCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.HeightChangeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.subsystem.HangSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
@@ -85,6 +88,12 @@ public class OpMode extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
                         .whenPressed(new DepositExtendCommand());
 
+        // G2 - Enable/Disable Endgame Systems (Failsafe, so the endgame tasks aren't triggered mid-teleop)
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                        .whenPressed(new EndgameStateCommand(true));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                        .whenPressed(new EndgameStateCommand(false));
+
         robot.read();
         while (opModeInInit()) {
             telemetry.addLine("Robot Initialized.");
@@ -96,22 +105,27 @@ public class OpMode extends CommandOpMode {
     public void run() {
         robot.read();
 
+        // G1 - Drivetrain Control
         robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
 
-        // Change Height
         boolean currentJoystickUp = gamepad2.right_stick_y < -0.5;
         boolean currentJoystickDown = gamepad2.right_stick_y > 0.5;
-        if (currentJoystickDown && !lastJoystickDown) {
-            CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, -1));
-        } else if (currentJoystickUp && !lastJoystickUp) {
-            CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, 1));
+        if (robot.hang.getHangState() == HangSubsystem.HangState.DISABLED) {
+            // G2 - Change Target Deposit Height
+            if (currentJoystickDown && !lastJoystickDown) {
+                CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, -1));
+            } else if (currentJoystickUp && !lastJoystickUp) {
+                CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, 1));
+            }
+        } else {
+            // G1 - Change Hang Height
+            CommandScheduler.getInstance().schedule(new ActuateHangCommand(gamepad2.right_stick_y));
         }
         lastJoystickUp = currentJoystickUp;
         lastJoystickDown = currentJoystickDown;
 
         super.run();
         robot.periodic();
-
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

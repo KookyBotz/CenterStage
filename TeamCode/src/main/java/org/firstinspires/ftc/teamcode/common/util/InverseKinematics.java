@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.common.util;
 
 public class InverseKinematics {
-    public static double t_extension = 0.0;
-    public static double t_angle = 0.0;
+    private static double t_extension = 0.0;
+    private static double t_angle = 0.0;
 
     public static void calculateTarget(double backdrop_distance, int target_backdrop_height) {
         double distance_sensor_input = 3;
@@ -36,5 +36,13 @@ public class InverseKinematics {
 
         t_extension -= d_retracted;
         t_extension *= ticks_per_inch;
+    }
+
+    public static double getTExtension() {
+        return t_extension;
+    }
+
+    public static double getTAngle() {
+        return t_angle;
     }
 }

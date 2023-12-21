@@ -10,7 +10,7 @@ public class Pose extends Point {
 
     public Pose(double x, double y, double heading) {
         super(x, y);
-        this.heading = heading;
+        this.heading = AngleUnit.normalizeRadians(heading);
     }
     public Pose(Point p, double heading) {
         this(p.x, p.y, heading);

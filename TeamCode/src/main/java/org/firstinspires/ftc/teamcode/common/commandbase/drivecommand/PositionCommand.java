@@ -17,22 +17,20 @@ public class PositionCommand extends CommandBase {
     Drivetrain drivetrain;
     Pose targetPose;
 
-    public static double xP = 0.0385;
-    public static double xD = 0.005;
+    public static double xP = 0.105;
+    public static double xD = 0.0175;
 
-    public static double yP = 0.0385;
-    public static double yD = 0.005;
+    public static double yP = 0.105;
+    public static double yD = 0.0175;
 
-    public static double hP = 0.75;
-    public static double hD = 0.02;
-
-    public static double kStatic = 0.05;
+    public static double hP = 1.45;
+    public static double hD = 0.075;
 
     public static PIDFController xController = new PIDFController(xP, 0.0, xD, 0);
     public static PIDFController yController = new PIDFController(yP, 0.0, yD, 0);
     public static PIDFController hController = new PIDFController(hP, 0.0, hD, 0);
 
-    public static double ALLOWED_TRANSLATIONAL_ERROR = 1;
+    public static double ALLOWED_TRANSLATIONAL_ERROR = 2;
     public static double ALLOWED_HEADING_ERROR = 0.03;
 
     private RobotHardware robot = RobotHardware.getInstance();
@@ -44,6 +42,11 @@ public class PositionCommand extends CommandBase {
         this.drivetrain = robot.drivetrain;
         this.localizer = robot.localizer;
         this.targetPose = targetPose;
+
+
+        xController.reset();
+        yController.reset();
+        hController.reset();
     }
 
     /**
@@ -70,27 +73,28 @@ public class PositionCommand extends CommandBase {
             stable.reset();
         }
 
-        return timer.milliseconds() > 5000 || stable.milliseconds() > 150;
+        return timer.milliseconds() > 5000 || stable.milliseconds() > 250;
     }
 
     public Pose getPower(Pose robotPose) {
-        Pose delta = targetPose.subtract(robotPose);
+        if(targetPose.heading - robotPose.heading > Math.PI) targetPose.heading -= 2 * Math.PI;
+        if(targetPose.heading - robotPose.heading < -Math.PI) targetPose.heading += 2 * Math.PI;
 
         double xPower = xController.calculate(robotPose.x, targetPose.x);
         double yPower = yController.calculate(robotPose.y, targetPose.y);
-        double hPower = -hController.calculate(0, delta.heading);
+        double hPower = -hController.calculate(robotPose.heading, targetPose.heading);
 
-        double x_rotated = xPower * Math.cos(robotPose.heading) - yPower * Math.sin(robotPose.heading);
-        double y_rotated = xPower * Math.sin(robotPose.heading) + yPower * Math.cos(robotPose.heading);
+        double y_rotated = xPower * Math.cos(robotPose.heading) - yPower * Math.sin(robotPose.heading);
+        double x_rotated = xPower * Math.sin(robotPose.heading) + yPower * Math.cos(robotPose.heading);
 
-        if (Math.abs(x_rotated) < 0.01) x_rotated = 0;
-        else x_rotated += kStatic * Math.signum(x_rotated);
-        if (Math.abs(y_rotated) < 0.01) y_rotated = 0;
-        else y_rotated += kStatic * Math.signum(y_rotated);
-        if (Math.abs(hPower) < 0.01) hPower = 0;
-        else hPower += kStatic * Math.signum(hPower);
+        hPower = Range.clip(hPower, -0.7, 0.7);
 
-        return new Pose((y_rotated / robot.getVoltage() * 12.5) *1.6, x_rotated / robot.getVoltage() * 12.5, hPower / robot.getVoltage() * 12.5);
+        double correction = robot.getVoltage() / 13.5;
+        x_rotated /= correction;
+        y_rotated /= correction;
+        hPower /= correction;
+
+        return new Pose(x_rotated * 1.41, y_rotated, hPower);
     }
 
     @Override

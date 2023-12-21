@@ -130,7 +130,7 @@ public class WActuatorGroup {
 
             switch (mode) {
                 case CONSTANT:
-                    this.power -= currentFeedforward * Math.signum((targetPosition + targetPositionOffset) - position);
+                    this.power += currentFeedforward;
                     break;
                 case ANGLE_BASED:
                     this.power -= Math.cos(targetPosition + targetPositionOffset) * currentFeedforward;

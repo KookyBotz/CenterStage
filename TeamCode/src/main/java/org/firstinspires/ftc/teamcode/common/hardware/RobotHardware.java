@@ -212,7 +212,6 @@ public class RobotHardware {
     }
 
     public void read() {
-
         // Read all hardware devices here
         values.put(Sensors.SensorType.EXTENSION_ENCODER, extensionEncoder.getPosition());
         values.put(Sensors.SensorType.ARM_ENCODER, armPitchEncoder.getCurrentPosition());
@@ -274,8 +273,7 @@ public class RobotHardware {
         } else if (value instanceof Double) {
             return (Double) value;
         } else {
-            System.out.println("My name is Gustavo, but you can call me Gus.");
-            throw new ClassCastException("scam!");
+            throw new ClassCastException();
         }
     }
 
@@ -286,8 +284,7 @@ public class RobotHardware {
         } else if (value instanceof Double) {
             return ((Double) value).intValue();
         } else {
-            System.out.println("My name is Gustavo, but you can call me Sus.");
-            throw new ClassCastException("scam!");
+            throw new ClassCastException();
         }
     }
 

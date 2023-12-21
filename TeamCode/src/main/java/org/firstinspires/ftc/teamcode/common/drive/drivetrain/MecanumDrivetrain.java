@@ -52,9 +52,9 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
         wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = (forwardSpeed + strafeSpeed - turnSpeed);
         // 1.06, 1.04
 
-        double max = Arrays.stream(wheelSpeeds).max().getAsDouble();
+        double max = Arrays.stream(wheelSpeeds).map(Math::abs).max().getAsDouble();
 
-        if (Math.abs(max) > 1) {
+        if (max > 1) {
             wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] /= max;
             wheelSpeeds[RobotDrive.MotorType.kFrontRight.value] /= max;
             wheelSpeeds[RobotDrive.MotorType.kBackLeft.value] /= max;

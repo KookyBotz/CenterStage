@@ -40,7 +40,6 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
         positionLeft = () -> robot.doubleSubscriber(Sensors.SensorType.POD_LEFT);
         positionRight = () -> robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT);
         positionFront = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_FRONT);
-//        imuAngle = robot::getAngle;
         imuAngle = () -> 0.0;
     }
 
@@ -65,11 +64,7 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
         //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
         //  compensation method
 
-        return Arrays.asList(
-                encoderTicksToInches(robot.podLeft.getRawVelocity()),
-                encoderTicksToInches(robot.podRight.getRawVelocity()),
-                encoderTicksToInches(robot.podFront.getRawVelocity())
-        );
+        return Arrays.asList(0.0, 0.0, 0.0);
     }
 
     @Override
@@ -88,25 +83,10 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
 
     }
 
-    public double getHeading() {
-        return 0.0;
-    }
-
-    public double getRawExternalHeading() {
-        return 0;
-    }
-
-    public double getExternalHeadingVelocity() {
-        return 0.0;
-    }
 
     @Override
     public void setPoseEstimate(Pose2d pose) {
         super.setPoseEstimate(pose);
     }
 
-    public Pose getNewPoseVelocity() {
-        Pose2d a = super.getPoseVelocity();
-        return new Pose(a.getX(), a.getY(), Math.toRadians(a.getHeading()));
-    }
 }

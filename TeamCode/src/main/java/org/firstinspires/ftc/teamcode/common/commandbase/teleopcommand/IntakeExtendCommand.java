@@ -16,8 +16,8 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class IntakeExtendCommand extends SequentialCommandGroup {
     public IntakeExtendCommand(int target) {
         super(
-                new InstantCommand(() -> Globals.retract()),
-                new ArmCommand(-0.03),
+                new InstantCommand(Globals::retract),
+                new ArmCommand(-0.08),
                 new ExtensionCommand(target),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
                 new PivotCommand(0.46),

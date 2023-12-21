@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
-@Disabled
 @Autonomous(name = "LocalizationTest")
 public class LocalizationTest extends CommandOpMode {
 
@@ -46,8 +45,7 @@ public class LocalizationTest extends CommandOpMode {
             localizer.setPoseEstimate(new Pose2d(0, 0, 0));
         }
 
-        robot.clearBulkCache();
-
+        robot.read();
         localizer.periodic();
         super.run();
 
@@ -61,5 +59,7 @@ public class LocalizationTest extends CommandOpMode {
         telemetry.addData("front", (localizer.positionFront.getAsDouble()) /  (2972.64 * currentPose.heading));
 
         telemetry.update();
+        robot.clearBulkCache();
+
     }
 }

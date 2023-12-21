@@ -130,7 +130,6 @@ public class OpMode extends CommandOpMode {
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        System.out.println(1000000000 / (loop - loopTime));
         telemetry.addData("currentAngle", robot.armActuator.getPosition());
         telemetry.addData("angle", InverseKinematics.t_angle);
         telemetry.addData("power", robot.armActuator.getPower());

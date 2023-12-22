@@ -15,13 +15,9 @@ public class PurplePixelDepositCommand extends SequentialCommandGroup {
     public PurplePixelDepositCommand() {
         super(
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
-                new WaitCommand(150),
+                new WaitCommand(75),
                 new ArmCommand(0.2),
-                new WaitCommand(500),
-                new ArmLiftCommand(0.675),
-                new WaitCommand(500),
-                new ArmFloatCommand(true),
-                new PivotCommand(0.49)
+                new WaitCommand(250)
         );
     }
 }

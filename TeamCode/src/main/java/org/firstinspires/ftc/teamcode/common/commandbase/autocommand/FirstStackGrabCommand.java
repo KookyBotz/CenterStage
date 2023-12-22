@@ -16,7 +16,7 @@ public class FirstStackGrabCommand extends SequentialCommandGroup {
     public FirstStackGrabCommand() {
         super(
                 new ExtensionCommand(600),
-                new WaitCommand(750),
+                new WaitCommand(500),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT),
                 new WaitCommand(150),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
@@ -24,7 +24,7 @@ public class FirstStackGrabCommand extends SequentialCommandGroup {
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT),
                 new WaitCommand(250),
                 new ArmLiftCommand(0.63),
-                new WaitCommand(500),
+                new WaitCommand(100),
                 new ExtensionCommand(0)
         );
     }

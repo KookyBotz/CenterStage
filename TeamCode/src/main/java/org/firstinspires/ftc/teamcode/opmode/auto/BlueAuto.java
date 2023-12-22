@@ -6,14 +6,17 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackSetupCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondStackGrabCommand;
@@ -31,7 +34,8 @@ public class BlueAuto extends CommandOpMode {
 
 
     private double loopTime = 0.0;
-
+    private final ElapsedTime timer = new ElapsedTime();
+    private double endTime = 0;
 
     @Override
     public void initialize() {
@@ -60,25 +64,29 @@ public class BlueAuto extends CommandOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
+                        new InstantCommand(timer::reset),
                         // go to yellow pixel scoring pos
                         new PositionCommand(new Pose(25, 0, 0))
                                 .alongWith(new PurplePixelExtendCommand()),
 
                         new PurplePixelDepositCommand(),
 
-                        new PositionCommand(new Pose(25, -0.6, -Math.PI/2)),
+                        new PositionCommand(new Pose(25, -0.25, -Math.PI / 2))
+                                .alongWith(new FirstStackSetupCommand()),
 
                         new FirstStackGrabCommand(),
 
-                        new PositionCommand(new Pose(27, -67, -Math.PI/2))
+                        new PositionCommand(new Pose(27, -68.25, -Math.PI / 2))
                                 .alongWith(new AutoDepositCommand()),
 
-                        new PositionCommand(new Pose(26, 0, -Math.PI/2)),
+                        new InstantCommand(() -> endTime = timer.seconds())
 
-                        new SecondStackGrabCommand(),
-
-                        new PositionCommand(new Pose(27, -67, -Math.PI/2))
-                                .alongWith(new AutoDepositCommand())
+//                        new PositionCommand(new Pose(26.5, 0.6, -Math.PI/2)),
+//
+//                        new SecondStackGrabCommand(),
+//
+//                        new PositionCommand(new Pose(27, -68, -Math.PI/2))
+//                                .alongWith(new AutoDepositCommand())
                 )
         );
     }
@@ -92,6 +100,7 @@ public class BlueAuto extends CommandOpMode {
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         telemetry.addLine(robot.localizer.getPos().toString());
+        telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
         loopTime = loop;
         telemetry.update();
 

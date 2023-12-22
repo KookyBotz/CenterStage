@@ -62,6 +62,8 @@ public class RobotHardware {
     public WActuatorGroup extensionActuator;
     public WActuatorGroup intakePivotActuator;
 
+    public WServo armLiftServo;
+
     public WServo intakeClawLeftServo;
     public WServo intakeClawRightServo;
     public WServo intakePivotLeftServo;
@@ -167,15 +169,17 @@ public class RobotHardware {
                 .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0)
                 .setErrorTolerance(0.03);
 
+        armLiftServo = new WServo(hardwareMap.get(Servo.class, "lift"));
+
         // INTAKE
         intakeClawLeftServo = new WServo(hardwareMap.get(Servo.class, "servo1"));
         intakeClawRightServo = new WServo(hardwareMap.get(Servo.class, "servo2"));
         intakeClawRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
+        intakePivotLeftServo.setOffset(-0.045);
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
-        intakePivotRightServo.setOffset(-0.13);
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
 

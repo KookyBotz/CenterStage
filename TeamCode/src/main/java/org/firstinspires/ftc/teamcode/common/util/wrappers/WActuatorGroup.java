@@ -50,6 +50,7 @@ public class WActuatorGroup {
     private double offset = 0.0;
 
     private boolean reached = false;
+    private boolean floating = false;
 
     private FeedforwardMode mode = FeedforwardMode.NONE;
 
@@ -91,7 +92,7 @@ public class WActuatorGroup {
             if (value instanceof Integer) {
                 this.position = (int) value;
                 return;
-            } else if (value instanceof  Double) {
+            } else if (value instanceof Double) {
                 this.position = (double) value;
                 return;
             }
@@ -156,7 +157,8 @@ public class WActuatorGroup {
             if (device instanceof DcMotor) {
                 double correction = 1.0;
                 if (voltage != null) correction = 12.0 / voltage.getAsDouble();
-                ((DcMotor) device).setPower(power * correction);
+                if (!floating) ((DcMotor) device).setPower(power * correction);
+                else ((DcMotor) device).setPower(0);
             } else if (device instanceof Servo) {
                 ((Servo) device).setPosition(targetPosition);
             }
@@ -173,6 +175,10 @@ public class WActuatorGroup {
     public void setTargetPosition(double targetPosition) {
         this.targetPosition = targetPosition;
         this.overallTargetPosition = targetPosition;
+    }
+
+    public void setFloat(boolean f) {
+        this.floating = f;
     }
 
     public void setOffset(double offset) {

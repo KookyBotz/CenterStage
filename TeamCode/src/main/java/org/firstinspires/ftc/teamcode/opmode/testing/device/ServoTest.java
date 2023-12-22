@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 
 @Config
-@TeleOp(name = "ServoTest")
 @Disabled
+@TeleOp(name = "ServoTest")
 public class ServoTest extends OpMode {
     private WServo servo1;
     private WServo servo2;
@@ -26,9 +26,7 @@ public class ServoTest extends OpMode {
     public void init() {
         servo1 = new WServo(hardwareMap.get(Servo.class, "servo1"));
         servo2 = new WServo(hardwareMap.get(Servo.class, "servo2"));
-        servo2.setDirection(Servo.Direction.REVERSE);
         servo3 = new WServo(hardwareMap.get(Servo.class, "servo3"));
-        servo3.setOffset(0.025);
         servo4 = new WServo(hardwareMap.get(Servo.class, "servo4"));
         servo4.setDirection(Servo.Direction.REVERSE);
     }

@@ -12,6 +12,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.AutoDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -53,20 +58,27 @@ public class BlueAuto extends CommandOpMode {
         robot.localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
 
-
-
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         // go to yellow pixel scoring pos
-                        new PositionCommand(new Pose(25.75, 0, 0)),
-                        new WaitUntilCommand(()->gamepad1.a),
-                        new PositionCommand(new Pose(25.75, -0.6, -1.57)),
-                        new WaitUntilCommand(()->gamepad1.a),
-                        new PositionCommand(new Pose(27, -64, -1.57)),
-                        new WaitUntilCommand(()->gamepad1.a),
-                        new PositionCommand(new Pose(27, -0.6, -1.57)),
-                        new WaitUntilCommand(()->gamepad1.a),
-                        new PositionCommand(new Pose(27, -64, -1.57))
+                        new PositionCommand(new Pose(25, 0, 0))
+                                .alongWith(new PurplePixelExtendCommand()),
+
+                        new PurplePixelDepositCommand(),
+
+                        new PositionCommand(new Pose(25, -0.6, -Math.PI/2)),
+
+                        new FirstStackGrabCommand(),
+
+                        new PositionCommand(new Pose(27, -67, -Math.PI/2))
+                                .alongWith(new AutoDepositCommand()),
+
+                        new PositionCommand(new Pose(26, 0, -Math.PI/2)),
+
+                        new SecondStackGrabCommand(),
+
+                        new PositionCommand(new Pose(27, -67, -Math.PI/2))
+                                .alongWith(new AutoDepositCommand())
                 )
         );
     }

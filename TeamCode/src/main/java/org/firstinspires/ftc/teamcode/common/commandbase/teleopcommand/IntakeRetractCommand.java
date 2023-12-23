@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class IntakeRetractCommand extends SequentialCommandGroup {
     public IntakeRetractCommand() {
         super(
-                new InstantCommand(() -> Globals.retract()),
+                new InstantCommand(Globals::stopIntaking),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                 new WaitCommand(250),
                 new ArmCommand(-0.06),

@@ -15,8 +15,7 @@ import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 public class DepositExtendCommand extends SequentialCommandGroup {
     public DepositExtendCommand() {
         super(
-                new InstantCommand(() -> Globals.startScoring()),
-                new InstantCommand(() -> InverseKinematics.calculateTarget(3, RobotHardware.getInstance().extension.getBackdropHeight())),
+                new InstantCommand(Globals::startScoring),
                 new ArmCommand(InverseKinematics.t_angle),
                 new WaitCommand(200),
                 new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),

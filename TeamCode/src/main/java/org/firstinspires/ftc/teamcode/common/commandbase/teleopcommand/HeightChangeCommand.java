@@ -17,7 +17,7 @@ public class HeightChangeCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> InverseKinematics.calculateTarget(3, robot.extension.getBackdropHeight())),
                 new ConditionalCommand(
                         new ScoreCommand(robot, 3, robot.extension.getBackdropHeight()),
-                        new WaitCommand(1),
+                        new InstantCommand(),
                         () -> Globals.IS_SCORING
                 )
         );

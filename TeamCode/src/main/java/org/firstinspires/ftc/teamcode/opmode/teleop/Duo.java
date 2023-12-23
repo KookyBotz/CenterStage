@@ -27,8 +27,8 @@ import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Config
-@TeleOp(name = "TeleOp")
-public class OpMode extends CommandOpMode {
+@TeleOp(name = "Duo")
+public class Duo extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
     private GamepadEx gamepadEx;
@@ -109,8 +109,8 @@ public class OpMode extends CommandOpMode {
         // G1 - Drivetrain Control
         robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
 
-        boolean currentJoystickUp = gamepad2.right_stick_y < -0.5;
-        boolean currentJoystickDown = gamepad2.right_stick_y > 0.5;
+        boolean currentJoystickUp = gamepad1.right_stick_y < -0.5;
+        boolean currentJoystickDown = gamepad1.right_stick_y > 0.5;
         if (robot.hang.getHangState() == HangSubsystem.HangState.DISABLED) {
             // G2 - Change Target Deposit Height
             if (currentJoystickDown && !lastJoystickDown) {

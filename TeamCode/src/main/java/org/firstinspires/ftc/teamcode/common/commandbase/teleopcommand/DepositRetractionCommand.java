@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand;
 
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.Robot;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
@@ -21,7 +20,7 @@ public class DepositRetractionCommand extends ConditionalCommand {
     public DepositRetractionCommand() {
         super(
                 new SequentialCommandGroup(
-                        new InstantCommand(() -> Globals.retract()),
+                        new InstantCommand(Globals::stopScoring),
                         new ExtensionCommand(0),
                         new WaitCommand(350 + RobotHardware.getInstance().intSubscriber(Sensors.SensorType.EXTENSION_ENCODER)),
                         new ArmCommand(-0.06),

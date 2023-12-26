@@ -73,7 +73,6 @@ public class RobotHardware {
     public WEncoder podRight;
     public WEncoder podFront;
 
-    public WServo droneActuator;
     public WServo droneTrigger;
 
     public CRServoImplEx leftHang;
@@ -187,8 +186,7 @@ public class RobotHardware {
         this.podFront = new WEncoder(new MotorEx(hardwareMap, "dtBackRightMotor").encoder);
         this.podRight = new WEncoder(new MotorEx(hardwareMap, "dtBackLeftMotor").encoder);
 
-//        this.droneActuator = new WServo(hardwareMap.get(Servo.class, "droneActuator"));
-//        this.droneTrigger = new WServo(hardwareMap.get(Servo.class, "droneTrigger"));
+        this.droneTrigger = new WServo(hardwareMap.get(Servo.class, "drone"));
 
         // TODO: Configure config names
 //        this.leftHang = hardwareMap.get(CRServoImplEx.class, "leftHang");

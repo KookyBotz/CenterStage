@@ -12,33 +12,22 @@ public class DroneSubsystem extends WSubsystem {
 
     private DroneState droneState;
 
-    public static double STORED_ACTUATOR = 0.0;
-    public static double STORED_TRIGGER = 0.0;
-
-    public static double ARMED_ACTUATOR = 0.0;
     public static double ARMED_TRIGGER = 0.0;
 
-    public static double FIRED_ACTUATOR = 0.0;
     public static double FIRED_TRIGGER = 0.0;
 
     public enum DroneState {
-        STORED,
         ARMED,
         FIRED
     }
 
     public DroneSubsystem() {
-        if (robot.droneTrigger != null && robot.droneActuator != null) this.updateState(DroneState.STORED);
+        if (robot.droneTrigger != null) this.updateState(DroneState.ARMED);
     }
 
     public void updateState(DroneState state) {
         switch (state) {
-            case STORED:
-                robot.droneActuator.setPosition(STORED_ACTUATOR);
-                robot.droneTrigger.setPosition(STORED_TRIGGER);
-                break;
             case ARMED:
-                robot.droneActuator.setPosition(ARMED_ACTUATOR);
                 robot.droneTrigger.setPosition(ARMED_TRIGGER);
                 break;
             case FIRED:
@@ -64,7 +53,7 @@ public class DroneSubsystem extends WSubsystem {
 
     @Override
     public void reset() {
-        this.updateState(DroneState.STORED);
+        this.updateState(DroneState.ARMED);
     }
 
     public DroneState getDroneState() {

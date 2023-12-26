@@ -17,7 +17,7 @@ public class IntakeExtendCommand extends SequentialCommandGroup {
     public IntakeExtendCommand(int target) {
         super(
                 new InstantCommand(Globals::startIntaking),
-                new ArmCommand(-0.08),
+                new ArmCommand(-0.1),
                 new ExtensionCommand(target),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
                 new PivotCommand(0.46),

@@ -5,11 +5,14 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.ClawDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.ClawToggleCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositExtendCommand;
@@ -21,6 +24,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
@@ -82,6 +86,16 @@ public class Duo extends CommandOpMode {
                                 ),
                                 () -> Globals.IS_SCORING
                         )
+                );
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y )
+                        .whenPressed(new SequentialCommandGroup(
+                                new InstantCommand(Globals::startScoring),
+                                new ArmCommand(2.94),
+                                new PivotStateCommand(IntakeSubsystem.PivotState.SCORING)
+                        )).whenReleased(new SequentialCommandGroup(
+                                new DepositRetractionCommand()
+                                )
                 );
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)

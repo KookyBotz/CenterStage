@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmFloatCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
@@ -17,10 +18,11 @@ public class IntakeExtendCommand extends SequentialCommandGroup {
     public IntakeExtendCommand(int target) {
         super(
                 new InstantCommand(Globals::startIntaking),
-                new ArmCommand(-0.1),
+//                new ArmCommand(-0.1),
+                new ArmFloatCommand(true),
                 new ExtensionCommand(target),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.46),
+//                new PivotCommand(0.46),
                 new WaitCommand(250),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)
         );

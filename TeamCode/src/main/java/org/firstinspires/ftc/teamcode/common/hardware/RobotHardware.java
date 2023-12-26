@@ -158,13 +158,13 @@ public class RobotHardware {
 
         this.extensionActuator = new WActuatorGroup(
                 () -> intSubscriber(Sensors.SensorType.EXTENSION_ENCODER), extensionMotor)
-                .setPIDController(new PIDController(0.005, 0.0, 0.00035))
+                .setPIDController(new PIDController(0.008, 0.0, 0.00035))
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(20);
 
         this.armActuator = new WActuatorGroup(
                 () -> doubleSubscriber(Sensors.SensorType.ARM_ENCODER), armMotor)
-                .setPIDController(new PIDController(1.6379, 0, 0.05))
+                .setPIDController(new PIDController(1.7500, 0, 0.05))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0)
                 .setErrorTolerance(0.03);
 

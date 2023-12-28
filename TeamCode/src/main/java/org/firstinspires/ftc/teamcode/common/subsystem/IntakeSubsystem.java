@@ -35,7 +35,7 @@ public class IntakeSubsystem extends WSubsystem {
 
     public void updateState(@NotNull ClawState state, @NotNull ClawSide side) {
         double position = getClawStatePosition(state, side);
-        switch(side) {
+        switch (side) {
             case LEFT:
                 robot.intakeClawLeftServo.setPosition(position);
                 this.leftClaw = state;
@@ -62,12 +62,12 @@ public class IntakeSubsystem extends WSubsystem {
         double pos = robot.armActuator.getOverallTargetPosition();
         if (pivotState == PivotState.SCORING) {
             double targetAngle = ((pos) - ((((pos < Math.PI / 2) ? 5 : 13) * Math.PI) / 18));
-            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2, 0.46, 0.96), 0.075, 0.98));
+            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2 - 0.35, 0.5, 0.93), 0.03, 0.97));
         } else if (pivotState == PivotState.FLAT) {
-            double targetAngle = ((pos) - ((((pos < Math.PI / 2) ? 0 : 1) * Math.PI) / 1));
-            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2, 0.46, 0.96), 0.075, 0.98));
+            double targetAngle = ((pos) - ((((pos < Math.PI / 2) ? 0 : 1) * Math.PI)));
+            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2 - 0.35, 0.5, 0.93), 0.03, 0.97));
         } else if (pivotState == PivotState.STORED) {
-            robot.intakePivotActuator.setTargetPosition(0.01);
+            robot.intakePivotActuator.setTargetPosition(0.03);
         }
     }
 
@@ -116,7 +116,8 @@ public class IntakeSubsystem extends WSubsystem {
     }
 
     public ClawState getClawState(ClawSide side) {
-        if (side == ClawSide.BOTH) return (robot.intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (robot.intake.leftClaw == IntakeSubsystem.ClawState.CLOSED)) ? ClawState.CLOSED : ClawState.OPEN;
+        if (side == ClawSide.BOTH)
+            return (robot.intake.rightClaw == (IntakeSubsystem.ClawState.CLOSED) || (robot.intake.leftClaw == IntakeSubsystem.ClawState.CLOSED)) ? ClawState.CLOSED : ClawState.OPEN;
         return (side == ClawSide.LEFT) ? leftClaw : rightClaw;
     }
 }

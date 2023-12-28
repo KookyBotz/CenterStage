@@ -20,15 +20,15 @@ public class DepositRetractionCommand extends ConditionalCommand {
     public DepositRetractionCommand() {
         super(
                 new SequentialCommandGroup(
-                        new InstantCommand(Globals::stopScoring),
                         new ExtensionCommand(0),
-                        new WaitCommand(320 + RobotHardware.getInstance().intSubscriber(Sensors.SensorType.EXTENSION_ENCODER)),
-                        new ArmCommand(-0.06),
+                        new WaitCommand((long) RobotHardware.getInstance().extensionEncoder.getPosition()),
+                        new ArmCommand(0),
+                        new InstantCommand(Globals::stopScoring),
                         new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                         new PivotStateCommand(IntakeSubsystem.PivotState.STORED)
 //                        new PivotCommand(0)
                 ),
-                new WaitCommand(1),
+                new InstantCommand(),
                 () -> Globals.IS_SCORING
         );
     }

@@ -48,7 +48,7 @@ public class Solo extends CommandOpMode {
 
         robot.init(hardwareMap, telemetry);
 
-        robot.intakePivotActuator.setTargetPosition(0);
+        robot.intakePivotActuator.setTargetPosition(0.03);
         robot.intakePivotActuator.write();
 
         // G1 - Claw Control

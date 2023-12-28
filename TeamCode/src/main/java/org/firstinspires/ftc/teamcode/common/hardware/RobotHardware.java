@@ -90,7 +90,7 @@ public class RobotHardware {
     private BNO055IMU imu;
     public List<LynxModule> modules;
 
-    private double imuAngle ;
+    private double imuAngle;
 
     private ArrayList<WSubsystem> subsystems;
 
@@ -115,7 +115,7 @@ public class RobotHardware {
      * Created at the start of every OpMode.
      *
      * @param hardwareMap The HardwareMap of the robot, storing all hardware devices
-     * @param telemetry Saved for later in the event FTC Dashboard used
+     * @param telemetry   Saved for later in the event FTC Dashboard used
      */
     public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -176,8 +176,9 @@ public class RobotHardware {
         intakeClawRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
-        intakePivotLeftServo.setOffset(-0.045);
+        intakePivotLeftServo.setOffset(-0.03);
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
+        intakePivotRightServo.setOffset(0.01);
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
@@ -223,7 +224,7 @@ public class RobotHardware {
             values.put(Sensors.SensorType.POD_RIGHT, podRight.getPosition());
         }
 
-        if (Globals.IS_USING_IMU); // read imu here
+        if (Globals.IS_USING_IMU) ; // read imu here
     }
 
     public void write() {

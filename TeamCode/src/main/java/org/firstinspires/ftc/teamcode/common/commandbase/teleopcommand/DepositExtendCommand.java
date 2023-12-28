@@ -17,9 +17,8 @@ public class DepositExtendCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(Globals::startScoring),
                 new ArmCommand(InverseKinematics.t_angle),
-                new WaitCommand(200),
+                new WaitCommand(300),
                 new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),
-                new WaitCommand(400),
                 new ExtensionCommand((int) InverseKinematics.t_extension)
         );
     }

@@ -53,7 +53,7 @@ public class Duo extends CommandOpMode {
 
         robot.init(hardwareMap, telemetry);
 
-        robot.intakePivotActuator.setTargetPosition(0);
+        robot.intakePivotActuator.setTargetPosition(0.03);
         robot.intakePivotActuator.write();
 
         robot.drone.reset();
@@ -64,15 +64,6 @@ public class Duo extends CommandOpMode {
         gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(new ClawToggleCommand(robot, ClawSide.RIGHT));
 
-//        // G1 - Retract deposit
-//        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
-//                .whenPressed(
-//                        new ConditionalCommand(
-//                                new DepositRetractionCommand(),
-//                                new InstantCommand(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand())),
-//                                () -> Globals.IS_SCORING
-//                        )
-//                );
 
         // G1 - Claw control for scoring, retraction for when intaking
         gamepadEx.getGamepadButton(GamepadKeys.Button.A)

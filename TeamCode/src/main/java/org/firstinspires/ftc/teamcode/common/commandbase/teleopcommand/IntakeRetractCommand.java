@@ -21,6 +21,7 @@ public class IntakeRetractCommand extends SequentialCommandGroup {
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                 new WaitCommand(250),
                 new ArmFloatCommand(false),
+                new ArmCommand(0),
                 new ExtensionCommand(0),
                 new PivotStateCommand(IntakeSubsystem.PivotState.STORED),
                 new PivotCommand(0)

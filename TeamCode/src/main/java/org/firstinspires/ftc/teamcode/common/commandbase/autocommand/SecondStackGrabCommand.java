@@ -18,16 +18,12 @@ public class SecondStackGrabCommand extends SequentialCommandGroup {
                 new ArmFloatCommand(true),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
                 new WaitCommand(250),
-                new ExtensionCommand(600),
-                new WaitCommand(750),
-                new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT),
-                new WaitCommand(150),
-                new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
-                new WaitCommand(150),
+                new ExtensionCommand(550),
+                new WaitCommand(500),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT),
                 new WaitCommand(250),
                 new ArmLiftCommand(0.63),
-                new WaitCommand(500),
+                new WaitCommand(100),
                 new ExtensionCommand(0)
         );
     }

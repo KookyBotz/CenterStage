@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.function.DoubleSupplier;
 
 @Config
-public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements Localizer {
+public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer {
 
     private final RobotHardware robot = RobotHardware.getInstance();
 
@@ -26,7 +26,6 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
 
     public static double TRACK_WIDTH = 10.787401;
     public static double FORWARD_OFFSET = 4.370004;
-
 
     public final DoubleSupplier positionLeft, positionRight, positionFront, imuAngle;
 
@@ -67,26 +66,17 @@ public class ThreeWheelLocalizer extends ThreeTrackingWheelLocalizer implements 
         return Arrays.asList(0.0, 0.0, 0.0);
     }
 
-    @Override
     public void periodic() {
         super.update();
     }
 
-    @Override
-    public Pose getPos() {
+    public Pose getPose() {
         Pose2d pose = getPoseEstimate();
-        return new Pose(pose.getX(), -pose.getY(), pose.getHeading());
+        return new Pose(-pose.getY(), pose.getX(), pose.getHeading());
     }
 
-    @Override
-    public void setPos(Pose pose) {
-
-    }
-
-
-    @Override
-    public void setPoseEstimate(Pose2d pose) {
-        super.setPoseEstimate(pose);
+    public void setPose(Pose pose) {
+        super.setPoseEstimate(new Pose2d(pose.y, -pose.x, pose.heading));
     }
 
 }

@@ -7,13 +7,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.Localizer;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
 @Config
 public class PositionCommand extends CommandBase {
-    Localizer localizer;
+    ThreeWheelLocalizer localizer;
     Drivetrain drivetrain;
     Pose targetPose;
 
@@ -57,7 +57,7 @@ public class PositionCommand extends CommandBase {
         if (timer == null) timer = new ElapsedTime();
         if (stable == null) stable = new ElapsedTime();
 
-        Pose robotPose = localizer.getPos();
+        Pose robotPose = localizer.getPose();
 
         Pose powers = getPower(robotPose);
         drivetrain.set(powers);
@@ -65,7 +65,7 @@ public class PositionCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        Pose robotPose = localizer.getPos();
+        Pose robotPose = localizer.getPose();
         Pose delta = targetPose.subtract(robotPose);
 
         if (delta.toVec2D().magnitude() > ALLOWED_TRANSLATIONAL_ERROR

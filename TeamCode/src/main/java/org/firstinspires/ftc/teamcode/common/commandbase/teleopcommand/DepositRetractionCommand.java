@@ -22,7 +22,7 @@ public class DepositRetractionCommand extends ConditionalCommand {
                 new SequentialCommandGroup(
                         new ExtensionCommand(0),
                         new WaitCommand((long) RobotHardware.getInstance().extensionEncoder.getPosition()),
-                        new ArmCommand(0),
+                        new ArmCommand(-0.035),
                         new InstantCommand(Globals::stopScoring),
                         new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                         new PivotStateCommand(IntakeSubsystem.PivotState.STORED)

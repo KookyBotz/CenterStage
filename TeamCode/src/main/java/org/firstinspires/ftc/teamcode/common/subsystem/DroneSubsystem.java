@@ -12,9 +12,9 @@ public class DroneSubsystem extends WSubsystem {
 
     private DroneState droneState;
 
-    public static double ARMED_TRIGGER = 0.0;
+    public static double ARMED_TRIGGER = 0.075;
 
-    public static double FIRED_TRIGGER = 0.0;
+    public static double FIRED_TRIGGER = 0.3 ;
 
     public enum DroneState {
         ARMED,

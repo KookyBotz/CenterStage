@@ -13,7 +13,7 @@ public class FirstStackSetupCommand extends SequentialCommandGroup {
                 new ArmLiftCommand(0.67),
                 new WaitCommand(400),
                 new ArmFloatCommand(true),
-                new PivotCommand(0.48)
+                new PivotCommand(0.5)
         );
     }
 }

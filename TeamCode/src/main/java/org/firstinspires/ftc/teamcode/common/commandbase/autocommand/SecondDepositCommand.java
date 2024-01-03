@@ -13,11 +13,11 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCo
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
-public class AutoDepositCommand extends SequentialCommandGroup {
-    public AutoDepositCommand() {
+public class SecondDepositCommand extends SequentialCommandGroup {
+    public SecondDepositCommand() {
         super(
-                new WaitCommand(750),
-                new ArmCommand(3.05),
+                new WaitCommand(1250),
+                new ArmCommand(2.95),
                 new ArmFloatCommand(false),
                 new ArmLiftCommand(0.3),
                 new WaitCommand(500),
@@ -27,14 +27,13 @@ public class AutoDepositCommand extends SequentialCommandGroup {
                 new ClawCommand(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
                 new WaitCommand(250),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
-                new WaitCommand(250),
+                new WaitCommand(100),
                 new ExtensionCommand(0),
-                new WaitCommand(500),
+                new WaitCommand(150),
                 new ArmCommand(0.2),
-                new ArmLiftCommand(0.735),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.47)
+                new PivotCommand(0.46)
         );
     }
 }

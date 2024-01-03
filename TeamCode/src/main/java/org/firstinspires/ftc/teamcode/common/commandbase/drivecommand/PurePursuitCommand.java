@@ -6,7 +6,7 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.Localizer;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.PurePursuitConfig;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.purepursuit.PurePursuitPath;
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 @Config
 public class PurePursuitCommand extends CommandBase {
     private final Drivetrain drivetrain;
-    private final Localizer localizer;
+    private final ThreeWheelLocalizer localizer;
     private final PurePursuitPath purePursuitPath;
     private final Pose endPose;
 
@@ -41,7 +41,7 @@ public class PurePursuitCommand extends CommandBase {
 
     private ElapsedTime timer;
 
-    public PurePursuitCommand(Drivetrain drivetrain, Localizer localizer, PurePursuitPath purePursuitPath) {
+    public PurePursuitCommand(Drivetrain drivetrain, ThreeWheelLocalizer localizer, PurePursuitPath purePursuitPath) {
         this.drivetrain = drivetrain;
         this.localizer = localizer;
         this.purePursuitPath = purePursuitPath;
@@ -52,7 +52,7 @@ public class PurePursuitCommand extends CommandBase {
     public void execute() {
         if (purePursuitPath.isFinished()) PID = true;
 
-        Pose robotPose = localizer.getPos();
+        Pose robotPose = localizer.getPose();
         Pose targetPose = purePursuitPath.update(robotPose);
 
         if(PID && timer == null){

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.drive.pathing.geometry;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 
 import java.util.Locale;
 
@@ -24,6 +25,10 @@ public class Pose extends Point {
         this(0, 0, 0);
     }
 
+    public Pose(AprilTagPoseFtc ftcPose) {
+        this(ftcPose.x, ftcPose.y, Math.toRadians(ftcPose.yaw));
+    }
+
     public void set(Pose other) {
         this.x = other.x;
         this.y = other.y;
@@ -41,6 +46,8 @@ public class Pose extends Point {
     public Pose divide(Pose other) {
         return new Pose(this.x / other.x, this.y / other.y, this.heading / other.heading);
     }
+
+
 
     public Pose subt(Pose other) {
         return new Pose(x - other.x, y - other.y, heading - other.heading);

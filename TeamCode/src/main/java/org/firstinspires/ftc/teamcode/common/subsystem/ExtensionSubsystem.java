@@ -56,6 +56,13 @@ public class ExtensionSubsystem extends WSubsystem {
         robot.armActuator.setCurrentPosition(armAngle.getAsDouble());
         robot.extensionActuator.setCurrentPosition(liftTicks.getAsInt());
 
+        double error = robot.extensionActuator.getOverallTargetPosition() - robot.extensionActuator.getPosition();
+        double feedforward = 0.1 * Math.abs(Math.cos(robot.armActuator.getPosition())) * Math.signum(error);
+
+        System.out.println("feedforward " + feedforward);
+
+//        robot.extensionActuator.updateFeedforward(Math.abs(error) > 10 ? feedforward : 0);
+
         robot.armActuator.periodic();
         robot.extensionActuator.periodic();
     }

@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -13,16 +12,13 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.profile.ProfileConstraints;
 import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.HangSubsystem;
@@ -158,7 +154,8 @@ public class RobotHardware {
 
         this.extensionActuator = new WActuatorGroup(
                 () -> intSubscriber(Sensors.SensorType.EXTENSION_ENCODER), extensionMotor)
-                .setPIDController(new PIDController(0.006, 0.0, 0.00035))
+                .setPIDController(new PIDController(0.008, 0.0, 0.0004))
+                .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0)
 //                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(20);
 

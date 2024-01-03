@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeRet
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
@@ -35,6 +36,8 @@ public class Solo extends CommandOpMode {
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
 
+    private boolean extendIntake = true;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -42,6 +45,8 @@ public class Solo extends CommandOpMode {
         Globals.IS_AUTO = false;
         Globals.IS_USING_IMU = false;
         Globals.USING_DASHBOARD = false;
+        Globals.stopIntaking();
+        Globals.stopScoring();
 
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
@@ -50,6 +55,8 @@ public class Solo extends CommandOpMode {
 
         robot.intakePivotActuator.setTargetPosition(0.03);
         robot.intakePivotActuator.write();
+
+        robot.drone.reset();
 
         // G1 - Claw Control
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
@@ -62,7 +69,7 @@ public class Solo extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new DepositRetractionCommand(),
-                                new InstantCommand(()-> CommandScheduler.getInstance().schedule(new DepositExtendCommand())),
+                                new InstantCommand(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand())),
                                 () -> Globals.IS_SCORING
                         )
                 );
@@ -70,17 +77,20 @@ public class Solo extends CommandOpMode {
         // G1 - Claw control for scoring, retraction for when intaking
         gamepadEx.getGamepadButton(GamepadKeys.Button.A)
                 .whenPressed(
-                        new ConditionalCommand(
-                                new ClawDepositCommand(),
+                        () -> CommandScheduler.getInstance().schedule(
                                 new ConditionalCommand(
-                                        new IntakeRetractCommand(),
-                                        new IntakeExtendCommand(350),
-                                        () -> Globals.IS_INTAKING
-                                ),
-                                () -> Globals.IS_SCORING
-                        )
+                                        new ClawDepositCommand(),
+                                        new ConditionalCommand(
+                                                new IntakeRetractCommand(),
+                                                new IntakeExtendCommand(extendIntake ? 500 : 100),
+                                                () -> Globals.IS_INTAKING
+                                        ),
+                                        () -> Globals.IS_SCORING
+                                ))
                 );
 
+        gamepadEx.getGamepadButton(GamepadKeys.Button.X)
+                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)));
 
         robot.read();
         while (opModeInInit()) {
@@ -107,6 +117,8 @@ public class Solo extends CommandOpMode {
 
         lastJoystickUp = currentJoystickUp;
         lastJoystickDown = currentJoystickDown;
+
+        if (gamepad1.dpad_up && gamepad1.y) robot.drone.updateState(DroneSubsystem.DroneState.FIRED);
 
         super.run();
         robot.periodic();

@@ -15,12 +15,8 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class FirstStackGrabCommand extends SequentialCommandGroup {
     public FirstStackGrabCommand() {
         super(
-                new ExtensionCommand(600),
+                new ExtensionCommand(550),
                 new WaitCommand(500),
-                new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT),
-                new WaitCommand(150),
-                new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
-                new WaitCommand(150),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT),
                 new WaitCommand(250),
                 new ArmLiftCommand(0.63),

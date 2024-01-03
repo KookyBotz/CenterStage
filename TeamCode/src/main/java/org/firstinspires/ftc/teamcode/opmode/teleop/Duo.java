@@ -39,6 +39,7 @@ public class Duo extends CommandOpMode {
     private double loopTime = 0.0;
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
+    private boolean extendIntake = true;
 
     @Override
     public void initialize() {
@@ -47,6 +48,8 @@ public class Duo extends CommandOpMode {
         Globals.IS_AUTO = false;
         Globals.IS_USING_IMU = false;
         Globals.USING_DASHBOARD = false;
+        Globals.stopIntaking();
+        Globals.stopScoring();
 
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
@@ -68,15 +71,16 @@ public class Duo extends CommandOpMode {
         // G1 - Claw control for scoring, retraction for when intaking
         gamepadEx.getGamepadButton(GamepadKeys.Button.A)
                 .whenPressed(
-                        new ConditionalCommand(
-                                new ClawDepositCommand(),
+                        () -> CommandScheduler.getInstance().schedule(
                                 new ConditionalCommand(
-                                        new IntakeRetractCommand(),
-                                        new IntakeExtendCommand(350),
-                                        () -> Globals.IS_INTAKING
-                                ),
-                                () -> Globals.IS_SCORING
-                        )
+                                        new ClawDepositCommand(),
+                                        new ConditionalCommand(
+                                                new IntakeRetractCommand(),
+                                                new IntakeExtendCommand(extendIntake ? 500 : 100),
+                                                () -> Globals.IS_INTAKING
+                                        ),
+                                        () -> Globals.IS_SCORING
+                                ))
                 );
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.Y )
@@ -88,6 +92,9 @@ public class Duo extends CommandOpMode {
                                 new DepositRetractionCommand()
                                 )
                 );
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.X)
+                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand()));

@@ -9,20 +9,18 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 @TeleOp
 @Config
-@Disabled
-public class LiftServoTest extends OpMode {
-    private ServoImplEx lift;
+public class DroneTest extends OpMode {
+    private ServoImplEx drone;
 
     public static double pos = 0.5;
 
     @Override
     public void init() {
-        lift = hardwareMap.get(ServoImplEx.class, "lift");
-        lift.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        drone = hardwareMap.get(ServoImplEx.class, "drone");
     }
 
     @Override
     public void loop() {
-        lift.setPosition(pos);
+        drone.setPosition(pos);
     }
 }

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 
 @Config
+@Disabled
 @TeleOp(name = "ServoTest")
 public class ServoTest extends OpMode {
     private WServo servo1;

@@ -26,7 +26,7 @@ public class Pose extends Point {
     }
 
     public Pose(AprilTagPoseFtc ftcPose) {
-        this(ftcPose.x, ftcPose.y, Math.toRadians(ftcPose.yaw));
+        this(ftcPose.x, ftcPose.y, Math.toRadians(-ftcPose.yaw));
     }
 
     public void set(Pose other) {

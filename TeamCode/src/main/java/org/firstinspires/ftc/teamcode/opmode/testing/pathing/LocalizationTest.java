@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -26,7 +27,7 @@ public class LocalizationTest extends CommandOpMode {
 
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
-
+    private double loopTime = 0.0;
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -71,8 +72,11 @@ public class LocalizationTest extends CommandOpMode {
     public void run() {
 
         robot.read();
-        robot.localizer.periodic();
+        robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
+
         super.run();
+        robot.localizer.periodic();
+        robot.drivetrain.periodic();
 
         Pose currentPose = robot.localizer.getPose();
 
@@ -104,11 +108,17 @@ public class LocalizationTest extends CommandOpMode {
         telemetry.addLine(backdropPosition.toString());
 
         Pose globalTagPosition = AprilTagLocalizer.convert(backdropPosition);
+
+        double loop = System.nanoTime();
+        loopTime = loop;
+        telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+
         telemetry.addLine(globalTagPosition.toString());
         telemetry.update();
 
         if (gamepad1.a) robot.localizer.setPose(globalTagPosition);
 
+        robot.drivetrain.write();
         robot.clearBulkCache();
     }
 }

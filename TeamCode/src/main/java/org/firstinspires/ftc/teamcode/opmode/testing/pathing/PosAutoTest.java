@@ -24,14 +24,9 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
 @Config
 @Autonomous(name = "PosAutoTest")
-@Disabled
 public class PosAutoTest extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
-    private WSubsystem drivetrain;
-    private ThreeWheelLocalizer localizer;
-    private ExtensionSubsystem extension;
-    private IntakeSubsystem intake;
 
     private double loopTime = 0.0;
 
@@ -45,15 +40,8 @@ public class PosAutoTest extends CommandOpMode {
 
         robot.init(hardwareMap, telemetry);
         robot.enabled = true;
-        drivetrain = new MecanumDrivetrain();
-        localizer = new ThreeWheelLocalizer();
-        extension = new ExtensionSubsystem();
-        intake = new IntakeSubsystem();
 
-        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
-
-        robot.addSubsystem(drivetrain, extension, intake);
-        intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         robot.read();
         while (!isStarted()) {
@@ -61,30 +49,29 @@ public class PosAutoTest extends CommandOpMode {
             telemetry.update();
         }
 
-        localizer.setPoseEstimate(new Pose2d(0, 0, 0));
+        robot.localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new PositionCommand(new Pose(20, 20, Math.PI/2))
+                        new PositionCommand(new Pose(0, 0, Math.PI / 2))
                 )
         );
     }
 
     @Override
     public void run() {
-
         robot.read();
 
         super.run();
-        robot.periodic();
-        localizer.periodic();
+        robot.localizer.periodic();
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+        telemetry.addLine(robot.localizer.getPose().toString());
         loopTime = loop;
         telemetry.update();
 
-        robot.write();
+        robot.drivetrain.write();
         robot.clearBulkCache();
     }
 }

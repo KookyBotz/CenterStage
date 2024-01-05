@@ -84,8 +84,8 @@ public class PositionCommand extends CommandBase {
         double yPower = yController.calculate(robotPose.y, targetPose.y);
         double hPower = -hController.calculate(robotPose.heading, targetPose.heading);
 
-        double y_rotated = xPower * Math.cos(robotPose.heading) - yPower * Math.sin(robotPose.heading);
-        double x_rotated = xPower * Math.sin(robotPose.heading) + yPower * Math.cos(robotPose.heading);
+        double x_rotated = xPower * Math.cos(-robotPose.heading) - yPower * Math.sin(-robotPose.heading);
+        double y_rotated = xPower * Math.sin(-robotPose.heading) + yPower * Math.cos(-robotPose.heading);
 
         hPower = Range.clip(hPower, -0.7, 0.7);
 

@@ -28,6 +28,7 @@ public class LocalizationTest extends CommandOpMode {
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
     private double loopTime = 0.0;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -87,12 +88,15 @@ public class LocalizationTest extends CommandOpMode {
             if (detection.metadata != null) {
                 switch (detection.id) {
                     case 1:
+                    case 4:
                         backdropPositions.add(new Pose(detection.ftcPose).add(new Pose(6, 0, 0)));
                         break;
                     case 2:
+                    case 5:
                         backdropPositions.add(new Pose(detection.ftcPose));
                         break;
                     case 3:
+                    case 6:
                         backdropPositions.add(new Pose(detection.ftcPose).subt(new Pose(6, 0, 0)));
                         break;
                     default:
@@ -107,12 +111,13 @@ public class LocalizationTest extends CommandOpMode {
         telemetry.addLine(currentPose.toString());
         telemetry.addLine(backdropPosition.toString());
 
-        Pose globalTagPosition = AprilTagLocalizer.convert(backdropPosition);
+        Pose globalTagPosition = currentPose.x > 0 ?
+                AprilTagLocalizer.convertBlueBackdropPoseToGlobal(backdropPosition) :
+                AprilTagLocalizer.convertRedBackdropPoseToGlobal(backdropPosition);
 
         double loop = System.nanoTime();
-        loopTime = loop;
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-
+        loopTime = loop;
         telemetry.addLine(globalTagPosition.toString());
         telemetry.update();
 

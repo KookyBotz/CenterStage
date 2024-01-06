@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
+import android.util.Size;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
@@ -17,8 +18,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.HangSubsystem;
@@ -26,15 +30,16 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
-import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
+import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.annotation.Nonnegative;
 
 @Config
 public class RobotHardware {
@@ -77,16 +82,17 @@ public class RobotHardware {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
+    private VisionPortal visionPortal;
+    private AprilTagProcessor aprilTag;
+
     private ElapsedTime voltageTimer = new ElapsedTime();
     private double voltage = 12.0;
 
     private static RobotHardware instance = null;
     public boolean enabled;
 
-    private BNO055IMU imu;
     public List<LynxModule> modules;
 
-    private double imuAngle;
 
     private ArrayList<WSubsystem> subsystems;
 
@@ -116,7 +122,7 @@ public class RobotHardware {
     public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.values = new HashMap<>();
-        this.telemetry = (Globals.USING_DASHBOARD) ? new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry()) : telemetry;
+        this.telemetry = (Globals.USING_DASHBOARD) ? new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()) : telemetry;
 
         values.put(Sensors.SensorType.EXTENSION_ENCODER, 0);
         values.put(Sensors.SensorType.ARM_ENCODER, 0.0);
@@ -202,8 +208,20 @@ public class RobotHardware {
         drivetrain = new MecanumDrivetrain();
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
-        if (Globals.IS_AUTO) localizer = new ThreeWheelLocalizer();
-        else {
+        if (Globals.IS_AUTO) {
+            localizer = new ThreeWheelLocalizer();
+            aprilTag = new AprilTagProcessor.Builder()
+                    // calibrated using 3DF Zephyr 7.021
+                    .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
+                    .build();
+
+            visionPortal = new VisionPortal.Builder()
+                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                    .setCameraResolution(new Size(640, 480))
+                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                    .addProcessor(aprilTag)
+                    .build();
+        } else {
             drone = new DroneSubsystem();
             hang = new HangSubsystem();
         }
@@ -221,7 +239,6 @@ public class RobotHardware {
             values.put(Sensors.SensorType.POD_RIGHT, podRight.getPosition());
         }
 
-        if (Globals.IS_USING_IMU) ; // read imu here
     }
 
     public void write() {
@@ -250,17 +267,12 @@ public class RobotHardware {
 
     public void clearBulkCache() {
         modules.get(0).clearBulkCache();
-//        modules.get(1).clearBulkCache();
     }
 
     public void addSubsystem(WSubsystem... subsystems) {
         this.subsystems.addAll(Arrays.asList(subsystems));
     }
 
-    @Nonnegative
-    public double getAngle() {
-        return imuAngle;
-    }
 
     public double getVoltage() {
         return voltage;
@@ -290,5 +302,51 @@ public class RobotHardware {
 
     public boolean boolSubscriber(Sensors.SensorType topic) {
         return (boolean) values.getOrDefault(topic, 0);
+    }
+
+    public Pose getAprilTagPosition() {
+        if (aprilTag != null && localizer != null) {
+            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+            List<Pose> backdropPositions = new ArrayList<>();
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection.metadata != null) {
+                    switch (detection.id) {
+                        case 1:
+                        case 4:
+                            backdropPositions.add(new Pose(detection.ftcPose).add(new Pose(6, 0, 0)));
+                            break;
+                        case 2:
+                        case 5:
+                            backdropPositions.add(new Pose(detection.ftcPose));
+                            break;
+                        case 3:
+                        case 6:
+                            backdropPositions.add(new Pose(detection.ftcPose).subt(new Pose(6, 0, 0)));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            Pose backdropPosition = backdropPositions.stream().reduce(Pose::add).orElse(new Pose());
+            backdropPosition = backdropPosition.divide(new Pose(backdropPositions.size(), backdropPositions.size(), backdropPositions.size()));
+
+
+            Pose globalTagPosition = localizer.getPose().x > 0 ?
+                    AprilTagLocalizer.convertBlueBackdropPoseToGlobal(backdropPosition) :
+                    AprilTagLocalizer.convertRedBackdropPoseToGlobal(backdropPosition);
+
+            if (Double.isNaN(globalTagPosition.x) || Double.isNaN(globalTagPosition.y) || Double.isNaN(globalTagPosition.heading)) return null;
+
+            return globalTagPosition;
+        } else {
+            return null;
+        }
+    }
+
+    public void closeCamera() {
+        if (visionPortal != null) visionPortal.stopStreaming();
     }
 }

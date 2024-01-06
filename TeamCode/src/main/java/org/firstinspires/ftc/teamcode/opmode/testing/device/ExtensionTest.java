@@ -36,7 +36,6 @@ public class ExtensionTest extends CommandOpMode {
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         Globals.IS_AUTO = false;
-        Globals.IS_USING_IMU = true;
 
         robot.init(hardwareMap, telemetry);
         extension = new ExtensionSubsystem();

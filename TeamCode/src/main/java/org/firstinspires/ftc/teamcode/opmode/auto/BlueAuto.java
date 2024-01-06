@@ -9,7 +9,9 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -20,6 +22,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackG
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackSetupCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
@@ -45,15 +48,11 @@ public class BlueAuto extends CommandOpMode {
     private final ElapsedTime timer = new ElapsedTime();
     private double endTime = 0;
 
-    private VisionPortal visionPortal;
-    private AprilTagProcessor aprilTag;
-
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = true;
-        Globals.IS_USING_IMU = false;
         Globals.USING_DASHBOARD = true;
         Globals.COLOR = Side.BLUE;
 
@@ -66,76 +65,58 @@ public class BlueAuto extends CommandOpMode {
 
         robot.read();
 
-        aprilTag = new AprilTagProcessor.Builder()
-                // calibrated using 3DF Zephyr 7.021
-                .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
-                .build();
-
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .setCameraResolution(new Size(640, 480))
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .addProcessor(aprilTag)
-                .build();
-
+        robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
 
         while (!isStarted()) {
-            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-
-            List<Pose> backdropPositions = new ArrayList<>();
-            for (AprilTagDetection detection : currentDetections) {
-                if (detection.metadata != null) {
-                    switch (detection.id) {
-                        case 1:
-                            backdropPositions.add(new Pose(detection.ftcPose).add(new Pose(6, 0, 0)));
-                            break;
-                        case 2:
-                            backdropPositions.add(new Pose(detection.ftcPose));
-                            break;
-                        case 3:
-                            backdropPositions.add(new Pose(detection.ftcPose).subt(new Pose(6, 0, 0)));
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
-            Pose backdropPosition = backdropPositions.stream().reduce(Pose::add).orElse(new Pose());
-            backdropPosition = backdropPosition.divide(new Pose(backdropPositions.size(), backdropPositions.size(), backdropPositions.size()));
-
-            telemetry.addLine(backdropPositions.toString());
-            telemetry.addLine(backdropPosition.toString());
+            telemetry.addLine("in init");
             telemetry.update();
         }
 
 
-
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new InstantCommand(timer::reset),
+//                        new InstantCommand(timer::reset),
                         // go to yellow pixel scoring pos
-                        new PositionCommand(new Pose(37.75, 39.35, Math.PI /2))
-                                .alongWith(new PurplePixelExtendCommand()),
+                        new WaitUntilCommand(() -> gamepad1.a),
+                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+//                                .alongWith(new PurplePixelExtendCommand()),
 
-                        new PurplePixelDepositCommand(),
-
-                        new PositionCommand(new Pose(37.75, 38.36, 0))
-                                .alongWith(new FirstStackSetupCommand()),
-
-                        new FirstStackGrabCommand(),
-
-                        new PositionCommand(new Pose(35.75, -27, 0))
-                                .alongWith(new FirstDepositCommand()),
+//                        new PurplePixelDepositCommand(),
 
                         new PositionCommand(new Pose(37.75, 38.36, 0)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+//                                .alongWith(new FirstStackSetupCommand()),
 
-                        new SecondStackGrabCommand(),
+//                        new FirstStackGrabCommand(),
 
-                        new PositionCommand(new Pose(35.75, -27, 0))
-                                .alongWith(new SecondDepositCommand()),
+                        new PositionCommand(new Pose(35.75, -27, 0)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+                        new RelocalizeCommand(),
+                        new WaitUntilCommand(() -> gamepad1.a),
+//                                .alongWith(new FirstDepositCommand()),
 
-                        new InstantCommand(() -> endTime = timer.seconds())
+                        new PositionCommand(new Pose(37.75, 38.36, 0)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+
+//                        new SecondStackGrabCommand(),
+
+                        new PositionCommand(new Pose(35.75, -27, 0)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+                        new RelocalizeCommand(),
+                        new WaitUntilCommand(() -> gamepad1.a),
+                        new InstantCommand(() -> {
+                            robot.dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+                            robot.dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+                            robot.dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                            robot.dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        })
+
+//                                .alongWith(new SecondDepositCommand()),
+
+//                        new InstantCommand(() -> endTime = timer.seconds())
 
 //
 //                        new PositionCommand(new Pose(27, -68, -Math.PI/2))

@@ -26,7 +26,6 @@ public class IVKTest extends OpMode {
     public void init() {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         Globals.IS_AUTO = false;
-        Globals.IS_USING_IMU = true;
 
         robot.init(hardwareMap, telemetry);
         drivetrain = new MecanumDrivetrain();

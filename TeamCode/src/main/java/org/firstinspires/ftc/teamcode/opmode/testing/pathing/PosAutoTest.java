@@ -35,7 +35,6 @@ public class PosAutoTest extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = true;
-        Globals.IS_USING_IMU = false;
         Globals.USING_DASHBOARD = true;
 
         robot.init(hardwareMap, telemetry);

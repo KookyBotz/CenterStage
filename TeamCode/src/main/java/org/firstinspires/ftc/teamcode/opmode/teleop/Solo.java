@@ -43,7 +43,6 @@ public class Solo extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = false;
-        Globals.IS_USING_IMU = false;
         Globals.USING_DASHBOARD = false;
         Globals.stopIntaking();
         Globals.stopScoring();

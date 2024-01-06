@@ -64,6 +64,8 @@ public class LocalizationTest extends CommandOpMode {
         Pose currentPose = robot.localizer.getPose();
         Pose globalTagPosition = robot.getAprilTagPosition();
 
+        if (globalTagPosition == null) globalTagPosition = new Pose();
+
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;

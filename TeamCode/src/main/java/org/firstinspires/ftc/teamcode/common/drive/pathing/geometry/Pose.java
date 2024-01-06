@@ -13,6 +13,7 @@ public class Pose extends Point {
         super(x, y);
         this.heading = AngleUnit.normalizeRadians(heading);
     }
+
     public Pose(Point p, double heading) {
         this(p.x, p.y, heading);
     }
@@ -21,12 +22,15 @@ public class Pose extends Point {
         this(vec.x, vec.y, heading);
     }
 
-    public Pose(){
+    public Pose() {
         this(0, 0, 0);
     }
 
     public Pose(AprilTagPoseFtc ftcPose) {
-        this(ftcPose.x, ftcPose.y, Math.toRadians(-ftcPose.yaw));
+        double heading = Math.toRadians(-ftcPose.yaw);
+        this.x = ftcPose.x * Math.cos(heading) - ftcPose.y * Math.sin(heading);
+        this.y = ftcPose.x * Math.sin(heading) + ftcPose.y * Math.cos(heading);
+        this.heading = heading;
     }
 
     public void set(Pose other) {
@@ -46,7 +50,6 @@ public class Pose extends Point {
     public Pose divide(Pose other) {
         return new Pose(this.x / other.x, this.y / other.y, this.heading / other.heading);
     }
-
 
 
     public Pose subt(Pose other) {

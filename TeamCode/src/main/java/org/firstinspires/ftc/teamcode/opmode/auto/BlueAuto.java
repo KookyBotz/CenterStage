@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -84,7 +85,7 @@ public class BlueAuto extends CommandOpMode {
 
 //                        new PurplePixelDepositCommand(),
 
-                        new PositionCommand(new Pose(37.75, 38.36, 0)),
+                        new PositionCommand(new Pose(37.75, 39, 0)),
                         new WaitUntilCommand(() -> gamepad1.a),
 //                                .alongWith(new FirstStackSetupCommand()),
 
@@ -93,10 +94,11 @@ public class BlueAuto extends CommandOpMode {
                         new PositionCommand(new Pose(35.75, -27, 0)),
                         new WaitUntilCommand(() -> gamepad1.a),
                         new RelocalizeCommand(),
+                        new WaitCommand(1000),
                         new WaitUntilCommand(() -> gamepad1.a),
 //                                .alongWith(new FirstDepositCommand()),
 
-                        new PositionCommand(new Pose(37.75, 38.36, 0)),
+                        new PositionCommand(new Pose(37.75, 39, 0)),
                         new WaitUntilCommand(() -> gamepad1.a),
 
 //                        new SecondStackGrabCommand(),
@@ -104,6 +106,29 @@ public class BlueAuto extends CommandOpMode {
                         new PositionCommand(new Pose(35.75, -27, 0)),
                         new WaitUntilCommand(() -> gamepad1.a),
                         new RelocalizeCommand(),
+                        new WaitCommand(1000),
+                        new WaitUntilCommand(() -> gamepad1.a),
+
+                        new PositionCommand(new Pose(37.75, 39, 0)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+
+//                        new SecondStackGrabCommand(),
+
+                        new PositionCommand(new Pose(35.75, -27, 0)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+                        new RelocalizeCommand(),
+                        new WaitCommand(1000),
+                        new WaitUntilCommand(() -> gamepad1.a),
+
+                        new PositionCommand(new Pose(37.75, 39, 0)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+
+//                        new SecondStackGrabCommand(),
+
+                        new PositionCommand(new Pose(35.75, -27, 0)),
+                        new WaitUntilCommand(() -> gamepad1.a),
+                        new RelocalizeCommand(),
+                        new WaitCommand(1000),
                         new WaitUntilCommand(() -> gamepad1.a),
                         new InstantCommand(() -> {
                             robot.dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

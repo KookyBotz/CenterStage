@@ -73,7 +73,8 @@ public class LocalizationTest extends CommandOpMode {
     public void run() {
 
         robot.read();
-        robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
+        Pose drive = new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01));
+        robot.drivetrain.set(drive, 0);
 
         super.run();
         robot.localizer.periodic();
@@ -117,6 +118,7 @@ public class LocalizationTest extends CommandOpMode {
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+        telemetry.addLine(drive.toString());
         loopTime = loop;
         telemetry.addLine(globalTagPosition.toString());
         telemetry.update();

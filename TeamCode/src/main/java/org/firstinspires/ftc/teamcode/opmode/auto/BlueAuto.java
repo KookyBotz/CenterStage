@@ -115,24 +115,24 @@ public class BlueAuto extends CommandOpMode {
                 new SequentialCommandGroup(
                         new InstantCommand(timer::reset),
                         // go to yellow pixel scoring pos
-                        new PositionCommand(new Pose(25, 0, 0))
+                        new PositionCommand(new Pose(37.75, 39.35, Math.PI /2))
                                 .alongWith(new PurplePixelExtendCommand()),
 
                         new PurplePixelDepositCommand(),
 
-                        new PositionCommand(new Pose(25, -0.25, -Math.PI / 2))
+                        new PositionCommand(new Pose(37.75, 38.36, 0))
                                 .alongWith(new FirstStackSetupCommand()),
 
                         new FirstStackGrabCommand(),
 
-                        new PositionCommand(new Pose(27, -68.25, -Math.PI / 2))
+                        new PositionCommand(new Pose(35.75, -27, 0))
                                 .alongWith(new FirstDepositCommand()),
 
-                        new PositionCommand(new Pose(26, 0.6, -Math.PI / 2)),
+                        new PositionCommand(new Pose(37.75, 38.36, 0)),
 
                         new SecondStackGrabCommand(),
 
-                        new PositionCommand(new Pose(27, -68.25, -Math.PI / 2))
+                        new PositionCommand(new Pose(35.75, -27, 0))
                                 .alongWith(new SecondDepositCommand()),
 
                         new InstantCommand(() -> endTime = timer.seconds())

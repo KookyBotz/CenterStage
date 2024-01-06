@@ -44,16 +44,14 @@ public class PosAutoTest extends CommandOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         robot.read();
-        while (!isStarted()) {
-            telemetry.addLine("auto in init");
-            telemetry.update();
-        }
+
+        while (!isStarted()) {}
 
         robot.localizer.setPoseEstimate(new Pose2d(0, 0, 0));
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new PositionCommand(new Pose(0, 0, Math.PI / 2))
+                        new PositionCommand(new Pose(0, 20, 0))
                 )
         );
     }
@@ -68,6 +66,9 @@ public class PosAutoTest extends CommandOpMode {
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         telemetry.addLine(robot.localizer.getPose().toString());
+        telemetry.addData("x", robot.localizer.getPose().x);
+        telemetry.addData("y", robot.localizer.getPose().y);
+        telemetry.addData("h", robot.localizer.getPose().heading);
         loopTime = loop;
         telemetry.update();
 

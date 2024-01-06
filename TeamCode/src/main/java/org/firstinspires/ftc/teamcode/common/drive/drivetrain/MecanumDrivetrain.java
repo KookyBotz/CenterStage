@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.common.drive.drivetrain;
 
 import com.arcrobotics.ftclib.drivebase.RobotDrive;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Vector2D;
+import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
@@ -14,22 +16,6 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
     private final RobotHardware robot = RobotHardware.getInstance();
 
     double[] ws = new double[4];
-
-    public MecanumDrivetrain(DcMotorEx frontLeft, DcMotorEx frontRight, DcMotorEx backLeft, DcMotorEx backRight) {
-//        this.frontLeft = frontLeft;
-//        this.frontRight = frontRight;
-//        this.backLeft = backLeft;
-//        this.backRight = backRight;
-//        this.drive = new MecanumDrive(frontLeft, frontRight, backLeft, backRight);
-//        this.frontLeft = frontLeft;
-//        this.frontRight = frontRight;
-//        this.backLeft = backLeft;
-//        this.backRight = backRight;
-
-    }
-
-    public MecanumDrivetrain() {
-    }
 
     @Override
     public void set(Pose pose) {
@@ -41,8 +27,9 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
 
         Vector2D input = new Vector2D(strafeSpeed, forwardSpeed).rotate(-gyroAngle);
 
-        strafeSpeed = input.x;
-        forwardSpeed = input.y;
+        strafeSpeed = Range.clip(input.x, -1, 1);
+        forwardSpeed = Range.clip(input.y, -1, 1);
+        turnSpeed = Range.clip(turnSpeed, -1, 1);
 
         double[] wheelSpeeds = new double[4];
 
@@ -52,7 +39,16 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
         wheelSpeeds[RobotDrive.MotorType.kBackRight.value] = (forwardSpeed + strafeSpeed - turnSpeed);
         // 1.06, 1.04
 
-        double max = Arrays.stream(wheelSpeeds).map(Math::abs).max().getAsDouble();
+        if (Globals.IS_AUTO) {
+            // feedforward & voltage comp
+            double correction = 12 / robot.getVoltage();
+            wheelSpeeds = Arrays.stream(wheelSpeeds)
+                    .map(e -> Math.abs(e) < 0.01 ? e * correction : ((e + Math.signum(e) * 0.07)) * correction)
+                    .toArray();
+
+        }
+
+        double max = Arrays.stream(wheelSpeeds).map(Math::abs).max().orElse(1);
 
         if (max > 1) {
             wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] /= max;
@@ -65,6 +61,8 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
         ws[1] = wheelSpeeds[1];
         ws[2] = wheelSpeeds[2];
         ws[3] = wheelSpeeds[3];
+
+        System.out.println(Arrays.toString(ws));
     }
 
     public void set(Pose pose, double angle) {

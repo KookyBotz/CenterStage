@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
-import android.util.Size;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -11,33 +9,21 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.Side;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackGrabCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackSetupCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.RelocalizeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
-import java.util.ArrayList;
-import java.util.List;
-
+@Photon
 @Config
 @Autonomous(name = "Blue Auto")
 public class BlueAuto extends CommandOpMode {

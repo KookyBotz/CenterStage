@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.outoftheboxrobotics.photoncore.Photon;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
@@ -28,6 +29,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
+@Photon
 @Config
 @TeleOp(name = "Duo")
 public class Duo extends CommandOpMode {

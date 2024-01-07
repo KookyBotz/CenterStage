@@ -7,6 +7,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.outoftheboxrobotics.photoncore.hardware.PhotonLynxVoltageSensor;
+import com.outoftheboxrobotics.photoncore.hardware.motor.PhotonDcMotor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
@@ -45,17 +47,17 @@ import java.util.List;
 public class RobotHardware {
 
     //drivetrain
-    public DcMotorEx dtFrontLeftMotor;
-    public DcMotorEx dtFrontRightMotor;
-    public DcMotorEx dtBackLeftMotor;
-    public DcMotorEx dtBackRightMotor;
+    public PhotonDcMotor dtFrontLeftMotor;
+    public PhotonDcMotor dtFrontRightMotor;
+    public PhotonDcMotor dtBackLeftMotor;
+    public PhotonDcMotor dtBackRightMotor;
 
     // extension
     public AbsoluteAnalogEncoder armPitchEncoder;
     public AnalogInput armPitchEnc;
 
-    public DcMotorEx extensionMotor;
-    public DcMotorEx armMotor;
+    public PhotonDcMotor extensionMotor;
+    public PhotonDcMotor armMotor;
 
     public WEncoder extensionEncoder;
 
@@ -87,6 +89,7 @@ public class RobotHardware {
 
     private ElapsedTime voltageTimer = new ElapsedTime();
     private double voltage = 12.0;
+    PhotonLynxVoltageSensor sensor;
 
     private static RobotHardware instance = null;
     public boolean enabled;
@@ -104,7 +107,6 @@ public class RobotHardware {
     public ThreeWheelLocalizer localizer;
 
     public HashMap<Sensors.SensorType, Object> values;
-
     public static RobotHardware getInstance() {
         if (instance == null) {
             instance = new RobotHardware();
@@ -123,6 +125,7 @@ public class RobotHardware {
         this.hardwareMap = hardwareMap;
         this.values = new HashMap<>();
         this.telemetry = (Globals.USING_DASHBOARD) ? new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()) : telemetry;
+        this.sensor = hardwareMap.getAll(PhotonLynxVoltageSensor.class).iterator().next();
 
         values.put(Sensors.SensorType.EXTENSION_ENCODER, 0);
         values.put(Sensors.SensorType.ARM_ENCODER, 0.0);
@@ -131,38 +134,38 @@ public class RobotHardware {
         values.put(Sensors.SensorType.POD_RIGHT, 0.0);
 
         // DRIVETRAIN
-        this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
-        dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.dtBackLeftMotor = (PhotonDcMotor) hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
+        this.dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.dtBackLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.dtFrontLeftMotor = hardwareMap.get(DcMotorEx.class, "dtFrontLeftMotor");
-        dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.dtFrontLeftMotor = (PhotonDcMotor) hardwareMap.get(DcMotorEx.class, "dtFrontLeftMotor");
+        this.dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.dtFrontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        this.dtBackRightMotor = hardwareMap.get(DcMotorEx.class, "dtBackRightMotor");
-        dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        dtBackRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.dtBackRightMotor = (PhotonDcMotor) hardwareMap.get(DcMotorEx.class, "dtBackRightMotor");
+        this.dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        this.dtFrontRightMotor = hardwareMap.get(DcMotorEx.class, "dtFrontRightMotor");
-        dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        dtFrontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.dtFrontRightMotor = (PhotonDcMotor) hardwareMap.get(DcMotorEx.class, "dtFrontRightMotor");
+        this.dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // UWUXTENSION
-        extensionMotor = hardwareMap.get(DcMotorEx.class, "extensionMotor");
-        armMotor = hardwareMap.get(DcMotorEx.class, "extensionPitchMotor");
-        armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        this.extensionMotor = (PhotonDcMotor) hardwareMap.get(DcMotorEx.class, "extensionMotor");
+        this.extensionMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        extensionEncoder = new WEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
+        this.armMotor = (PhotonDcMotor) hardwareMap.get(DcMotorEx.class, "extensionPitchMotor");
+
+        this.extensionEncoder = new WEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
 
         this.armPitchEnc = hardwareMap.get(AnalogInput.class, "extensionPitchEncoder");
         this.armPitchEncoder = new AbsoluteAnalogEncoder(armPitchEnc);
-        armPitchEncoder.zero(2.086);
-        armPitchEncoder.setInverted(true);
-        armPitchEncoder.setWraparound(true);
+        this.armPitchEncoder.zero(2.086);
+        this.armPitchEncoder.setInverted(true);
+        this.armPitchEncoder.setWraparound(true);
 
         this.extensionActuator = new WActuatorGroup(
                 () -> intSubscriber(Sensors.SensorType.EXTENSION_ENCODER), extensionMotor)
                 .setPIDController(new PIDController(0.008, 0.0, 0.0004))
                 .setFeedforward(WActuatorGroup.FeedforwardMode.CONSTANT, 0.0)
-//                .setMotionProfile(0, new ProfileConstraints(1000, 5000, 2000))
                 .setErrorTolerance(20);
 
         this.armActuator = new WActuatorGroup(
@@ -226,7 +229,7 @@ public class RobotHardware {
             hang = new HangSubsystem();
         }
 
-        voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+        voltage = sensor.getCachedVoltage();
     }
 
     public void read() {
@@ -250,7 +253,7 @@ public class RobotHardware {
     public void periodic() {
         if (voltageTimer.seconds() > 5) {
             voltageTimer.reset();
-            voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+            voltage = sensor.getCachedVoltage();
         }
 
         intake.periodic();

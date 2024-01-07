@@ -12,9 +12,9 @@ public class PurplePixelExtendCommand extends SequentialCommandGroup {
     public PurplePixelExtendCommand(){
         super(
                 new ArmCommand(-0.04),
-                new ExtensionCommand(170),
+                new ExtensionCommand(150),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.49)
+                new PivotCommand(0.48)
         );
     }
 }

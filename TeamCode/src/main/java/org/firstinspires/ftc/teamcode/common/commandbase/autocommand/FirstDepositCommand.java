@@ -22,7 +22,7 @@ public class FirstDepositCommand extends SequentialCommandGroup {
                 new ArmLiftCommand(0.3),
                 new WaitCommand(500),
                 new ExtensionCommand(535),
-                new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),
+                new PivotCommand(0.75),
                 new WaitCommand(750),
                 new ClawCommand(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
                 new WaitCommand(250),

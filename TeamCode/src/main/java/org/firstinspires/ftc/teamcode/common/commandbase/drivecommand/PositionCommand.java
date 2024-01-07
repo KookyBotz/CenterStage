@@ -8,12 +8,13 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
 @Config
 public class PositionCommand extends CommandBase {
-    ThreeWheelLocalizer localizer;
+    TwoWheelLocalizer localizer;
     Drivetrain drivetrain;
     Pose targetPose;
 
@@ -90,7 +91,7 @@ public class PositionCommand extends CommandBase {
         double x_rotated = xPower * Math.cos(-robotPose.heading) - yPower * Math.sin(-robotPose.heading);
         double y_rotated = xPower * Math.sin(-robotPose.heading) + yPower * Math.cos(-robotPose.heading);
 
-        hPower = Range.clip(hPower, -0.7, 0.7);
+        hPower = Range.clip(hPower, -0.4, 0.4);
         x_rotated = Range.clip(x_rotated, -0.5, 0.5);
         y_rotated = Range.clip(y_rotated, -0.5, 0.5);
 

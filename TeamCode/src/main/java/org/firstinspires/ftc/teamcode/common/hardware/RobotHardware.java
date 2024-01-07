@@ -7,7 +7,9 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,9 +21,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
@@ -40,6 +44,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.annotation.concurrent.GuardedBy;
 
 @Config
 public class RobotHardware {
@@ -101,7 +107,16 @@ public class RobotHardware {
     public MecanumDrivetrain drivetrain;
     public DroneSubsystem drone;
     public HangSubsystem hang;
-    public ThreeWheelLocalizer localizer;
+
+    private final Object imuLock = new Object();
+    @GuardedBy("imuLock")
+    public BNO055IMU imu;
+    private Thread imuThread;
+    private double imuAngle = 0;
+    private double imuOffset = 0;
+    private double startOffset = 0;
+    public TwoWheelLocalizer localizer;
+
 
     public HashMap<Sensors.SensorType, Object> values;
 
@@ -209,7 +224,8 @@ public class RobotHardware {
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
         if (Globals.IS_AUTO) {
-            localizer = new ThreeWheelLocalizer();
+            localizer = new TwoWheelLocalizer();
+
             aprilTag = new AprilTagProcessor.Builder()
                     // calibrated using 3DF Zephyr 7.021
                     .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
@@ -221,6 +237,13 @@ public class RobotHardware {
                     .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                     .addProcessor(aprilTag)
                     .build();
+
+            synchronized (imuLock) {
+                imu = hardwareMap.get(BNO055IMU.class, "imu");
+                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+                imu.initialize(parameters);
+            }
         } else {
             drone = new DroneSubsystem();
             hang = new HangSubsystem();
@@ -259,10 +282,31 @@ public class RobotHardware {
         if (Globals.IS_AUTO) localizer.periodic();
     }
 
+    public void startIMUThread(LinearOpMode opMode) {
+        imuThread = new Thread(() -> {
+            while (!opMode.isStopRequested()) {
+                synchronized (imuLock) {
+                    imuAngle = AngleUnit.normalizeRadians(imu.getAngularOrientation().firstAngle + startOffset);
+                }
+            }
+        });
+        imuThread.start();
+    }
+
+    public double getAngle() {
+        return AngleUnit.normalizeRadians(imuAngle - imuOffset);
+    }
+
     public void reset() {
         for (WSubsystem subsystem : subsystems) {
             subsystem.reset();
         }
+
+        imuOffset = imuAngle;
+    }
+
+    public void setStartOffset(double off){
+        startOffset = off;
     }
 
     public void clearBulkCache() {

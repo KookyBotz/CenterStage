@@ -62,6 +62,6 @@ public class Pose extends Point {
 
     @Override
     public String toString() {
-        return String.format(Locale.ENGLISH, "%.2f %.2f %.2f", x, y, heading);
+        return String.format(Locale.ENGLISH, "%.2f %.2f %.3f", x, y, heading);
     }
 }

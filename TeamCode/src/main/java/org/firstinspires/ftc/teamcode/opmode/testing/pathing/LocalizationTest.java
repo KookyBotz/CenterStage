@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
@@ -24,6 +25,7 @@ import java.util.List;
 public class LocalizationTest extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
+    ThreeWheelLocalizer localizer;
     private double loopTime = 0.0;
 
     @Override
@@ -42,7 +44,13 @@ public class LocalizationTest extends CommandOpMode {
         robot.dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.read();
 
+        robot.startIMUThread(this);
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
+        robot.reset();
+        robot.setStartOffset(Math.PI / 2);
+
+        localizer = new ThreeWheelLocalizer();
+        localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
 
         while (!isStarted()) {
             telemetry.addLine("auto in init");
@@ -59,6 +67,7 @@ public class LocalizationTest extends CommandOpMode {
 
         super.run();
         robot.localizer.periodic();
+        localizer.periodic();
         robot.drivetrain.periodic();
 
         Pose currentPose = robot.localizer.getPose();
@@ -69,8 +78,12 @@ public class LocalizationTest extends CommandOpMode {
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;
-        telemetry.addLine(globalTagPosition.toString());
-        telemetry.addLine(currentPose.toString());
+        telemetry.addData("tag", globalTagPosition.toString());
+        telemetry.addData("two", currentPose.toString());
+        telemetry.addData("three", localizer.getPose().toString());
+        telemetry.addData("heading", robot.localizer.getHeading());
+        telemetry.addData("front", robot.localizer.positionFront.getAsDouble());
+        telemetry.addData("diff", robot.localizer.positionLeft.getAsDouble() - robot.localizer.positionRight.getAsDouble());
         telemetry.update();
 
         if (gamepad1.a) robot.localizer.setPose(globalTagPosition);

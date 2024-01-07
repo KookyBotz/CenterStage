@@ -15,6 +15,7 @@ import java.util.Arrays;
 public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
     private final RobotHardware robot = RobotHardware.getInstance();
 
+    double[] pws = new double[4];
     double[] ws = new double[4];
 
     @Override
@@ -81,10 +82,15 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
 
     @Override
     public void write() {
-        robot.dtFrontLeftMotor.setPower(ws[0]);
-        robot.dtFrontRightMotor.setPower(ws[1]);
-        robot.dtBackLeftMotor.setPower(ws[2]);
-        robot.dtBackRightMotor.setPower(ws[3]);
+        if (Math.abs(ws[0] - pws[0]) > 0.005) robot.dtFrontLeftMotor.setPower(ws[0]);
+        if (Math.abs(ws[1] - pws[1]) > 0.005) robot.dtFrontRightMotor.setPower(ws[1]);
+        if (Math.abs(ws[2] - pws[2]) > 0.005) robot.dtBackLeftMotor.setPower(ws[2]);
+        if (Math.abs(ws[3] - pws[3]) > 0.005) robot.dtBackRightMotor.setPower(ws[3]);
+
+        pws[0] = ws[0];
+        pws[1] = ws[1];
+        pws[2] = ws[2];
+        pws[3] = ws[3];
     }
 
     @Override

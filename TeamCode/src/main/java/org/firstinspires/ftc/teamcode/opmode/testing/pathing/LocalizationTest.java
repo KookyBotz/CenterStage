@@ -88,7 +88,7 @@ public class LocalizationTest extends CommandOpMode {
 
         if (gamepad1.a) robot.localizer.setPose(globalTagPosition);
 
-        robot.drivetrain.write();
+        robot.write();
         robot.clearBulkCache();
 
         if (isStopRequested()) robot.closeCamera();

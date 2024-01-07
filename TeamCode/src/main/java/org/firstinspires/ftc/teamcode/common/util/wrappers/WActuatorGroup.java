@@ -39,8 +39,10 @@ public class WActuatorGroup {
     private RobotHardware robot = RobotHardware.getInstance();
 
     private double position = 0.0;
+    private double pTargetPosition = 0.0;
     private double targetPosition = 0.0;
     private double overallTargetPosition = 0.0;
+    private double pPower = 0.0;
     private double power = 0.0;
     private double tolerance = 0.0;
     private double feedforwardMin = 0.0;
@@ -152,17 +154,22 @@ public class WActuatorGroup {
      * values calculated and saved. Runs different methods based on the given actuation group.
      */
     public void write() {
-        int i = 0;
-        for (HardwareDevice device : devices.values()) {
-            if (device instanceof DcMotor) {
-                double correction = 1.0;
-                if (voltage != null) correction = 12.0 / voltage.getAsDouble();
-                if (!floating) ((DcMotor) device).setPower(power * correction);
-                else ((DcMotor) device).setPower(0);
-            } else if (device instanceof Servo) {
-                ((Servo) device).setPosition(targetPosition);
+        if (Math.abs(targetPosition - pTargetPosition) > 0.005 ||
+                Math.abs(power - pPower) > 0.005) {
+            for (HardwareDevice device : devices.values()) {
+                if (device instanceof DcMotor) {
+                    double correction = 1.0;
+                    if (voltage != null) correction = 12.0 / voltage.getAsDouble();
+                    if (!floating) ((DcMotor) device).setPower(power * correction);
+                    else ((DcMotor) device).setPower(0);
+                } else if (device instanceof Servo) {
+                    ((Servo) device).setPosition(targetPosition);
+                }
             }
         }
+
+        pTargetPosition = targetPosition;
+        pPower = power;
     }
 
     /**

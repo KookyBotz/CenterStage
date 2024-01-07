@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixel
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.ThirdDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.ThirdStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -76,76 +78,49 @@ public class BlueAuto extends CommandOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-//                        new InstantCommand(timer::reset),
+                        new InstantCommand(timer::reset),
                         // go to yellow pixel scoring pos
-                        new WaitUntilCommand(() -> gamepad1.a),
-                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2)),
-                        new WaitUntilCommand(() -> gamepad1.a),
-//                                .alongWith(new PurplePixelExtendCommand()),
+                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
+                                .alongWith(new PurplePixelExtendCommand()),
 
-//                        new PurplePixelDepositCommand(),
+                        new PurplePixelDepositCommand(),
 
-                        new PositionCommand(new Pose(37.75, 39, 0)),
-                        new WaitUntilCommand(() -> gamepad1.a),
-//                                .alongWith(new FirstStackSetupCommand()),
 
-//                        new FirstStackGrabCommand(),
+                        new PositionCommand(new Pose(38, 39.25, 0))
+                                .alongWith(new FirstStackSetupCommand()),
 
-                        new PositionCommand(new Pose(35.75, -27, 0)),
-                        new WaitUntilCommand(() -> gamepad1.a),
-                        new RelocalizeCommand(),
-                        new WaitCommand(1000),
-                        new WaitUntilCommand(() -> gamepad1.a),
-//                                .alongWith(new FirstDepositCommand()),
 
-                        new PositionCommand(new Pose(37.75, 39, 0)),
-                        new WaitUntilCommand(() -> gamepad1.a),
+                        new FirstStackGrabCommand(),
 
-//                        new SecondStackGrabCommand(),
 
-                        new PositionCommand(new Pose(35.75, -27, 0)),
-                        new WaitUntilCommand(() -> gamepad1.a),
-                        new RelocalizeCommand(),
-                        new WaitCommand(1000),
-                        new WaitUntilCommand(() -> gamepad1.a),
+                        new PositionCommand(new Pose(35.75, -29, 0))
+                                .andThen(new RelocalizeCommand())
+                                .andThen(new PositionCommand(new Pose(35.75, -29, 0)))
+                                .alongWith(new FirstDepositCommand()),
 
-                        new PositionCommand(new Pose(37.75, 39, 0)),
-                        new WaitUntilCommand(() -> gamepad1.a),
 
-//                        new SecondStackGrabCommand(),
+                        new PositionCommand(new Pose(38, 39, 0)),
 
-                        new PositionCommand(new Pose(35.75, -27, 0)),
-                        new WaitUntilCommand(() -> gamepad1.a),
-                        new RelocalizeCommand(),
-                        new WaitCommand(1000),
-                        new WaitUntilCommand(() -> gamepad1.a),
+                        new SecondStackGrabCommand(),
 
-                        new PositionCommand(new Pose(37.75, 39, 0)),
-                        new WaitUntilCommand(() -> gamepad1.a),
 
-//                        new SecondStackGrabCommand(),
+                        new PositionCommand(new Pose(35.75, -29, 0))
+                                .andThen(new RelocalizeCommand())
+                                .andThen(new PositionCommand(new Pose(35.75, -29, 0)))
+                                .alongWith(new SecondDepositCommand()),
 
-                        new PositionCommand(new Pose(35.75, -27, 0)),
-                        new WaitUntilCommand(() -> gamepad1.a),
-                        new RelocalizeCommand(),
-                        new WaitCommand(1000),
-                        new WaitUntilCommand(() -> gamepad1.a),
-                        new InstantCommand(() -> {
-                            robot.dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-                            robot.dtFrontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                        new PositionCommand(new Pose(38, 39, 0)),
 
-                            robot.dtBackRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                            robot.dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-                        })
+                        new ThirdStackGrabCommand(),
 
-//                                .alongWith(new SecondDepositCommand()),
 
-//                        new InstantCommand(() -> endTime = timer.seconds())
+                        new PositionCommand(new Pose(35.75, -29, 0))
+                                .andThen(new RelocalizeCommand())
+                                .andThen(new PositionCommand(new Pose(34, -29, 0)))
+                                .alongWith(new ThirdDepositCommand()),
 
-//
-//                        new PositionCommand(new Pose(27, -68, -Math.PI/2))
-//                                .alongWith(new AutoDepositCommand())
+                        new InstantCommand(() -> endTime = timer.seconds())
                 )
         );
     }
@@ -159,6 +134,7 @@ public class BlueAuto extends CommandOpMode {
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         telemetry.addLine(robot.localizer.getPose().toString());
+        telemetry.addLine(String.valueOf(robot.localizer.positionFront.getAsDouble()));
         telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
         loopTime = loop;
         telemetry.update();

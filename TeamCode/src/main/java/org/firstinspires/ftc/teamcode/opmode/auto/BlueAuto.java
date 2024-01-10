@@ -68,10 +68,10 @@ public class BlueAuto extends CommandOpMode {
 
         robot.read();
 
-        robot.startIMUThread(this);
+//        robot.startIMUThread(this);
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
         robot.reset();
-        robot.setStartOffset(Math.PI / 2);
+//        robot.setStartOffset(Math.PI / 2);
 
         while (!isStarted()) {
             telemetry.addLine("in init");
@@ -120,7 +120,7 @@ public class BlueAuto extends CommandOpMode {
 
                         new PositionCommand(new Pose(35.75, -29, 0))
                                 .andThen(new RelocalizeCommand())
-                                .andThen(new PositionCommand(new Pose(34, -29, 0)))
+                                .andThen(new PositionCommand(new Pose(35.75, -29, 0)))
                                 .alongWith(new ThirdDepositCommand()),
 
                         new InstantCommand(() -> endTime = timer.seconds())

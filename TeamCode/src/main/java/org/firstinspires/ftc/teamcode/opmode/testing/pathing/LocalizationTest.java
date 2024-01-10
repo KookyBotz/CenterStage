@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.opmode.testing.pathing;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
@@ -25,7 +28,7 @@ import java.util.List;
 public class LocalizationTest extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
-    ThreeWheelLocalizer localizer;
+//    TwoWheelLocalizer localizer;
     private double loopTime = 0.0;
 
     @Override
@@ -34,6 +37,7 @@ public class LocalizationTest extends CommandOpMode {
 
         Globals.IS_AUTO = true;
 
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         robot.init(hardwareMap, telemetry);
 
         robot.dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -44,13 +48,13 @@ public class LocalizationTest extends CommandOpMode {
         robot.dtFrontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         robot.read();
 
-        robot.startIMUThread(this);
+//        robot.startIMUThread(this);
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
-        robot.reset();
-        robot.setStartOffset(Math.PI / 2);
+//        robot.reset();
+//        robot.setStartOffset(Math.PI / 2);
 
-        localizer = new ThreeWheelLocalizer();
-        localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
+//        localizer = new TwoWheelLocalizer();
+//        localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
 
         while (!isStarted()) {
             telemetry.addLine("auto in init");
@@ -60,14 +64,13 @@ public class LocalizationTest extends CommandOpMode {
 
     @Override
     public void run() {
-
         robot.read();
         Pose drive = new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01));
         robot.drivetrain.set(drive, 0);
 
         super.run();
         robot.localizer.periodic();
-        localizer.periodic();
+//        localizer.periodic();
         robot.drivetrain.periodic();
 
         Pose currentPose = robot.localizer.getPose();
@@ -79,18 +82,22 @@ public class LocalizationTest extends CommandOpMode {
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         loopTime = loop;
         telemetry.addData("tag", globalTagPosition.toString());
-        telemetry.addData("two", currentPose.toString());
-        telemetry.addData("three", localizer.getPose().toString());
-        telemetry.addData("heading", robot.localizer.getHeading());
+        telemetry.addData("three", currentPose.toString());
+//        telemetry.addData("two", localizer.getPose().toString());
+
+        telemetry.addData("left", robot.localizer.positionLeft.getAsDouble());
+        telemetry.addData("right", robot.localizer.positionRight.getAsDouble());
         telemetry.addData("front", robot.localizer.positionFront.getAsDouble());
-        telemetry.addData("diff", robot.localizer.positionLeft.getAsDouble() - robot.localizer.positionRight.getAsDouble());
         telemetry.update();
 
-        if (gamepad1.a) robot.localizer.setPose(globalTagPosition);
+        if (gamepad1.a) {
+            robot.localizer.setPose(globalTagPosition);
+//            localizer.setPose(globalTagPosition);
+        }
 
         robot.write();
         robot.clearBulkCache();
 
-        if (isStopRequested()) robot.closeCamera();
+//        if (isStopRequested()) robot.closeCamera();
     }
 }

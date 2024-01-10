@@ -41,8 +41,8 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 0.689;
     public static double GEAR_RATIO = 1;
 
-    public static double TRACK_WIDTH = 10.787401;
-    public static double FORWARD_OFFSET = 4.370004;
+    public static double TRACK_WIDTH = 10.818897;
+    public static double FORWARD_OFFSET = 4.307086;
 
     public final DoubleSupplier positionLeft, positionRight, positionFront, imuAngle;
 

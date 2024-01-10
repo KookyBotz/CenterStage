@@ -115,7 +115,7 @@ public class RobotHardware {
     private double imuAngle = 0;
     private double imuOffset = 0;
     private double startOffset = 0;
-    public TwoWheelLocalizer localizer;
+    public ThreeWheelLocalizer localizer;
 
 
     public HashMap<Sensors.SensorType, Object> values;
@@ -224,7 +224,7 @@ public class RobotHardware {
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
         if (Globals.IS_AUTO) {
-            localizer = new TwoWheelLocalizer();
+            localizer = new ThreeWheelLocalizer();
 
             aprilTag = new AprilTagProcessor.Builder()
                     // calibrated using 3DF Zephyr 7.021
@@ -238,12 +238,12 @@ public class RobotHardware {
                     .addProcessor(aprilTag)
                     .build();
 
-            synchronized (imuLock) {
-                imu = hardwareMap.get(BNO055IMU.class, "imu");
-                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-                imu.initialize(parameters);
-            }
+//            synchronized (imuLock) {
+//                imu = hardwareMap.get(BNO055IMU.class, "imu");
+//                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//                imu.initialize(parameters);
+//            }
         } else {
             drone = new DroneSubsystem();
             hang = new HangSubsystem();

@@ -43,13 +43,17 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
         if (Globals.IS_AUTO) {
             // feedforward & voltage comp
             double correction = 12 / robot.getVoltage();
-            wheelSpeeds = Arrays.stream(wheelSpeeds)
-                    .map(e -> Math.abs(e) < 0.01 ? e * correction : ((e + Math.signum(e) * 0.07)) * correction)
-                    .toArray();
+            for (int i = 0; i < wheelSpeeds.length; i++) {
+                wheelSpeeds[i] = Math.abs(wheelSpeeds[i]) < 0.01 ?
+                        wheelSpeeds[i] * correction :
+                        (wheelSpeeds[i] + Math.signum(wheelSpeeds[i]) * 0.07) * correction;
+            }
 
         }
 
-        double max = Arrays.stream(wheelSpeeds).map(Math::abs).max().orElse(1);
+        double max = 1;
+        for (double wheelSpeed : wheelSpeeds) max = Math.max(max, Math.abs(wheelSpeed));
+
 
         if (max > 1) {
             wheelSpeeds[RobotDrive.MotorType.kFrontLeft.value] /= max;
@@ -63,7 +67,6 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
         ws[2] = wheelSpeeds[2];
         ws[3] = wheelSpeeds[3];
 
-        System.out.println(Arrays.toString(ws));
     }
 
     public void set(Pose pose, double angle) {
@@ -82,16 +85,24 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
 
     @Override
     public void write() {
-        if (Math.abs(ws[0] - pws[0]) > 0.005) robot.dtFrontLeftMotor.setPower(ws[0]);
-        if (Math.abs(ws[1] - pws[1]) > 0.005) robot.dtFrontRightMotor.setPower(ws[1]);
-        if (Math.abs(ws[2] - pws[2]) > 0.005) robot.dtBackLeftMotor.setPower(ws[2]);
-        if (Math.abs(ws[3] - pws[3]) > 0.005) robot.dtBackRightMotor.setPower(ws[3]);
-
-        pws[0] = ws[0];
-        pws[1] = ws[1];
-        pws[2] = ws[2];
-        pws[3] = ws[3];
+        if (Math.abs(ws[0] - pws[0]) > 0.005) {
+            robot.dtFrontLeftMotor.setPower(ws[0]);
+            pws[0] = ws[0];
+        }
+        if (Math.abs(ws[1] - pws[1]) > 0.005) {
+            robot.dtFrontRightMotor.setPower(ws[1]);
+            pws[1] = ws[1];
+        }
+        if (Math.abs(ws[2] - pws[2]) > 0.005) {
+            robot.dtBackLeftMotor.setPower(ws[2]);
+            pws[2] = ws[2];
+        }
+        if (Math.abs(ws[3] - pws[3]) > 0.005) {
+            robot.dtBackRightMotor.setPower(ws[3]);
+            pws[3] = ws[3];
+        }
     }
+
 
     @Override
     public void reset() {

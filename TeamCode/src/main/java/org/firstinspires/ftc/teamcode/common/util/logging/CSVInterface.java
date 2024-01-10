@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.util.logging;
 
+import android.os.Environment;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +15,7 @@ public class CSVInterface {
     private static String LOG_DIRECTORY;
 
     public static void log() {
-        LOG_DIRECTORY = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".csv";
+        LOG_DIRECTORY = Environment.getExternalStorageDirectory() + "/FIRST/data/" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".csv";
         StringBuilder fileContent = new StringBuilder();
 
         try {

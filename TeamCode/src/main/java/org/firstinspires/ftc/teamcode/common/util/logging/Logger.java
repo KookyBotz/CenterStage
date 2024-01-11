@@ -37,7 +37,7 @@ public class Logger {
     private Logger() {
         buffer = new ArrayList<>();
         for (int i = 0; i < LogType.values().length; i++) {
-            buffer.add(new LinkedBlockingQueue<LogEntry>());
+            buffer.add(new LinkedBlockingQueue<>());
         }
         timeSinceStart = System.currentTimeMillis();
     }

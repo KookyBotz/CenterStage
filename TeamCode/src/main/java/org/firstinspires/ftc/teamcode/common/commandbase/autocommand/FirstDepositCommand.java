@@ -20,10 +20,11 @@ public class FirstDepositCommand extends SequentialCommandGroup {
                 new ArmCommand(3.05),
                 new ArmFloatCommand(false),
                 new ArmLiftCommand(0.3),
-                new WaitCommand(500),
+                new WaitCommand(200),
+                new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),
+                new WaitCommand(300),
                 new ExtensionCommand(535),
-                new PivotCommand(0.75),
-                new WaitCommand(750),
+                new WaitCommand(1250),
                 new ClawCommand(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
                 new WaitCommand(250),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
@@ -31,10 +32,10 @@ public class FirstDepositCommand extends SequentialCommandGroup {
                 new ExtensionCommand(0),
                 new WaitCommand(150),
                 new ArmCommand(0.2),
-                new ArmLiftCommand(0.73),
+                new ArmLiftCommand(0.735  ),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.46)
+                new PivotCommand(0.48)
         );
     }
 }

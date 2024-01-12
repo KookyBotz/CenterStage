@@ -10,10 +10,10 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCo
 public class FirstStackSetupCommand extends SequentialCommandGroup {
     public FirstStackSetupCommand() {
         super(
-                new ArmLiftCommand(0.67),
+                new ArmLiftCommand(0.68),
                 new WaitCommand(400),
                 new ArmFloatCommand(true),
-                new PivotCommand(0.5)
+                new PivotCommand(0.51)
         );
     }
 }

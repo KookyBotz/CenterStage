@@ -37,7 +37,7 @@ public class ExtensionTest extends CommandOpMode {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry());
         Globals.IS_AUTO = false;
 
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap);
         extension = new ExtensionSubsystem();
         robot.addSubsystem(extension);
 

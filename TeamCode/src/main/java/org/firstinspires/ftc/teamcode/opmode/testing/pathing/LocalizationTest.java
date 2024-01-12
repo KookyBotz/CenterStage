@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.TwoWheelLocalizer;
@@ -31,6 +32,8 @@ public class LocalizationTest extends CommandOpMode {
 //    TwoWheelLocalizer localizer;
     private double loopTime = 0.0;
 
+    private boolean flag = true;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -38,7 +41,7 @@ public class LocalizationTest extends CommandOpMode {
         Globals.IS_AUTO = true;
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap);
 
         robot.dtBackLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
@@ -90,8 +93,9 @@ public class LocalizationTest extends CommandOpMode {
         telemetry.addData("front", robot.localizer.positionFront.getAsDouble());
         telemetry.update();
 
-        if (gamepad1.a) {
-            robot.localizer.setPose(globalTagPosition);
+        if (gamepad1.a && flag) {
+            CommandScheduler.getInstance().schedule(new RelocalizeCommand());
+            flag = false;
 //            localizer.setPose(globalTagPosition);
         }
 

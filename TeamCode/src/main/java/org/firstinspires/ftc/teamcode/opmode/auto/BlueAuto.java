@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -42,45 +43,37 @@ import java.util.List;
 
 @Config
 @Autonomous(name = "Blue Auto")
-public class BlueAuto extends CommandOpMode {
-
+public class BlueAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-
 
     private double loopTime = 0.0;
     private final ElapsedTime timer = new ElapsedTime();
     private double endTime = 0;
 
     @Override
-    public void initialize() {
+    public void runOpMode() {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = true;
-        Globals.USING_DASHBOARD = true;
+        Globals.USING_DASHBOARD = false;
         Globals.COLOR = Side.BLUE;
 
-        robot.init(hardwareMap, telemetry);
-        robot.enabled = true;
-
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        robot.init(hardwareMap);
 
         robot.intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
 
-        robot.read();
-
-//        robot.startIMUThread(this);
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
-        robot.reset();
-//        robot.setStartOffset(Math.PI / 2);
 
-        while (!isStarted()) {
-            telemetry.addLine("in init");
-            telemetry.update();
-        }
+        telemetry.addLine("ready");
+        telemetry.update();
 
+        waitForStart();
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
+                        new InstantCommand(robot::startCamera),
+                        new WaitCommand(2000),
+
                         new InstantCommand(timer::reset),
                         // go to yellow pixel scoring pos
                         new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
@@ -89,60 +82,58 @@ public class BlueAuto extends CommandOpMode {
                         new PurplePixelDepositCommand(),
 
 
-                        new PositionCommand(new Pose(38, 39.25, 0))
+                        new PositionCommand(new Pose(38, 39.25, -0.02))
                                 .alongWith(new FirstStackSetupCommand()),
 
 
                         new FirstStackGrabCommand(),
 
 
-                        new PositionCommand(new Pose(35.75, -29, 0))
+                        new PositionCommand(new Pose(35.75, -29.5, 0))
                                 .andThen(new RelocalizeCommand())
                                 .andThen(new PositionCommand(new Pose(35.75, -29, 0)))
                                 .alongWith(new FirstDepositCommand()),
 
 
-                        new PositionCommand(new Pose(38, 39, 0)),
+                        new PositionCommand(new Pose(38, 39, -0.02)),
 
                         new SecondStackGrabCommand(),
 
 
-                        new PositionCommand(new Pose(35.75, -29, 0))
+                        new PositionCommand(new Pose(35.75, -31.85, 0))
                                 .andThen(new RelocalizeCommand())
-                                .andThen(new PositionCommand(new Pose(35.75, -29, 0)))
                                 .alongWith(new SecondDepositCommand()),
 
 
-                        new PositionCommand(new Pose(38, 39, 0)),
+                        new PositionCommand(new Pose(38, 39, -0.02)),
 
                         new ThirdStackGrabCommand(),
 
 
-                        new PositionCommand(new Pose(35.75, -29, 0))
+                        new PositionCommand(new Pose(35.75, -31.85, 0))
                                 .andThen(new RelocalizeCommand())
-                                .andThen(new PositionCommand(new Pose(35.75, -29, 0)))
                                 .alongWith(new ThirdDepositCommand()),
 
                         new InstantCommand(() -> endTime = timer.seconds())
                 )
         );
-    }
 
-    @Override
-    public void run() {
-        robot.read();
-        super.run();
-        robot.periodic();
+        while (opModeIsActive()) {
+            robot.read();
+            CommandScheduler.getInstance().run();
+            robot.periodic();
 
-        double loop = System.nanoTime();
-        telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addLine(robot.localizer.getPose().toString());
-        telemetry.addLine(String.valueOf(robot.localizer.positionFront.getAsDouble()));
-        telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
-        loopTime = loop;
-        telemetry.update();
+            double loop = System.nanoTime();
+            telemetry.addData("hz ", 1000000000 / (loop - loopTime));
+            telemetry.addLine(robot.localizer.getPose().toString());
+            telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
+            loopTime = loop;
+            telemetry.update();
 
-        robot.write();
-        robot.clearBulkCache();
+            robot.write();
+            robot.clearBulkCache();
+        }
+
+        robot.closeCamera();
     }
 }

@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmFloa
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmLiftCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
 public class ThirdStackGrabCommand extends SequentialCommandGroup {
@@ -23,7 +24,7 @@ public class ThirdStackGrabCommand extends SequentialCommandGroup {
                 new WaitCommand(250),
                 new ArmFloatCommand(false),
                 new ArmCommand(0),
-                new WaitCommand(100),
+                new PivotStateCommand(IntakeSubsystem.PivotState.STORED),
                 new ExtensionCommand(0)
         );
     }

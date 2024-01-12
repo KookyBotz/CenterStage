@@ -37,8 +37,7 @@ public class PosAutoTest extends CommandOpMode {
         Globals.IS_AUTO = true;
         Globals.USING_DASHBOARD = true;
 
-        robot.init(hardwareMap, telemetry);
-        robot.enabled = true;
+        robot.init(hardwareMap);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 

@@ -23,7 +23,7 @@ public class SecondStackGrabCommand extends SequentialCommandGroup {
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT),
                 new WaitCommand(250),
                 new ArmLiftCommand(0.63),
-                new WaitCommand(100),
+                new PivotStateCommand(IntakeSubsystem.PivotState.STORED),
                 new ExtensionCommand(0)
         );
     }

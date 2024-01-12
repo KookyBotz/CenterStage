@@ -86,7 +86,6 @@ public class RobotHardware {
     public CRServoImplEx rightHang;
 
     private HardwareMap hardwareMap;
-    private Telemetry telemetry;
 
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
@@ -95,7 +94,7 @@ public class RobotHardware {
     private double voltage = 12.0;
 
     private static RobotHardware instance = null;
-    public boolean enabled;
+    private boolean enabled;
 
     public List<LynxModule> modules;
 
@@ -134,10 +133,9 @@ public class RobotHardware {
      * @param hardwareMap The HardwareMap of the robot, storing all hardware devices
      * @param telemetry   Saved for later in the event FTC Dashboard used
      */
-    public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
+    public void init(final HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         this.values = new HashMap<>();
-        this.telemetry = (Globals.USING_DASHBOARD) ? new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()) : telemetry;
 
         values.put(Sensors.SensorType.EXTENSION_ENCODER, 0);
         values.put(Sensors.SensorType.ARM_ENCODER, 0.0);
@@ -226,17 +224,17 @@ public class RobotHardware {
         if (Globals.IS_AUTO) {
             localizer = new ThreeWheelLocalizer();
 
-            aprilTag = new AprilTagProcessor.Builder()
-                    // calibrated using 3DF Zephyr 7.021
-                    .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
-                    .build();
-
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                    .setCameraResolution(new Size(640, 480))
-                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                    .addProcessor(aprilTag)
-                    .build();
+//            aprilTag = new AprilTagProcessor.Builder()
+//                    // calibrated using 3DF Zephyr 7.021
+//                    .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
+//                    .build();
+//
+//            visionPortal = new VisionPortal.Builder()
+//                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+//                    .setCameraResolution(new Size(640, 480))
+//                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+//                    .addProcessor(aprilTag)
+//                    .build();
 
 //            synchronized (imuLock) {
 //                imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -271,10 +269,10 @@ public class RobotHardware {
     }
 
     public void periodic() {
-        if (voltageTimer.seconds() > 5) {
-            voltageTimer.reset();
-            voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-        }
+//        if (voltageTimer.seconds() > 5) {
+//            voltageTimer.reset();
+//            voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+//        }
 
         intake.periodic();
         extension.periodic();
@@ -305,7 +303,7 @@ public class RobotHardware {
         imuOffset = imuAngle;
     }
 
-    public void setStartOffset(double off){
+    public void setStartOffset(double off) {
         startOffset = off;
     }
 
@@ -388,6 +386,20 @@ public class RobotHardware {
         } else {
             return null;
         }
+    }
+
+    public void startCamera() {
+        aprilTag = new AprilTagProcessor.Builder()
+                // calibrated using 3DF Zephyr 7.021
+                .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
+                .build();
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCameraResolution(new Size(640, 480))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .addProcessor(aprilTag)
+                .build();
     }
 
     public void closeCamera() {

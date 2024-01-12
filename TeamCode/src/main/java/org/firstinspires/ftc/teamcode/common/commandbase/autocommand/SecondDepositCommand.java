@@ -17,23 +17,24 @@ public class SecondDepositCommand extends SequentialCommandGroup {
     public SecondDepositCommand() {
         super(
                 new WaitCommand(1250),
-                new ArmCommand(2.95),
+                new ArmCommand(2.82),
                 new ArmFloatCommand(false),
                 new ArmLiftCommand(0.3),
-                new WaitCommand(500),
-                new ExtensionCommand(600),
+                new WaitCommand(200),
                 new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),
+                new WaitCommand(300),
+                new ExtensionCommand(600),
                 new WaitCommand(750),
-                new ClawCommand(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.BOTH),
-                new WaitCommand(250),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
-                new WaitCommand(100),
+                new WaitCommand(250),
+                new ArmCommand(2.79),
+                new WaitCommand(750),
                 new ExtensionCommand(0),
                 new WaitCommand(150),
                 new ArmCommand(0.2),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.46)
+                new PivotCommand(0.48)
         );
     }
 }

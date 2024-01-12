@@ -53,7 +53,7 @@ public class Duo extends CommandOpMode {
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap);
 
         robot.intakePivotActuator.setTargetPosition(0.03);
         robot.intakePivotActuator.write();

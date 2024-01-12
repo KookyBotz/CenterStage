@@ -39,6 +39,8 @@ public class RelocalizeCommand extends SequentialCommandGroup {
                 i++;
             }
         }
-        return i > 0 ? pose.divide(new Pose(i, i, i)) : null;
+        Pose ret = i > 0 ? pose.divide(new Pose(i, i, i)) : null;
+        System.out.println(ret);
+        return ret;
     }
 }

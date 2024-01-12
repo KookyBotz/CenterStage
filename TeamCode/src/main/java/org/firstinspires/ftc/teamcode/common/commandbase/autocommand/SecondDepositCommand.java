@@ -27,7 +27,7 @@ public class SecondDepositCommand extends SequentialCommandGroup {
                 new WaitCommand(750),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH),
                 new WaitCommand(250),
-                new ArmCommand(2.79),
+                new ArmCommand(2.805),
                 new WaitCommand(750),
                 new ExtensionCommand(0),
                 new WaitCommand(150),

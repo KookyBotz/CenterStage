@@ -89,7 +89,7 @@ public class BlueAuto extends LinearOpMode {
                         new FirstStackGrabCommand(),
 
 
-                        new PositionCommand(new Pose(35.75, -29.5, 0))
+                        new PositionCommand(new Pose(35.75, -29.2, 0))
                                 .andThen(new RelocalizeCommand())
                                 .andThen(new PositionCommand(new Pose(35.75, -29, 0)))
                                 .alongWith(new FirstDepositCommand()),

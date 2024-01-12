@@ -129,7 +129,6 @@ public class WActuatorGroup {
 
         if (controller != null) {
             this.power = controller.calculate(position, targetPosition + targetPositionOffset);
-            System.out.println(this.power);
 
             switch (mode) {
                 case CONSTANT:

@@ -46,7 +46,6 @@ public class Duo extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = false;
-        Globals.USING_DASHBOARD = false;
         Globals.stopIntaking();
         Globals.stopScoring();
 
@@ -110,7 +109,11 @@ public class Duo extends CommandOpMode {
 
     @Override
     public void run() {
+        CommandScheduler.getInstance().run();
+        robot.clearBulkCache();
         robot.read();
+        robot.periodic();
+        robot.write();
 
         // G1 - Drivetrain Control
         robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
@@ -129,19 +132,10 @@ public class Duo extends CommandOpMode {
         lastJoystickUp = currentJoystickUp;
         lastJoystickDown = currentJoystickDown;
 
-        super.run();
-        robot.periodic();
-
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("currentAngle", robot.armActuator.getPosition());
-        telemetry.addData("angle", InverseKinematics.t_angle);
-        telemetry.addData("power", robot.armActuator.getPower());
-        telemetry.addData("feedforward", robot.armActuator.getCurrentFeedforward());
         telemetry.addData("height", robot.extension.getBackdropHeight());
         loopTime = loop;
         telemetry.update();
-        robot.write();
-        robot.clearBulkCache();
     }
 }

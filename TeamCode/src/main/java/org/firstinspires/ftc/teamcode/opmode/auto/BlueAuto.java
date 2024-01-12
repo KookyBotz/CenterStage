@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
 @Autonomous(name = "Blue Auto")
@@ -41,14 +42,18 @@ public class BlueAuto extends LinearOpMode {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = true;
-        Globals.USING_DASHBOARD = false;
-        Globals.COLOR = Side.BLUE;
+        Globals.ALLIANCE = Side.BLUE;
 
         robot.init(hardwareMap);
 
         robot.intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
 
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
+
+        while (robot.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addLine("initializing... please wait");
+            telemetry.update();
+        }
 
         telemetry.addLine("ready");
         telemetry.update();
@@ -57,7 +62,6 @@ public class BlueAuto extends LinearOpMode {
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new InstantCommand(robot::startCamera),
                         new WaitCommand(2000),
 
                         new InstantCommand(timer::reset),
@@ -105,21 +109,22 @@ public class BlueAuto extends LinearOpMode {
         );
 
         while (opModeIsActive()) {
-            robot.read();
             CommandScheduler.getInstance().run();
+            robot.clearBulkCache();
+            robot.read();
             robot.periodic();
+            robot.write();
 
             double loop = System.nanoTime();
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
             telemetry.addLine(robot.localizer.getPose().toString());
             telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
-            loopTime = loop;
             telemetry.update();
 
-            robot.write();
-            robot.clearBulkCache();
+            loopTime = loop;
         }
 
         robot.closeCamera();
+        robot.kill();
     }
 }

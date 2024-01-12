@@ -4,13 +4,11 @@ import org.firstinspires.ftc.teamcode.common.centerstage.Side;
 
 public class Globals {
 
-    public static Side COLOR = Side.RED;
+    public static Side ALLIANCE = Side.RED;
     /**
      * Match constants.
      */
-    public static Side SIDE = Side.LEFT;
     public static boolean IS_AUTO = false;
-    public static boolean USING_DASHBOARD = false;
 
     /**
      * Robot State Constants

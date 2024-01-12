@@ -63,7 +63,7 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
     public void init(int width, int height, CameraCalibration calibration) {
         lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
 
-        if (Globals.COLOR == Side.RED) {
+        if (Globals.ALLIANCE == Side.RED) {
             threshold = redThreshold;
         } else {
             threshold = blueThreshold;
@@ -73,7 +73,7 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
 
-        if (Globals.COLOR == Side.RED) {
+        if (Globals.ALLIANCE == Side.RED) {
             threshold = redThreshold;
         } else {
             threshold = blueThreshold;
@@ -82,8 +82,8 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
         frame.copyTo(finalMat);
         Imgproc.GaussianBlur(finalMat, finalMat, new Size(5, 5), 0.0);
 
-        leftZoneArea = new Rect(Globals.COLOR == Side.RED? redLeftX : blueLeftX, Globals.COLOR == Side.RED? redLeftY : blueLeftY, width, height);
-        centerZoneArea = new Rect(Globals.COLOR == Side.RED?redCenterX:blueCenterX, Globals.COLOR == Side.RED?redCenterY:blueCenterY, width, height);
+        leftZoneArea = new Rect(Globals.ALLIANCE == Side.RED? redLeftX : blueLeftX, Globals.ALLIANCE == Side.RED? redLeftY : blueLeftY, width, height);
+        centerZoneArea = new Rect(Globals.ALLIANCE == Side.RED?redCenterX:blueCenterX, Globals.ALLIANCE == Side.RED?redCenterY:blueCenterY, width, height);
 
         Mat leftZone = finalMat.submat(leftZoneArea);
         Mat centerZone = finalMat.submat(centerZoneArea);
@@ -94,7 +94,7 @@ public class PropPipeline implements VisionProcessor, CameraStreamSource {
         leftColor = left.val[0] / 1000000.0;
         centerColor = center.val[0] / 1000000.0;
 
-        if(Globals.COLOR == Side.BLUE){
+        if(Globals.ALLIANCE == Side.BLUE){
             if (leftColor < threshold) {
                 // left zone has it
                 location = Side.LEFT;

@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -97,6 +98,7 @@ public class RobotHardware {
     private boolean enabled;
 
     public List<LynxModule> modules;
+    public LynxModule CONTROL_HUB;
 
 
     private ArrayList<WSubsystem> subsystems;
@@ -131,7 +133,6 @@ public class RobotHardware {
      * Created at the start of every OpMode.
      *
      * @param hardwareMap The HardwareMap of the robot, storing all hardware devices
-     * @param telemetry   Saved for later in the event FTC Dashboard used
      */
     public void init(final HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -214,8 +215,13 @@ public class RobotHardware {
         InverseKinematics.calculateTarget(3, 0);
 
         modules = hardwareMap.getAll(LynxModule.class);
-        modules.get(0).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+
+        for (LynxModule m : modules) {
+            m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            if (m.isParent() && LynxConstants.isEmbeddedSerialNumber(m.getSerialNumber()) && CONTROL_HUB == null) CONTROL_HUB = m;
+
+        }
+
 
         subsystems = new ArrayList<>();
         drivetrain = new MecanumDrivetrain();
@@ -224,17 +230,7 @@ public class RobotHardware {
         if (Globals.IS_AUTO) {
             localizer = new ThreeWheelLocalizer();
 
-//            aprilTag = new AprilTagProcessor.Builder()
-//                    // calibrated using 3DF Zephyr 7.021
-//                    .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
-//                    .build();
-//
-//            visionPortal = new VisionPortal.Builder()
-//                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-//                    .setCameraResolution(new Size(640, 480))
-//                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-//                    .addProcessor(aprilTag)
-//                    .build();
+            startCamera();
 
 //            synchronized (imuLock) {
 //                imu = hardwareMap.get(BNO055IMU.class, "imu");
@@ -259,7 +255,6 @@ public class RobotHardware {
             values.put(Sensors.SensorType.POD_FRONT, podFront.getPosition());
             values.put(Sensors.SensorType.POD_RIGHT, podRight.getPosition());
         }
-
     }
 
     public void write() {
@@ -308,7 +303,7 @@ public class RobotHardware {
     }
 
     public void clearBulkCache() {
-        modules.get(0).clearBulkCache();
+        CONTROL_HUB.clearBulkCache();
     }
 
     public void addSubsystem(WSubsystem... subsystems) {
@@ -402,7 +397,16 @@ public class RobotHardware {
                 .build();
     }
 
+    public VisionPortal.CameraState getCameraState() {
+        if (visionPortal != null) return visionPortal.getCameraState();
+        return null;
+    }
+
     public void closeCamera() {
         if (visionPortal != null) visionPortal.stopStreaming();
+    }
+
+    public void kill() {
+        instance = null;
     }
 }

@@ -13,9 +13,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackSetupCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelDepositCommand;
@@ -80,34 +81,35 @@ public class BlueAuto extends LinearOpMode {
         }
 
         randomization = propPipeline.getLocation();
-        portal.stopStreaming();
+        portal.close();
 
         Pose purplePixelPose;
         Pose yellowPixelPose;
 
         switch (randomization) {
             case LEFT:
-                purplePixelPose = new Pose(37.75, 39.35, 3 * Math.PI / 4);
+                purplePixelPose = new Pose(37.75, 39.35, 2.1);
                 yellowPixelPose = new Pose(38.75, -29, 0);
                 break;
             case RIGHT:
-                purplePixelPose = new Pose(37.75, 39.35, Math.PI / 4);
+                purplePixelPose = new Pose(37.75, 39.35, 0.75);
                 yellowPixelPose = new Pose(29.75, -29, 0);
                 break;
             default:
                 purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
-                yellowPixelPose = new Pose(32.75, -29, 0);
+                yellowPixelPose = new Pose(35.75, -29, 0);
                 break;
         }
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
-                        new WaitCommand(2000),
-
                         new InstantCommand(timer::reset),
 
-                        new PositionCommand(purplePixelPose)
+                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
                                 .alongWith(new PurplePixelExtendCommand(randomization)),
+
+                        new PositionCommand(purplePixelPose),
+
 
                         new PurplePixelDepositCommand(),
 
@@ -121,11 +123,12 @@ public class BlueAuto extends LinearOpMode {
 
                         new PositionCommand(new Pose(35.75, -29, 0))
                                 .andThen(new RelocalizeCommand())
-                                .andThen(new PositionCommand(yellowPixelPose))
-                                .alongWith(new FirstDepositCommand()),
+                                .andThen(new PositionCommand(yellowPixelPose)
+                                        .alongWith(new FirstDepositExtendCommand())),
+
+                        new FirstDepositCommand(),
 
                         new PositionCommand(new Pose(35.75, -29, 0)),
-
                         new RelocalizeCommand(),
 
                         new PositionCommand(new Pose(38, 39, -0.02)),
@@ -138,7 +141,7 @@ public class BlueAuto extends LinearOpMode {
                                 .alongWith(new SecondDepositCommand()),
 
 
-                        new PositionCommand(new Pose(38, 39, -0.02)),
+                        new PositionCommand(new Pose(38, 39.5, -0.02)),
 
                         new ThirdStackGrabCommand(),
 
@@ -147,11 +150,12 @@ public class BlueAuto extends LinearOpMode {
                                 .andThen(new RelocalizeCommand())
                                 .alongWith(new ThirdDepositCommand()),
 
-                        new InstantCommand(() -> endTime = timer.seconds())
+                        new InstantCommand(() -> endTime = timer.seconds()),
+                        new InstantCommand(robot::closeCamera)
                 )
         );
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             CommandScheduler.getInstance().run();
             robot.clearBulkCache();
             robot.read();
@@ -167,7 +171,6 @@ public class BlueAuto extends LinearOpMode {
             loopTime = loop;
         }
 
-        robot.closeCamera();
         robot.kill();
     }
 }

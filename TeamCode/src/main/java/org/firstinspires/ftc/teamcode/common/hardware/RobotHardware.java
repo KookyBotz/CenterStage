@@ -403,7 +403,7 @@ public class RobotHardware {
     }
 
     public void closeCamera() {
-        if (visionPortal != null) visionPortal.stopStreaming();
+        if (visionPortal != null) visionPortal.close();
     }
 
     public void kill() {

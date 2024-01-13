@@ -393,6 +393,7 @@ public class RobotHardware {
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(aprilTag)
+                .enableLiveView(false)
                 .build();
     }
 

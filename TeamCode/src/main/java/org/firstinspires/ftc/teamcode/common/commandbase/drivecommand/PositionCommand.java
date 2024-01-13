@@ -93,7 +93,7 @@ public class PositionCommand extends CommandBase {
         x_rotated = Range.clip(x_rotated, -0.5, 0.5);
         y_rotated = Range.clip(y_rotated, -0.5, 0.5);
 
-        return new Pose(x_rotated * 1.41, y_rotated, hPower);
+        return new Pose(x_rotated * 1.6, y_rotated, hPower);
     }
 
     @Override

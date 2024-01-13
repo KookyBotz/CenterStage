@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -88,16 +89,16 @@ public class BlueAuto extends LinearOpMode {
 
         switch (randomization) {
             case LEFT:
-                purplePixelPose = new Pose(37.75, 39.35, 2.1);
+                purplePixelPose = new Pose(37.75, 25, Math.PI / 2);
                 yellowPixelPose = new Pose(38.75, -29, 0);
                 break;
             case RIGHT:
                 purplePixelPose = new Pose(37.75, 39.35, 0.75);
-                yellowPixelPose = new Pose(29.75, -29, 0);
+                yellowPixelPose = new Pose(28.75, -29, 0);
                 break;
             default:
                 purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
-                yellowPixelPose = new Pose(35.75, -29, 0);
+                yellowPixelPose = new Pose(31.75, -29, 0);
                 break;
         }
 
@@ -149,6 +150,8 @@ public class BlueAuto extends LinearOpMode {
                         new PositionCommand(new Pose(35.75, -31.85, 0))
                                 .andThen(new RelocalizeCommand())
                                 .alongWith(new ThirdDepositCommand()),
+
+                        new PositionCommand(new Pose(12, -54, 0)),
 
                         new InstantCommand(() -> endTime = timer.seconds()),
                         new InstantCommand(robot::closeCamera)

@@ -1,10 +1,10 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
-import org.firstinspires.ftc.teamcode.common.vision.Side;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 
 public class Globals {
 
-    public static Side ALLIANCE = Side.RED;
+    public static Location ALLIANCE = Location.RED;
     /**
      * Match constants.
      */

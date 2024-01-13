@@ -2,16 +2,14 @@ package org.firstinspires.ftc.teamcode.opmode.testing.extra;
 
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
-import org.firstinspires.ftc.teamcode.common.vision.Side;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.opencv.core.Scalar;
 
 @Autonomous(name = "PipelineTest")
 public class PipelineTest extends LinearOpMode {
@@ -21,12 +19,12 @@ public class PipelineTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Globals.ALLIANCE = Side.BLUE;
+        Globals.ALLIANCE = Location.BLUE;
 
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
-                .setCameraResolution(new Size(1920, 1080))
+                .setCameraResolution(new Size(1280, 720))
                 .addProcessor(propPipeline)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)

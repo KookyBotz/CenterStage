@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.vision;
 
+import static org.firstinspires.ftc.teamcode.common.hardware.Globals.ALLIANCE;
+
 import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -15,29 +17,30 @@ import org.opencv.imgproc.Imgproc;
 public class PropPipeline implements VisionProcessor {
     private static final boolean DEBUG = false;
 
-    private volatile Side location = Side.RIGHT;
+    private volatile Location location = Location.RIGHT;
 
     private final Mat hsv = new Mat();
 
-    public static int redLeftX = 765;
-    public static int redLeftY = 500;
+    public static int redLeftX = (int) (775 / 1.5);
+    public static int redLeftY = (int) (550 / 1.5);
 
-    public static int redCenterX = 1335;
-    public static int redCenterY = 450;
+    public static int redCenterX = (int) (1335 / 1.5);
+    public static int redCenterY = (int) (475 / 1.5);
 
-    public static int blueLeftX = 200;
-    public static int blueLeftY = 475;
+    public static int blueLeftX = (int) (150 / 1.5);
+    public static int blueLeftY = (int) (525 / 1.5);
 
-    public static int blueCenterX = 925;
-    public static int blueCenterY = 440;
+    public static int blueCenterX = (int) (925 / 1.5);
+    public static int blueCenterY = (int) (485 / 1.5);
 
-    public static int leftWidth = 175;
-    public static int leftHeight = 125;
+    public static int leftWidth = (int) (250 / 1.5);
+    public static int leftHeight = (int) (150 / 1.5);
 
-    public static int centerWidth = 125;
-    public static int centerHeight = 125;
+    public static int centerWidth = (int) (125 / 1.5);
+    public static int centerHeight = (int) (125 / 1.5);
 
-    public static double threshold = 180;
+    public static double BLUE_TRESHOLD = 70;
+    public static double RED_TRESHOLD = 150;
 
     public double leftColor = 0.0;
     public double centerColor = 0.0;
@@ -47,7 +50,7 @@ public class PropPipeline implements VisionProcessor {
 
     Telemetry telemetry;
 
-    Side ALLIANCE = Side.RED;
+//    Location ALLIANCE = Location.RED;
 
     public PropPipeline() {
         this(null);
@@ -67,7 +70,7 @@ public class PropPipeline implements VisionProcessor {
         Rect leftZoneArea;
         Rect centerZoneArea;
 
-        if (ALLIANCE == Side.RED) {
+        if (ALLIANCE == Location.RED) {
             leftZoneArea = new Rect(redLeftX, redLeftY, leftWidth, leftHeight);
             centerZoneArea = new Rect(redCenterX, redCenterY, centerWidth, centerHeight);
         } else {
@@ -80,25 +83,16 @@ public class PropPipeline implements VisionProcessor {
 
 
         if (DEBUG) {
-            Imgproc.cvtColor(frame, frame, Imgproc.COLOR_RGB2HSV);
             Imgproc.blur(frame, frame, new Size(5, 5));
-            Core.inRange(frame, new Scalar(0, 150, 150), new Scalar(180, 255, 255), frame);
             Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255), 2);
             Imgproc.rectangle(frame, centerZoneArea, new Scalar(255, 255, 255), 2);
         }
 
-        Imgproc.cvtColor(leftZone, leftZone, Imgproc.COLOR_RGB2HSV);
-        Imgproc.cvtColor(centerZone, centerZone, Imgproc.COLOR_RGB2HSV);
         Imgproc.blur(leftZone, leftZone, new Size(5, 5));
         Imgproc.blur(centerZone, centerZone, new Size(5, 5));
-        Core.inRange(leftZone, new Scalar(0, 150, 150), new Scalar(180, 255, 255), leftZone);
-        Core.inRange(centerZone, new Scalar(0, 150, 150), new Scalar(180, 255, 255), centerZone);
 
         left = Core.mean(leftZone);
         center = Core.mean(centerZone);
-
-        leftColor = left.val[0];
-        centerColor = center.val[0];
 
         if (telemetry != null) {
             telemetry.addData("leftColor", left.toString());
@@ -107,17 +101,23 @@ public class PropPipeline implements VisionProcessor {
             telemetry.update();
         }
 
-        if (leftColor > threshold) {
+        double threshold = ALLIANCE == Location.RED ? RED_TRESHOLD : BLUE_TRESHOLD;
+        int idx = ALLIANCE == Location.RED ? 0 : 2;
+
+        leftColor = left.val[idx];
+        centerColor = center.val[idx];
+
+        if (leftColor > threshold && (left.val[0] + left.val[1] + left.val[2] - left.val[idx] < left.val[idx])) {
             // left zone has it
-            location = Side.LEFT;
+            location = Location.LEFT;
             Imgproc.rectangle(frame, leftZoneArea, new Scalar(255, 255, 255), 10);
-        } else if (centerColor > threshold) {
+        } else if (centerColor > threshold && (center.val[0] + center.val[1] + center.val[2] - center.val[idx] < center.val[idx])) {
             // center zone has it
-            location = Side.CENTER;
+            location = Location.CENTER;
             Imgproc.rectangle(frame, centerZoneArea, new Scalar(255, 255, 255), 10);
         } else {
             // right zone has it
-            location = Side.RIGHT;
+            location = Location.RIGHT;
         }
 
         leftZone.release();
@@ -131,7 +131,7 @@ public class PropPipeline implements VisionProcessor {
 
     }
 
-    public Side getLocation() {
+    public Location getLocation() {
         return this.location;
     }
 }

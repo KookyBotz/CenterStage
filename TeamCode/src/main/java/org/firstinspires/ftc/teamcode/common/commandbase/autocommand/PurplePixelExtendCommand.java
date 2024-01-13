@@ -7,12 +7,13 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.Extensi
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 
 public class PurplePixelExtendCommand extends SequentialCommandGroup {
-    public PurplePixelExtendCommand(){
+    public PurplePixelExtendCommand(Location randomization){
         super(
                 new ArmCommand(-0.04),
-                new ExtensionCommand(150),
+                new ExtensionCommand(randomization == Location.CENTER ? 150 : 300),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
                 new PivotCommand(0.48)
         );

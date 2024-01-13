@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import android.util.Size;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -9,8 +11,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
-import org.firstinspires.ftc.teamcode.common.vision.Side;
+import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackSetupCommand;
@@ -37,12 +41,16 @@ public class BlueAuto extends LinearOpMode {
     private final ElapsedTime timer = new ElapsedTime();
     private double endTime = 0;
 
+    private PropPipeline propPipeline;
+    private VisionPortal portal;
+    private Location randomization;
+
     @Override
     public void runOpMode() {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = true;
-        Globals.ALLIANCE = Side.BLUE;
+        Globals.ALLIANCE = Location.BLUE;
 
         robot.init(hardwareMap);
 
@@ -50,24 +58,56 @@ public class BlueAuto extends LinearOpMode {
 
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
 
-        while (robot.getCameraState() != VisionPortal.CameraState.STREAMING) {
+        propPipeline = new PropPipeline();
+        portal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
+                .setCameraResolution(new Size(1280, 720))
+                .addProcessor(propPipeline)
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .enableLiveView(true)
+                .setAutoStopLiveView(true)
+                .build();
+
+        while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             telemetry.addLine("initializing... please wait");
             telemetry.update();
         }
 
-        telemetry.addLine("ready");
-        telemetry.update();
+        while (opModeInInit()) {
+            telemetry.addLine("ready");
+            telemetry.addData("position", propPipeline.getLocation());
+            telemetry.update();
+        }
 
-        waitForStart();
+        randomization = propPipeline.getLocation();
+        portal.stopStreaming();
+
+        Pose purplePixelPose;
+        Pose yellowPixelPose;
+
+        switch (randomization) {
+            case LEFT:
+                purplePixelPose = new Pose(37.75, 39.35, 3 * Math.PI / 4);
+                yellowPixelPose = new Pose(38.75, -29, 0);
+                break;
+            case RIGHT:
+                purplePixelPose = new Pose(37.75, 39.35, Math.PI / 4);
+                yellowPixelPose = new Pose(29.75, -29, 0);
+                break;
+            default:
+                purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
+                yellowPixelPose = new Pose(32.75, -29, 0);
+                break;
+        }
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new WaitCommand(2000),
 
                         new InstantCommand(timer::reset),
-                        // go to yellow pixel scoring pos
-                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
-                                .alongWith(new PurplePixelExtendCommand()),
+
+                        new PositionCommand(purplePixelPose)
+                                .alongWith(new PurplePixelExtendCommand(randomization)),
 
                         new PurplePixelDepositCommand(),
 
@@ -79,11 +119,14 @@ public class BlueAuto extends LinearOpMode {
                         new FirstStackGrabCommand(),
 
 
-                        new PositionCommand(new Pose(35.75, -29.2, 0))
+                        new PositionCommand(new Pose(35.75, -29, 0))
                                 .andThen(new RelocalizeCommand())
-                                .andThen(new PositionCommand(new Pose(35.75, -29, 0)))
+                                .andThen(new PositionCommand(yellowPixelPose))
                                 .alongWith(new FirstDepositCommand()),
 
+                        new PositionCommand(new Pose(35.75, -29, 0)),
+
+                        new RelocalizeCommand(),
 
                         new PositionCommand(new Pose(38, 39, -0.02)),
 

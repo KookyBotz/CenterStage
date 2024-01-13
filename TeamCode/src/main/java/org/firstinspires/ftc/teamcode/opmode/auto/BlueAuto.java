@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
-import org.firstinspires.ftc.teamcode.common.centerstage.Side;
+import org.firstinspires.ftc.teamcode.common.vision.Side;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackSetupCommand;

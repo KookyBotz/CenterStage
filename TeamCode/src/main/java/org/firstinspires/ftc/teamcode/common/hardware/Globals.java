@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
-import org.firstinspires.ftc.teamcode.common.centerstage.Side;
+import org.firstinspires.ftc.teamcode.common.vision.Side;
 
 public class Globals {
 

@@ -193,12 +193,13 @@ public class RobotHardware {
         intakeClawRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
-        intakePivotLeftServo.setOffset(-0.03);
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
-        intakePivotRightServo.setOffset(0.01);
+        intakePivotRightServo.setOffset(0.04);
+//        intakePivotRightServo.setOffset(0.01);
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
+        intakePivotActuator.setOffset(-0.05);
 
         this.podLeft = new WEncoder(new MotorEx(hardwareMap, "dtFrontRightMotor").encoder);
         this.podFront = new WEncoder(new MotorEx(hardwareMap, "dtBackRightMotor").encoder);

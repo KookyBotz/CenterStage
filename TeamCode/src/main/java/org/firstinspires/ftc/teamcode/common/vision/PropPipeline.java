@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.vision;
 
 import static org.firstinspires.ftc.teamcode.common.hardware.Globals.ALLIANCE;
+import static org.firstinspires.ftc.teamcode.common.hardware.Globals.SIDE;
 
 import android.graphics.Canvas;
 
@@ -15,25 +16,25 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class PropPipeline implements VisionProcessor {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private volatile Location location = Location.RIGHT;
 
     private final Mat hsv = new Mat();
 
-    public static int redLeftX = (int) (825 / 1.5);
-    public static int redLeftY = (int) (530 / 1.5);
+    public static int redLeftX = (int) (775 / 1.5);
+    public static int redLeftY = (int) (550 / 1.5);
 
     public static int redCenterX = (int) (1335 / 1.5);
     public static int redCenterY = (int) (475 / 1.5);
 
-    public static int blueLeftX = (int) (250 / 1.5);
+    public static int blueLeftX = (int) (200 / 1.5);
     public static int blueLeftY = (int) (525 / 1.5);
 
     public static int blueCenterX = (int) (925 / 1.5);
     public static int blueCenterY = (int) (485 / 1.5);
 
-    public static int leftWidth = (int) (150 / 1.5);
+    public static int leftWidth = (int) (250 / 1.5);
     public static int leftHeight = (int) (150 / 1.5);
 
     public static int centerWidth = (int) (125 / 1.5);
@@ -70,7 +71,7 @@ public class PropPipeline implements VisionProcessor {
         Rect leftZoneArea;
         Rect centerZoneArea;
 
-        if (ALLIANCE == Location.RED) {
+        if (ALLIANCE == Location.RED && SIDE == Location.FAR || ALLIANCE == Location.BLUE && SIDE == Location.CLOSE) {
             leftZoneArea = new Rect(redLeftX, redLeftY, leftWidth, leftHeight);
             centerZoneArea = new Rect(redCenterX, redCenterY, centerWidth, centerHeight);
         } else {

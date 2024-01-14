@@ -6,27 +6,25 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositExtendCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackGrabCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackSetupCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.RelocalizeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondStackGrabCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.ThirdDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.ThirdStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackSetupCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PurplePixelDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PurplePixelExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.SecondDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.SecondStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.ThirdDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.ThirdStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -53,6 +51,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Location.BLUE;
+        Globals.SIDE = Location.FAR;
 
         robot.init(hardwareMap);
 
@@ -137,7 +136,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                         new SecondStackGrabCommand(),
 
 
-                        new PositionCommand(new Pose(35.75, -31.85, 0))
+                        new PositionCommand(new Pose(35.75, -31.5, 0))
                                 .andThen(new RelocalizeCommand())
                                 .alongWith(new SecondDepositCommand()),
 
@@ -147,7 +146,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                         new ThirdStackGrabCommand(),
 
 
-                        new PositionCommand(new Pose(35.75, -31.85, 0))
+                        new PositionCommand(new Pose(35.75, -31.5, 0))
                                 .andThen(new RelocalizeCommand())
                                 .alongWith(new ThirdDepositCommand()),
 

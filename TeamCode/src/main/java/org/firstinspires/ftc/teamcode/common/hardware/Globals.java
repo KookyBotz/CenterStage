@@ -4,10 +4,11 @@ import org.firstinspires.ftc.teamcode.common.vision.Location;
 
 public class Globals {
 
-    public static Location ALLIANCE = Location.RED;
+    public static Location SIDE = Location.FAR;
     /**
      * Match constants.
      */
+    public static Location ALLIANCE = Location.RED;
     public static boolean IS_AUTO = false;
 
     /**

@@ -13,17 +13,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstDepositExtendCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackGrabCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.FirstStackSetupCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.PurplePixelExtendCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.RelocalizeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.SecondStackGrabCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.ThirdDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.ThirdStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackSetupCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PurplePixelDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PurplePixelExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -35,7 +31,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
 @Autonomous(name = "🔴 Red Far Cycle Auto")
-public class RedFarCycleAuto extends LinearOpMode {
+public class RedFarPreloadAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
 
     private double loopTime = 0.0;
@@ -52,6 +48,7 @@ public class RedFarCycleAuto extends LinearOpMode {
 
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Location.RED;
+        Globals.SIDE = Location.FAR;
 
         robot.init(hardwareMap);
 
@@ -130,43 +127,43 @@ public class RedFarCycleAuto extends LinearOpMode {
 
                         new FirstDepositCommand(),
 
-                        new WaitUntilCommand(()-> gamepad1.a),
-
-
-                        new PositionCommand(new Pose(-35.75, -29, 0)),
-                        new RelocalizeCommand(),
-
-                        new WaitUntilCommand(()-> gamepad1.a),
-
-                        new PositionCommand(new Pose(-38, 39, 0.02)),
-
-                        new SecondStackGrabCommand(),
-
-                        new WaitUntilCommand(()-> gamepad1.a),
-
-
-
-                        new PositionCommand(new Pose(-35.75, -31.85, 0))
-                                .andThen(new RelocalizeCommand())
-                                .alongWith(new SecondDepositCommand()),
-
-                        new WaitUntilCommand(()-> gamepad1.a),
-
-
-
-                        new PositionCommand(new Pose(-38, 39.5, 0.02)),
-
-                        new ThirdStackGrabCommand(),
-
-                        new WaitUntilCommand(()-> gamepad1.a),
-
-
-
-                        new PositionCommand(new Pose(-35.75, -31.85, 0))
-                                .andThen(new RelocalizeCommand())
-                                .alongWith(new ThirdDepositCommand()),
-
-                        new WaitUntilCommand(()-> gamepad1.a),
+//                        new WaitUntilCommand(()-> gamepad1.a),
+//
+//
+//                        new PositionCommand(new Pose(-35.75, -29, 0)),
+//                        new RelocalizeCommand(),
+//
+//                        new WaitUntilCommand(()-> gamepad1.a),
+//
+//                        new PositionCommand(new Pose(-38, 39, 0.02)),
+//
+//                        new SecondStackGrabCommand(),
+//
+//                        new WaitUntilCommand(()-> gamepad1.a),
+//
+//
+//
+//                        new PositionCommand(new Pose(-35.75, -31.85, 0))
+//                                .andThen(new RelocalizeCommand())
+//                                .alongWith(new SecondDepositCommand()),
+//
+//                        new WaitUntilCommand(()-> gamepad1.a),
+//
+//
+//
+//                        new PositionCommand(new Pose(-38, 39.5, 0.02)),
+//
+//                        new ThirdStackGrabCommand(),
+//
+//                        new WaitUntilCommand(()-> gamepad1.a),
+//
+//
+//
+//                        new PositionCommand(new Pose(-35.75, -31.85, 0))
+//                                .andThen(new RelocalizeCommand())
+//                                .alongWith(new ThirdDepositCommand()),
+//
+//                        new WaitUntilCommand(()-> gamepad1.a),
 
 
                         new PositionCommand(new Pose(-12, -54, 0)),

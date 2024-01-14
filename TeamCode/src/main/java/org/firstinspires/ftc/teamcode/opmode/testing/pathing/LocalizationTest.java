@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode.testing.pathing;
 
-import android.util.Size;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
@@ -9,21 +7,11 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.common.commandbase.autocommand.RelocalizeCommand;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.TwoWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Autonomous(name = "LocalizationTest")
 public class LocalizationTest extends CommandOpMode {

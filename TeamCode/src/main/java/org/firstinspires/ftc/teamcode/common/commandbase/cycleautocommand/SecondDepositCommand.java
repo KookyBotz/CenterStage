@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.common.commandbase.autocommand;
+package org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCo
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
-public class ThirdDepositCommand extends SequentialCommandGroup {
-    public ThirdDepositCommand() {
+public class SecondDepositCommand extends SequentialCommandGroup {
+    public SecondDepositCommand() {
         super(
                 new WaitCommand(1250),
                 new ArmCommand(2.82),
@@ -34,7 +34,7 @@ public class ThirdDepositCommand extends SequentialCommandGroup {
                 new ArmCommand(0.2),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.46)
+                new PivotCommand(0.48)
         );
     }
 }

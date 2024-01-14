@@ -90,16 +90,16 @@ public class RedClosePreloadAuto extends LinearOpMode {
 
         switch (randomization) {
             case RIGHT:
-                yellowScorePos = new Pose(23.25, 21.5, -1.52);
+                yellowScorePos = new Pose(24, 21.5, -1.52);
                 purpleScorePos = new Pose(25, 26, -1.52);
                 break;
             case CENTER:
-                yellowScorePos = new Pose(23.25, 27.75, -1.52);
+                yellowScorePos = new Pose(24, 27.75, -1.52);
                 purpleScorePos = new Pose(18, 36, -1.52);
                 break;
             case LEFT:
-                yellowScorePos = new Pose(23.25, 34.25, -1.52);
-                purpleScorePos = new Pose(4, 24, -1.52);
+                yellowScorePos = new Pose(24, 34.25, -1.52);
+                purpleScorePos = new Pose(4, 25, -1.52);
                 break;
             default:
                 break;

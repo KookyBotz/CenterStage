@@ -117,8 +117,6 @@ public class RedFarPreloadAuto extends LinearOpMode {
 
                         new FirstStackGrabCommand(),
 
-                        new WaitUntilCommand(()-> gamepad1.a),
-
 
                         new PositionCommand(new Pose(-35.75, -29, 0))
                                 .andThen(new RelocalizeCommand())

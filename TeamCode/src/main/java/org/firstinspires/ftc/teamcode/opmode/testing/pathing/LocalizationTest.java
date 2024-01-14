@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Autonomous(name = "LocalizationTest")
+@Disabled
 public class LocalizationTest extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();

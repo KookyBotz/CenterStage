@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 @TeleOp
 @Config
+@Disabled
 public class DroneTest extends OpMode {
     private ServoImplEx drone;
 

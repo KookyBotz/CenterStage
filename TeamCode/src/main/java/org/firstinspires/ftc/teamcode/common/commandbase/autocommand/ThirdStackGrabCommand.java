@@ -10,17 +10,19 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmLift
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
+import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 
 public class ThirdStackGrabCommand extends SequentialCommandGroup {
     public ThirdStackGrabCommand() {
         super(
                 new ArmFloatCommand(true),
-                new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
+                new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.BLUE ? ClawSide.RIGHT : ClawSide.LEFT),
                 new WaitCommand(250),
-                new ExtensionCommand(600),
+                new ExtensionCommand(550),
                 new WaitCommand(500),
-                new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.RIGHT),
+                new ClawCommand(IntakeSubsystem.ClawState.CLOSED, Globals.ALLIANCE == Location.BLUE ? ClawSide.RIGHT : ClawSide.LEFT),
                 new WaitCommand(250),
                 new ArmFloatCommand(false),
                 new ArmCommand(0),

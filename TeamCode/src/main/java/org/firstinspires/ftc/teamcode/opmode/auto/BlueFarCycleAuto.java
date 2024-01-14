@@ -35,8 +35,8 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Autonomous(name = "Blue Auto")
-public class BlueAuto extends LinearOpMode {
+@Autonomous(name = "🔵 Blue Far Cycle Auto")
+public class BlueFarCycleAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
 
     private double loopTime = 0.0;

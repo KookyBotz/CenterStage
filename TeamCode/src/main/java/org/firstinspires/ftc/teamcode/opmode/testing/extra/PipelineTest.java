@@ -19,7 +19,7 @@ public class PipelineTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Globals.ALLIANCE = Location.BLUE;
+        Globals.ALLIANCE = Location.RED;
 
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()
@@ -33,8 +33,8 @@ public class PipelineTest extends LinearOpMode {
 
         while (opModeInInit()) {
             telemetry.addData("Location", propPipeline.getLocation());
-            telemetry.addData("leftZone", propPipeline.leftColor);
-            telemetry.addData("centerZone", propPipeline.centerColor);
+            telemetry.addData("leftZone", propPipeline.left.toString());
+            telemetry.addData("centerZone", propPipeline.center.toString());
             telemetry.update();
         }
 
@@ -42,8 +42,8 @@ public class PipelineTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.addData("Location", propPipeline.getLocation());
-            telemetry.addData("leftZone", propPipeline.leftColor);
-            telemetry.addData("centerZone", propPipeline.centerColor);
+            telemetry.addData("leftZone", propPipeline.left.toString());
+            telemetry.addData("centerZone", propPipeline.center.toString());
             telemetry.update();
         }
     }

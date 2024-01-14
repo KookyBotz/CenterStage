@@ -11,12 +11,14 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCom
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
+import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 
 public class PurplePixelDepositCommand extends SequentialCommandGroup {
     public PurplePixelDepositCommand() {
         super(
-                new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
+                new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.BLUE ? ClawSide.RIGHT : ClawSide.LEFT),
                 new WaitCommand(75),
                 new ExtensionCommand(0),
                 new ArmCommand(0.2),

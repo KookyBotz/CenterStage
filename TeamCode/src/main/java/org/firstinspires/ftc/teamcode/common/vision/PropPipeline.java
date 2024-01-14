@@ -15,32 +15,32 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class PropPipeline implements VisionProcessor {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     private volatile Location location = Location.RIGHT;
 
     private final Mat hsv = new Mat();
 
-    public static int redLeftX = (int) (775 / 1.5);
-    public static int redLeftY = (int) (550 / 1.5);
+    public static int redLeftX = (int) (825 / 1.5);
+    public static int redLeftY = (int) (530 / 1.5);
 
     public static int redCenterX = (int) (1335 / 1.5);
     public static int redCenterY = (int) (475 / 1.5);
 
-    public static int blueLeftX = (int) (200 / 1.5);
+    public static int blueLeftX = (int) (250 / 1.5);
     public static int blueLeftY = (int) (525 / 1.5);
 
     public static int blueCenterX = (int) (925 / 1.5);
     public static int blueCenterY = (int) (485 / 1.5);
 
-    public static int leftWidth = (int) (250 / 1.5);
+    public static int leftWidth = (int) (150 / 1.5);
     public static int leftHeight = (int) (150 / 1.5);
 
     public static int centerWidth = (int) (125 / 1.5);
     public static int centerHeight = (int) (125 / 1.5);
 
     public static double BLUE_TRESHOLD = 70;
-    public static double RED_TRESHOLD = 150;
+    public static double RED_TRESHOLD = 100;
 
     public double leftColor = 0.0;
     public double centerColor = 0.0;

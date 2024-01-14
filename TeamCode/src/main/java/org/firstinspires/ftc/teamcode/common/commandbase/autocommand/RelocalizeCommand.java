@@ -25,6 +25,7 @@ public class RelocalizeCommand extends SequentialCommandGroup {
                 new InstantCommand(() -> {
                     c = RobotHardware.getInstance().getAprilTagPosition();
                     if (avg(a, b, c) != null) RobotHardware.getInstance().localizer.setPose(avg(a, b, c));
+                    System.out.println("atag" + RobotHardware.getInstance().localizer.getPose());
                 }),
                 new WaitCommand(50)
         );

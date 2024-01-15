@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-@Disabled
 @Autonomous(name = "PipelineTest")
 public class PipelineTest extends LinearOpMode {
 
@@ -21,7 +20,8 @@ public class PipelineTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Globals.ALLIANCE = Location.RED;
+        Globals.ALLIANCE = Location.BLUE;
+        Globals.SIDE = Location.CLOSE;
 
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()

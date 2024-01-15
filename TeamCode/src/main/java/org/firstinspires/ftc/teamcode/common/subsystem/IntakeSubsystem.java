@@ -93,7 +93,7 @@ public class IntakeSubsystem extends WSubsystem {
                     case CLOSED:
                         return 0.07;
                     case INTERMEDIATE:
-                        return 0.15;
+                        return 0.17;
                     case OPEN:
                         return 0.38;
                     default:
@@ -104,7 +104,7 @@ public class IntakeSubsystem extends WSubsystem {
                     case CLOSED:
                         return 0.52;
                     case INTERMEDIATE:
-                        return 0.6;
+                        return 0.62;
                     case OPEN:
                         return 0.89;
                     default:

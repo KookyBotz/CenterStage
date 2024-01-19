@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
 @Config
 public class PositionCommand extends CommandBase {
-    TwoWheelLocalizer localizer;
     Drivetrain drivetrain;
     Pose targetPose;
 
@@ -40,11 +39,10 @@ public class PositionCommand extends CommandBase {
     private ElapsedTime stable;
 
     public static double STABLE_MS = 250;
-    public static double DEAD_MS = 5000;
+    public static double DEAD_MS = 2500;
 
     public PositionCommand(Pose targetPose) {
         this.drivetrain = robot.drivetrain;
-        this.localizer = robot.localizer;
         this.targetPose = targetPose;
 
 
@@ -61,7 +59,7 @@ public class PositionCommand extends CommandBase {
         if (timer == null) timer = new ElapsedTime();
         if (stable == null) stable = new ElapsedTime();
 
-        Pose robotPose = localizer.getPose();
+        Pose robotPose = robot.localizer.getPose();
 
         Pose powers = getPower(robotPose);
         drivetrain.set(powers);
@@ -69,7 +67,7 @@ public class PositionCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        Pose robotPose = localizer.getPose();
+        Pose robotPose = robot.localizer.getPose();
         Pose delta = targetPose.subtract(robotPose);
 
         if (delta.toVec2D().magnitude() > ALLOWED_TRANSLATIONAL_ERROR
@@ -95,7 +93,7 @@ public class PositionCommand extends CommandBase {
         x_rotated = Range.clip(x_rotated, -0.5, 0.5);
         y_rotated = Range.clip(y_rotated, -0.5, 0.5);
 
-        return new Pose(x_rotated * 1.41, y_rotated, hPower);
+        return new Pose(x_rotated * 1.6, y_rotated, hPower);
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.AbsoluteAnalogEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 
 @TeleOp(name = "arm")
+@Disabled
 public class Arm extends OpMode {
     public AbsoluteAnalogEncoder extensionPitchEncoder;
     public AnalogInput extensionPitchEnc;

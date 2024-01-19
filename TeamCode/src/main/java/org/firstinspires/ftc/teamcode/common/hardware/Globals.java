@@ -1,16 +1,15 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
-import org.firstinspires.ftc.teamcode.common.centerstage.Side;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 
 public class Globals {
 
-    public static Side COLOR = Side.RED;
+    public static Location SIDE = Location.FAR;
     /**
      * Match constants.
      */
-    public static Side SIDE = Side.LEFT;
+    public static Location ALLIANCE = Location.RED;
     public static boolean IS_AUTO = false;
-    public static boolean USING_DASHBOARD = false;
 
     /**
      * Robot State Constants

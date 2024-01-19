@@ -43,14 +43,13 @@ public class Solo extends CommandOpMode {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = false;
-        Globals.USING_DASHBOARD = false;
         Globals.stopIntaking();
         Globals.stopScoring();
 
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
-        robot.init(hardwareMap, telemetry);
+        robot.init(hardwareMap);
 
         robot.intakePivotActuator.setTargetPosition(0.03);
         robot.intakePivotActuator.write();
@@ -100,10 +99,20 @@ public class Solo extends CommandOpMode {
 
     @Override
     public void run() {
+        CommandScheduler.getInstance().run();
+        robot.clearBulkCache();
         robot.read();
+        robot.periodic();
+        robot.write();
 
         // G1 - Drivetrain Control
-        robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
+        robot.drivetrain.set(
+                new Pose(
+                        gamepad1.left_stick_x,
+                        -gamepad1.left_stick_y,
+                        MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)
+                ), 0
+        );
 
         boolean currentJoystickUp = gamepad1.right_stick_y < -0.5;
         boolean currentJoystickDown = gamepad1.right_stick_y > 0.5;
@@ -119,19 +128,10 @@ public class Solo extends CommandOpMode {
 
         if (gamepad1.dpad_up && gamepad1.y) robot.drone.updateState(DroneSubsystem.DroneState.FIRED);
 
-        super.run();
-        robot.periodic();
-
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("currentAngle", robot.armActuator.getPosition());
-        telemetry.addData("angle", InverseKinematics.t_angle);
-        telemetry.addData("power", robot.armActuator.getPower());
-        telemetry.addData("feedforward", robot.armActuator.getCurrentFeedforward());
         telemetry.addData("height", robot.extension.getBackdropHeight());
         loopTime = loop;
         telemetry.update();
-        robot.write();
-        robot.clearBulkCache();
     }
 }

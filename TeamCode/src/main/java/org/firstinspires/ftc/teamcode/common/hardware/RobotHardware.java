@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -86,7 +87,6 @@ public class RobotHardware {
     public CRServoImplEx rightHang;
 
     private HardwareMap hardwareMap;
-    private Telemetry telemetry;
 
     private VisionPortal visionPortal;
     private AprilTagProcessor aprilTag;
@@ -95,9 +95,10 @@ public class RobotHardware {
     private double voltage = 12.0;
 
     private static RobotHardware instance = null;
-    public boolean enabled;
+    private boolean enabled;
 
     public List<LynxModule> modules;
+    public LynxModule CONTROL_HUB;
 
 
     private ArrayList<WSubsystem> subsystems;
@@ -115,7 +116,7 @@ public class RobotHardware {
     private double imuAngle = 0;
     private double imuOffset = 0;
     private double startOffset = 0;
-    public TwoWheelLocalizer localizer;
+    public ThreeWheelLocalizer localizer;
 
 
     public HashMap<Sensors.SensorType, Object> values;
@@ -132,12 +133,10 @@ public class RobotHardware {
      * Created at the start of every OpMode.
      *
      * @param hardwareMap The HardwareMap of the robot, storing all hardware devices
-     * @param telemetry   Saved for later in the event FTC Dashboard used
      */
-    public void init(final HardwareMap hardwareMap, final Telemetry telemetry) {
+    public void init(final HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         this.values = new HashMap<>();
-        this.telemetry = (Globals.USING_DASHBOARD) ? new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry()) : telemetry;
 
         values.put(Sensors.SensorType.EXTENSION_ENCODER, 0);
         values.put(Sensors.SensorType.ARM_ENCODER, 0.0);
@@ -194,12 +193,13 @@ public class RobotHardware {
         intakeClawRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
-        intakePivotLeftServo.setOffset(-0.03);
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
-        intakePivotRightServo.setOffset(0.01);
+        intakePivotRightServo.setOffset(0.04);
+//        intakePivotRightServo.setOffset(0.01);
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
+        intakePivotActuator.setOffset(-0.05);
 
         this.podLeft = new WEncoder(new MotorEx(hardwareMap, "dtFrontRightMotor").encoder);
         this.podFront = new WEncoder(new MotorEx(hardwareMap, "dtBackRightMotor").encoder);
@@ -216,34 +216,28 @@ public class RobotHardware {
         InverseKinematics.calculateTarget(3, 0);
 
         modules = hardwareMap.getAll(LynxModule.class);
-        modules.get(0).setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-        modules.get(1).setBulkCachingMode(LynxModule.BulkCachingMode.OFF);
+
+        for (LynxModule m : modules) {
+            m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+            if (m.isParent() && LynxConstants.isEmbeddedSerialNumber(m.getSerialNumber()) && CONTROL_HUB == null) CONTROL_HUB = m;
+        }
+
 
         subsystems = new ArrayList<>();
         drivetrain = new MecanumDrivetrain();
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
         if (Globals.IS_AUTO) {
-            localizer = new TwoWheelLocalizer();
+            localizer = new ThreeWheelLocalizer();
 
-            aprilTag = new AprilTagProcessor.Builder()
-                    // calibrated using 3DF Zephyr 7.021
-                    .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
-                    .build();
+            startCamera();
 
-            visionPortal = new VisionPortal.Builder()
-                    .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                    .setCameraResolution(new Size(640, 480))
-                    .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                    .addProcessor(aprilTag)
-                    .build();
-
-            synchronized (imuLock) {
-                imu = hardwareMap.get(BNO055IMU.class, "imu");
-                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-                imu.initialize(parameters);
-            }
+//            synchronized (imuLock) {
+//                imu = hardwareMap.get(BNO055IMU.class, "imu");
+//                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+//                imu.initialize(parameters);
+//            }
         } else {
             drone = new DroneSubsystem();
             hang = new HangSubsystem();
@@ -261,7 +255,6 @@ public class RobotHardware {
             values.put(Sensors.SensorType.POD_FRONT, podFront.getPosition());
             values.put(Sensors.SensorType.POD_RIGHT, podRight.getPosition());
         }
-
     }
 
     public void write() {
@@ -271,10 +264,10 @@ public class RobotHardware {
     }
 
     public void periodic() {
-        if (voltageTimer.seconds() > 5) {
-            voltageTimer.reset();
-            voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-        }
+//        if (voltageTimer.seconds() > 5) {
+//            voltageTimer.reset();
+//            voltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+//        }
 
         intake.periodic();
         extension.periodic();
@@ -305,12 +298,12 @@ public class RobotHardware {
         imuOffset = imuAngle;
     }
 
-    public void setStartOffset(double off){
+    public void setStartOffset(double off) {
         startOffset = off;
     }
 
     public void clearBulkCache() {
-        modules.get(0).clearBulkCache();
+        CONTROL_HUB.clearBulkCache();
     }
 
     public void addSubsystem(WSubsystem... subsystems) {
@@ -390,7 +383,31 @@ public class RobotHardware {
         }
     }
 
+    public void startCamera() {
+        aprilTag = new AprilTagProcessor.Builder()
+                // calibrated using 3DF Zephyr 7.021
+                .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
+                .build();
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCameraResolution(new Size(640, 480))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .addProcessor(aprilTag)
+                .enableLiveView(false)
+                .build();
+    }
+
+    public VisionPortal.CameraState getCameraState() {
+        if (visionPortal != null) return visionPortal.getCameraState();
+        return null;
+    }
+
     public void closeCamera() {
-        if (visionPortal != null) visionPortal.stopStreaming();
+        if (visionPortal != null) visionPortal.close();
+    }
+
+    public void kill() {
+        instance = null;
     }
 }

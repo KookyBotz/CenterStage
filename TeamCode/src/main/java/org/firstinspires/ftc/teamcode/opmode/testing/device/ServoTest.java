@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 
 @Config
-@Disabled
 @TeleOp(name = "ServoTest")
 public class ServoTest extends OpMode {
     private WServo servo1;
@@ -19,17 +18,16 @@ public class ServoTest extends OpMode {
 
     public static double targetPos1 = 0.0;
     public static double targetPos2 = 0.0;
-    public static double targetPos3 = 0.0;
-    public static double targetPos4 = 0.0;
+    public static double targetPos3 = 0.5;
+    public static double targetPos4 = 0.5;
 
     @Override
     public void init() {
         servo1 = new WServo(hardwareMap.get(Servo.class, "servo1"));
         servo2 = new WServo(hardwareMap.get(Servo.class, "servo2"));
         servo3 = new WServo(hardwareMap.get(Servo.class, "servo3"));
-        servo3.setOffset(-0.03);
         servo4 = new WServo(hardwareMap.get(Servo.class, "servo4"));
-        servo4.setOffset(0.01);
+        servo4.setOffset(0.04);
         servo4.setDirection(Servo.Direction.REVERSE);
     }
 

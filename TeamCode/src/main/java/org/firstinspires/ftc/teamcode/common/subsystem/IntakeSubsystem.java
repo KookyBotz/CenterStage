@@ -61,13 +61,13 @@ public class IntakeSubsystem extends WSubsystem {
     public void periodic() {
         double pos = robot.armActuator.getOverallTargetPosition();
         if (pivotState == PivotState.SCORING) {
-            double targetAngle = ((pos) - ((((pos < Math.PI / 2) ? 5 : 13) * Math.PI) / 18));
+            double targetAngle = (pos) - (((pos < Math.PI / 2) ? 0.22 : 0.78) * Math.PI);
             robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2 - 0.35, 0.5, 0.93), 0.03, 0.97));
         } else if (pivotState == PivotState.FLAT) {
 //            double targetAngle = ((pos) - ((((pos < Math.PI / 2) ? 0 : 1) * Math.PI)));
 //            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2 - 0.35, 0.5, 0.93) + 0.03, 0.03, 0.97));
         } else if (pivotState == PivotState.STORED) {
-            robot.intakePivotActuator.setTargetPosition(0.03);
+            robot.intakePivotActuator.setTargetPosition(0.05);
         }
     }
 
@@ -93,7 +93,7 @@ public class IntakeSubsystem extends WSubsystem {
                     case CLOSED:
                         return 0.07;
                     case INTERMEDIATE:
-                        return 0.15;
+                        return 0.17;
                     case OPEN:
                         return 0.38;
                     default:
@@ -104,7 +104,7 @@ public class IntakeSubsystem extends WSubsystem {
                     case CLOSED:
                         return 0.52;
                     case INTERMEDIATE:
-                        return 0.58;
+                        return 0.62;
                     case OPEN:
                         return 0.89;
                     default:

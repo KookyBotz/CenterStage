@@ -129,7 +129,6 @@ public class WActuatorGroup {
 
         if (controller != null) {
             this.power = controller.calculate(position, targetPosition + targetPositionOffset);
-            System.out.println(this.power);
 
             switch (mode) {
                 case CONSTANT:
@@ -162,14 +161,13 @@ public class WActuatorGroup {
                     if (voltage != null) correction = 12.0 / voltage.getAsDouble();
                     if (!floating) ((DcMotor) device).setPower(power * correction);
                     else ((DcMotor) device).setPower(0);
+                    pPower = power;
                 } else if (device instanceof Servo) {
                     ((Servo) device).setPosition(targetPosition);
+                    pTargetPosition = targetPosition;
                 }
             }
         }
-
-        pTargetPosition = targetPosition;
-        pPower = power;
     }
 
     /**

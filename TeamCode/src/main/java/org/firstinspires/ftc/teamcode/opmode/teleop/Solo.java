@@ -23,6 +23,9 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
+import org.firstinspires.ftc.teamcode.common.util.logging.CSVInterface;
+import org.firstinspires.ftc.teamcode.common.util.logging.LogType;
+import org.firstinspires.ftc.teamcode.common.util.logging.Logger;
 
 @Config
 @TeleOp(name = "Solo")
@@ -45,6 +48,9 @@ public class Solo extends CommandOpMode {
         Globals.IS_AUTO = false;
         Globals.stopIntaking();
         Globals.stopScoring();
+
+        Logger.logData(LogType.ARM_POSITION, "DATA!");
+        CSVInterface.log();
 
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
@@ -134,4 +140,6 @@ public class Solo extends CommandOpMode {
         loopTime = loop;
         telemetry.update();
     }
+
+
 }

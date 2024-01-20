@@ -15,7 +15,7 @@ public class CSVInterface {
     private static String LOG_DIRECTORY;
 
     public static void log() {
-        LOG_DIRECTORY = Environment.getExternalStorageDirectory() + "/FIRST/data/" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".csv";
+        LOG_DIRECTORY = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FIRST/" + new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date()) + ".csv";
         StringBuilder fileContent = new StringBuilder();
 
         try {
@@ -49,7 +49,9 @@ public class CSVInterface {
                 writer.write(fileContent.toString());
             }
         } catch (IOException e) {
+
             e.printStackTrace();
+            throw new ArithmeticException("math aint mathing");
         }
     }
 }

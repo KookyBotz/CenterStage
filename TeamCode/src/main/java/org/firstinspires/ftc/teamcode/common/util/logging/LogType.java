@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.common.util.logging;
 
 public enum LogType {
-    ARM_POSITION("Arm Position", "radians"),
-    EXTENSION_POSITION("Extension Position", "ticks"),
+//    ARM_POSITION("Arm Position", "radians"),
+//    EXTENSION_POSITION("Extension Position", "ticks"),
     CONTOUR_LENGTH("Contour Length", "px"),
     CONTOUR_AREA("Contour Area", "px"),
     CENTROID_X("Centroid X", "px"),

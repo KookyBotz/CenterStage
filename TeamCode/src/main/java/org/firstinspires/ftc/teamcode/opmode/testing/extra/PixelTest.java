@@ -50,12 +50,19 @@ public class PixelTest extends LinearOpMode {
             boolean currentState = gamepad1.a;
             if (currentState && !previousState) {
                 // log
-                PixelPipeline.ContourData data = pixelPipeline.getClosestContour();
+                PixelPipeline.ContourData data = pixelPipeline.getClosestPixelContour();
 
                 Logger.logData(LogType.CENTROID_X, String.valueOf(data.x));
                 Logger.logData(LogType.CENTROID_Y, String.valueOf(data.y));
                 Logger.logData(LogType.CONTOUR_AREA, String.valueOf(data.area));
                 Logger.logData(LogType.CONTOUR_LENGTH, String.valueOf(data.length));
+
+                data = pixelPipeline.getClosestTapeContour();
+
+                Logger.logData(LogType.TAPE_CENTROID_X, String.valueOf(data.x));
+                Logger.logData(LogType.TAPE_CENTROID_Y, String.valueOf(data.y));
+                Logger.logData(LogType.TAPE_CONTOUR_AREA, String.valueOf(data.area));
+                Logger.logData(LogType.TAPE_CONTOUR_LENGTH, String.valueOf(data.length));
             }
 
             previousState = currentState;

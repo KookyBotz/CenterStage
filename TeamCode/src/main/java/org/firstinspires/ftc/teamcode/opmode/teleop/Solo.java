@@ -49,9 +49,6 @@ public class Solo extends CommandOpMode {
         Globals.stopIntaking();
         Globals.stopScoring();
 
-        Logger.logData(LogType.ARM_POSITION, "DATA!");
-        CSVInterface.log();
-
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 

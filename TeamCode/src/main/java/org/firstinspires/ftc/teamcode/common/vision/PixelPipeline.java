@@ -26,7 +26,8 @@ public class PixelPipeline implements VisionProcessor {
     public static int WIDTH = 1520;
     public static int HEIGHT = 630;
 
-    ContourData closestContour = null;
+    ContourData closestPixelContour = new ContourData(0, 0, 0, 0);
+    ContourData closestTapeContour = new ContourData(0, 0, 0, 0);
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
@@ -45,19 +46,22 @@ public class PixelPipeline implements VisionProcessor {
         Core.inRange(frame, new Scalar(0, 185, 0), new Scalar(179, 255, 255), mask);
 
         Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
-        Imgproc.erode(frame, frame, element);
-        Imgproc.dilate(frame, frame, element);
+        Imgproc.erode(mask, mask, element);
+        Imgproc.dilate(mask, mask, element);
 
+        Mat pixel_mask = mask.submat(new Rect(0, 0, WIDTH, 240));
+        Mat tape_mask = mask.submat(new Rect(0, 240, WIDTH, 390));
 
-
-        List<MatOfPoint> contours = new ArrayList<>();
+        List<MatOfPoint> pixelContours = new ArrayList<>();
         List<MatOfPoint> tapeContours = new ArrayList<>();
         Mat hierarchy = new Mat(); // test if i cna remove this
-        Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(pixel_mask, pixelContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(tape_mask, tapeContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
+
+        // Go through all pixel contours
         double minDistance = Double.MAX_VALUE;
-
-        for (MatOfPoint contour : contours) {
+        for (MatOfPoint contour : pixelContours) {
             double length = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
             double area = Imgproc.contourArea(contour);
 
@@ -67,21 +71,37 @@ public class PixelPipeline implements VisionProcessor {
                 int cX = (int) (M.get_m10() / M.get_m00());
                 int cY = (int) (M.get_m01() / M.get_m00());
 
+                double distance = Math.sqrt(Math.pow(cX - 976, 2) + Math.pow(cY - 138, 2));
 
-                System.out.println("POSE: (" + cX + ", " + cY + ") - AREA: (" + area + ") - LENGTH: (" + length + ")");
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestPixelContour = new ContourData(cX, cY, area, length);
+                }
+            }
+        }
+        System.out.println("PIXEL POSE: (" + closestPixelContour.x + ", " + closestPixelContour.y + ") - AREA: (" + closestPixelContour.area + ") - LENGTH: (" + closestPixelContour.length + ")");
+
+        // Go through all tape contours
+        minDistance = Double.MAX_VALUE;
+        for (MatOfPoint contour : tapeContours) {
+            double length = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
+            double area = Imgproc.contourArea(contour);
+
+            if (length >= 100 && area >= 3000) {
+                Moments M = Imgproc.moments(contour);
+
+                int cX = (int) (M.get_m10() / M.get_m00());
+                int cY = (int) (M.get_m01() / M.get_m00());
 
                 double distance = Math.sqrt(Math.pow(cX - 976, 2) + Math.pow(cY - 138, 2));
 
                 if (distance < minDistance) {
                     minDistance = distance;
-                    closestContour = new ContourData(cX, cY, area, length);
-                    Imgproc.drawContours(frame, contours, contours.indexOf(contour), new Scalar(0, 255, 0), 3);
-                    Imgproc.circle(frame, new Point(cX, cY), 7, new Scalar(255, 0, 0), -1);
+                    closestTapeContour = new ContourData(cX, cY, area, length);
                 }
             }
         }
-
-        Imgproc.circle(frame, new Point(100, 100), 7, new Scalar(0, 0, 255), -1);
+        System.out.println("TAPE POSE: (" + closestTapeContour.x + ", " + closestTapeContour.y + ") - AREA: (" + closestTapeContour.area + ") - LENGTH: (" + closestTapeContour.length + ")");
 
         mask.release();
         hierarchy.release();
@@ -95,8 +115,12 @@ public class PixelPipeline implements VisionProcessor {
 
     }
 
-    public ContourData getClosestContour() {
-        return closestContour;
+    public ContourData getClosestPixelContour() {
+        return closestPixelContour;
+    }
+
+    public ContourData getClosestTapeContour() {
+        return closestTapeContour;
     }
 
     public class ContourData {

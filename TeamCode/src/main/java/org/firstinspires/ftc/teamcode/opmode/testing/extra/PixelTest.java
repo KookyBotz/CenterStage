@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.util.logging.CSVInterface;
 import org.firstinspires.ftc.teamcode.common.util.logging.LogType;
 import org.firstinspires.ftc.teamcode.common.util.logging.Logger;
-import org.firstinspires.ftc.teamcode.common.vision.PixelPipeline;
+import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -19,7 +19,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 @Autonomous(name = "PixelTest")
 public class PixelTest extends LinearOpMode {
 
-    private PixelPipeline pixelPipeline;
+    private StackPipeline pixelPipeline;
     private VisionPortal portal;
 
     private boolean previousState = false;
@@ -29,7 +29,7 @@ public class PixelTest extends LinearOpMode {
         Globals.ALLIANCE = Location.BLUE;
         Globals.SIDE = Location.CLOSE;
 
-        pixelPipeline = new PixelPipeline();
+        pixelPipeline = new StackPipeline();
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
                 .setCameraResolution(new Size(1920, 1080))
@@ -50,7 +50,7 @@ public class PixelTest extends LinearOpMode {
             boolean currentState = gamepad1.a;
             if (currentState && !previousState) {
                 // log
-                PixelPipeline.ContourData data = pixelPipeline.getClosestPixelContour();
+                StackPipeline.ContourData data = pixelPipeline.getClosestPixelContour();
 
                 Logger.logData(LogType.CENTROID_X, String.valueOf(data.x));
                 Logger.logData(LogType.CENTROID_Y, String.valueOf(data.y));

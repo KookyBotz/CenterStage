@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,6 +14,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizationCommand;
+import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositExtendCommand;
@@ -42,6 +45,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
     private double endTime = 0;
 
     private PropPipeline propPipeline;
+    private StackPipeline stackPipeline;
     private VisionPortal portal;
     private Location randomization;
 
@@ -60,14 +64,18 @@ public class BlueFarCycleAuto extends LinearOpMode {
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
 
         propPipeline = new PropPipeline();
+        stackPipeline = new StackPipeline();
+
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
                 .setCameraResolution(new Size(1280, 720))
-                .addProcessor(propPipeline)
+                .addProcessors(propPipeline, stackPipeline)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
                 .setAutoStopLiveView(true)
                 .build();
+
+        portal.setProcessorEnabled(stackPipeline, false);
 
         while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             telemetry.addLine("initializing... please wait");
@@ -81,7 +89,9 @@ public class BlueFarCycleAuto extends LinearOpMode {
         }
 
         randomization = propPipeline.getLocation();
-        portal.close();
+//        portal.close();
+        portal.setProcessorEnabled(propPipeline, false);
+        portal.setProcessorEnabled(stackPipeline, true);
 
         Pose purplePixelPose;
         Pose yellowPixelPose;
@@ -117,6 +127,10 @@ public class BlueFarCycleAuto extends LinearOpMode {
                         new PositionCommand(new Pose(38, 39.25, -0.02))
                                 .alongWith(new FirstStackSetupCommand()),
 
+                        // // ERROR ADJUST
+                        new WaitCommand(5000),
+                        new PositionCommand(new Pose(38 + stackPipeline.getErrorCorrection(), 39.25, -0.02)),
+                        new WaitCommand(5000),
 
                         new FirstStackGrabCommand(),
 
@@ -133,6 +147,11 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         new PositionCommand(new Pose(38, 39, -0.02)),
 
+                        // ERROR ADJUST
+                        new WaitCommand(5000),
+                        new PositionCommand(new Pose(38 + stackPipeline.getErrorCorrection(), 39, -0.02)),
+                        new WaitCommand(5000),
+
                         new SecondStackGrabCommand(),
 
 
@@ -142,6 +161,11 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
 
                         new PositionCommand(new Pose(38, 39.5, -0.02)),
+
+                        // ERROR ADJUST
+                        new WaitCommand(5000),
+                        new PositionCommand(new Pose(38 + stackPipeline.getErrorCorrection(), 39.5, -0.02)),
+                        new WaitCommand(5000),
 
                         new ThirdStackGrabCommand(),
 

@@ -8,7 +8,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -18,7 +17,7 @@ import org.opencv.imgproc.Moments;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PixelPipeline implements VisionProcessor {
+public class StackPipeline implements VisionProcessor {
 
     public static int TOPLEFT_X = 200;
     public static int TOPLEFT_Y = 450;
@@ -121,6 +120,11 @@ public class PixelPipeline implements VisionProcessor {
 
     public ContourData getClosestTapeContour() {
         return closestTapeContour;
+    }
+
+    public double getErrorCorrection() {
+        if (closestTapeContour == null) return 0.0;
+        return -0.0120*closestTapeContour.x + 12.42;
     }
 
     public class ContourData {

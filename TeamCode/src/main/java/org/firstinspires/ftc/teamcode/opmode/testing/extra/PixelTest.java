@@ -32,7 +32,7 @@ public class PixelTest extends LinearOpMode {
         pixelPipeline = new PixelPipeline();
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
-                .setCameraResolution(new Size(1280, 720))
+                .setCameraResolution(new Size(1920, 1080))
                 .addProcessor(pixelPipeline)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)

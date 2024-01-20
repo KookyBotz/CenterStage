@@ -35,6 +35,8 @@ public class PixelPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+        System.out.println(frame.width());
+        System.out.println(frame.height());
         frame = frame.submat(new Rect(TOPLEFT_X, TOPLEFT_Y, WIDTH, HEIGHT));
 
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2HLS);
@@ -46,7 +48,10 @@ public class PixelPipeline implements VisionProcessor {
         Imgproc.erode(frame, frame, element);
         Imgproc.dilate(frame, frame, element);
 
+
+
         List<MatOfPoint> contours = new ArrayList<>();
+        List<MatOfPoint> tapeContours = new ArrayList<>();
         Mat hierarchy = new Mat(); // test if i cna remove this
         Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -65,7 +70,7 @@ public class PixelPipeline implements VisionProcessor {
 
                 System.out.println("POSE: (" + cX + ", " + cY + ") - AREA: (" + area + ") - LENGTH: (" + length + ")");
 
-                double distance = Math.sqrt(Math.pow(cX - 760, 2) + Math.pow(cY - 315, 2));
+                double distance = Math.sqrt(Math.pow(cX - 976, 2) + Math.pow(cY - 138, 2));
 
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -75,6 +80,8 @@ public class PixelPipeline implements VisionProcessor {
                 }
             }
         }
+
+        Imgproc.circle(frame, new Point(100, 100), 7, new Scalar(0, 0, 255), -1);
 
         mask.release();
         hierarchy.release();

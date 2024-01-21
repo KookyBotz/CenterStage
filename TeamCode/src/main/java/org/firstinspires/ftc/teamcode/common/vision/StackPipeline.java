@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.common.vision;
 
 import android.graphics.Canvas;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -57,7 +59,6 @@ public class StackPipeline implements VisionProcessor {
         Imgproc.findContours(pixel_mask, pixelContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         Imgproc.findContours(tape_mask, tapeContours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-
         // Go through all pixel contours
         double minDistance = Double.MAX_VALUE;
         for (MatOfPoint contour : pixelContours) {
@@ -78,7 +79,7 @@ public class StackPipeline implements VisionProcessor {
                 }
             }
         }
-        System.out.println("PIXEL POSE: (" + closestPixelContour.x + ", " + closestPixelContour.y + ") - AREA: (" + closestPixelContour.area + ") - LENGTH: (" + closestPixelContour.length + ")");
+
 
         // Go through all tape contours
         minDistance = Double.MAX_VALUE;
@@ -100,7 +101,8 @@ public class StackPipeline implements VisionProcessor {
                 }
             }
         }
-        System.out.println("TAPE POSE: (" + closestTapeContour.x + ", " + closestTapeContour.y + ") - AREA: (" + closestTapeContour.area + ") - LENGTH: (" + closestTapeContour.length + ")");
+
+        System.out.println("TAPE POSE: (" + closestTapeContour.x + ", " + closestTapeContour.y + ")");
 
         mask.release();
         hierarchy.release();
@@ -122,9 +124,8 @@ public class StackPipeline implements VisionProcessor {
         return closestTapeContour;
     }
 
-    public double getErrorCorrection() {
-        if (closestTapeContour == null) return 0.0;
-        return -0.0120*closestTapeContour.x + 12.42;
+    public double getStrafeCorrection() {
+        return -0.0120*getClosestTapeContour().x + 12.42;
     }
 
     public class ContourData {

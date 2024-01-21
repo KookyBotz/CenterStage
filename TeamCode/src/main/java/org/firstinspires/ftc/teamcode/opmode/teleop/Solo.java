@@ -49,6 +49,8 @@ public class Solo extends CommandOpMode {
         Globals.stopIntaking();
         Globals.stopScoring();
 
+
+
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 

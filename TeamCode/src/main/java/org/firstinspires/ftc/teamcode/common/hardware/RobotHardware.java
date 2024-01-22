@@ -219,7 +219,7 @@ public class RobotHardware {
 
         for (LynxModule m : modules) {
             m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
-            if (m.isParent() && LynxConstants.isEmbeddedSerialNumber(m.getSerialNumber()) && CONTROL_HUB == null) CONTROL_HUB = m;
+            if (m.isParent() && LynxConstants.isEmbeddedSerialNumber(m.getSerialNumber())) CONTROL_HUB = m;
         }
 
 

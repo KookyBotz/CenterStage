@@ -125,7 +125,7 @@ public class StackPipeline implements VisionProcessor {
     }
 
     public double getStrafeCorrection() {
-        return -0.0120*getClosestTapeContour().x + 12.42;
+        return -0.0120*closestTapeContour.x + 12.42;
     }
 
     public class ContourData {

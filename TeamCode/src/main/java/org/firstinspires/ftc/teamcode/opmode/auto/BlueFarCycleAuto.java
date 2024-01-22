@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
@@ -38,7 +39,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Autonomous(name = "🔵 Blue Far Cycle Auto")
+@Autonomous(name = "🔵 Blue Far Cycle Auto1")
 public class BlueFarCycleAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
 
@@ -131,12 +132,13 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
 //
 //////                        // // ERROR ADJUST
+////                        new WaitCommand(5000)
 ////                        new WaitCommand(5000),
-////                        new WaitCommand(5000),
-                        new WaitCommand(5000),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02))
-                                .alongWith(new PivotStateCommand(IntakeSubsystem.PivotState.FLAT)),
-                        new WaitCommand(5000),
+//                        new WaitCommand(5000),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
+                        new PivotCommand(0.51),
+//                                .alongWith()
+//                        new WaitCommand(5000),
 ////                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
 ////                        new WaitCommand(5000),
 //

@@ -27,6 +27,8 @@ public class StackPipeline implements VisionProcessor {
     public static int WIDTH = 1520;
     public static int HEIGHT = 630;
 
+//    public volatile double correctionAmt = 0.0;
+
     ContourData closestPixelContour = new ContourData(0, 0, 0, 0);
     ContourData closestTapeContour = new ContourData(0, 0, 0, 0);
 
@@ -103,6 +105,7 @@ public class StackPipeline implements VisionProcessor {
                 }
             }
         }
+
         Imgproc.circle(frame2, new Point(closestTapeContour.x, closestTapeContour.y), 7, new Scalar(0, 0, 255), -1);
 //        frame2.copyTo(frame);
 //        frame2.copyTo(frame);
@@ -131,6 +134,7 @@ public class StackPipeline implements VisionProcessor {
     }
 
     public double getStrafeCorrection() {
+//        correctionAmt = -0.0120*closestTapeContour.x + 12.42;
         return -0.0120*closestTapeContour.x + 12.42;
     }
 

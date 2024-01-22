@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 
+import java.util.function.DoubleSupplier;
+
 public class StackRelocalizeCommand extends SequentialCommandGroup {
     public StackRelocalizeCommand(StackPipeline stackPipeline, Pose targetPose) {
         super (

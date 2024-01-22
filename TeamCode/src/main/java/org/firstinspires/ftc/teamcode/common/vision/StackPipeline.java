@@ -37,12 +37,12 @@ public class StackPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
-        frame = frame.submat(new Rect(TOPLEFT_X, TOPLEFT_Y, WIDTH, HEIGHT));
+        Mat frame2 = frame.submat(new Rect(TOPLEFT_X, TOPLEFT_Y, WIDTH, HEIGHT));
 
-        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2HLS);
+        Imgproc.cvtColor(frame2, frame2, Imgproc.COLOR_BGR2HLS);
 
         Mat mask = new Mat();
-        Core.inRange(frame, new Scalar(0, 185, 0), new Scalar(179, 255, 255), mask);
+        Core.inRange(frame2, new Scalar(0, 185, 0), new Scalar(179, 255, 255), mask);
 
         Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
         Imgproc.erode(mask, mask, element);
@@ -78,7 +78,7 @@ public class StackPipeline implements VisionProcessor {
             }
         }
 
-        Imgproc.circle(frame, new Point(closestPixelContour.x, closestPixelContour.y), 7, new Scalar(0, 0, 255), -1);
+        Imgproc.circle(frame2, new Point(closestPixelContour.x, closestPixelContour.y), 7, new Scalar(0, 0, 255), -1);
 
 
         // Go through all tape contours
@@ -103,13 +103,16 @@ public class StackPipeline implements VisionProcessor {
                 }
             }
         }
-        Imgproc.circle(frame, new Point(closestTapeContour.x, closestTapeContour.y), 7, new Scalar(0, 0, 255), -1);
+        Imgproc.circle(frame2, new Point(closestTapeContour.x, closestTapeContour.y), 7, new Scalar(0, 0, 255), -1);
+//        frame2.copyTo(frame);
+//        frame2.copyTo(frame);
 
 //        System.out.println("TAPE POSE: (" + closestTapeContour.x + ", " + closestTapeContour.y + ")");
 
         mask.release();
         hierarchy.release();
         element.release();
+        frame2.release();
 
         return null;
     }

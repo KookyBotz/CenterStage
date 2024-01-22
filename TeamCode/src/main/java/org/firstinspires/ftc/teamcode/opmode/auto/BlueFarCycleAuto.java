@@ -76,7 +76,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                 .setAutoStopLiveView(true)
                 .build();
 
-//        portal.setProcessorEnabled(stackPipeline, false);
+        portal.setProcessorEnabled(stackPipeline, true);
 
         while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             telemetry.addLine("initializing... please wait");
@@ -116,27 +116,33 @@ public class BlueFarCycleAuto extends LinearOpMode {
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new InstantCommand(timer::reset),
-
-                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
-                                .alongWith(new PurplePixelExtendCommand(randomization)),
-
-                        new PositionCommand(purplePixelPose),
-
-                        new PurplePixelDepositCommand(),
-
                         new PositionCommand(new Pose(38, 39.25, -0.02))
-                                .alongWith(new FirstStackSetupCommand()),
 
-//                        // // ERROR ADJUST
-                        new WaitCommand(5000),
-                        new WaitCommand(5000),
+//                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
+//                                .alongWith(new PurplePixelExtendCommand(randomization)),
+//
+//                        new PositionCommand(purplePixelPose),
+//
+//                        new PurplePixelDepositCommand(),
+//
+//                        new PositionCommand(new Pose(38, 39.25, -0.02))
+//                                .alongWith(new FirstStackSetupCommand()),
+//
+////                        // // ERROR ADJUST
+//                        new WaitCommand(5000),
+//                        new WaitCommand(5000),
+//                        new InstantCommand(() -> portal.setProcessorEnabled(stackPipeline, true)),
+//                        new WaitCommand(1000),
+//                        new InstantCommand(() -> System.out.println(stackPipeline.getClosestTapeContour().x)),
+//                        new WaitCommand(5000),
+//                        new WaitCommand(5000),
 //                        new PrintCommand("HERE " + stackPipeline.getStrafeCorrection()),
 //                        new WaitCommand(5000),
 //                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
-                        new WaitCommand(5000),
-//
-                        new FirstStackGrabCommand()
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
+//                        new WaitCommand(5000),
+
+//                        new FirstStackGrabCommand()
 //
 //
 //                        new PositionCommand(new Pose(35.75, -29, 0))
@@ -203,7 +209,6 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
             telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
             telemetry.addLine("PIXEL POSE (" + stackPipeline.getClosestPixelContour().x + " " + stackPipeline.getClosestPixelContour().y);
-            System.out.println("CORRECTION: " + -stackPipeline.getStrafeCorrection());
             telemetry.update();
 
             loopTime = loop;

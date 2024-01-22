@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.testing.extra;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -33,6 +34,8 @@ public class PixelTest extends LinearOpMode {
         Globals.SIDE = Location.CLOSE;
 
         CommandScheduler.getInstance().reset();
+
+//        telemetry = FtcDashboard.getInstance().getTelemetry();
 
         stackPipeline = new StackPipeline();
         portal = new VisionPortal.Builder()

@@ -37,8 +37,6 @@ public class StackPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
-        System.out.println(frame.width());
-        System.out.println(frame.height());
         frame = frame.submat(new Rect(TOPLEFT_X, TOPLEFT_Y, WIDTH, HEIGHT));
 
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2HLS);
@@ -80,6 +78,8 @@ public class StackPipeline implements VisionProcessor {
             }
         }
 
+        Imgproc.circle(frame, new Point(closestPixelContour.x, closestPixelContour.y), 7, new Scalar(0, 0, 255), -1);
+
 
         // Go through all tape contours
         minDistance = Double.MAX_VALUE;
@@ -95,14 +95,17 @@ public class StackPipeline implements VisionProcessor {
 
                 double distance = Math.sqrt(Math.pow(cX - 976, 2) + Math.pow(cY - 138, 2));
 
+                System.out.println("TAPE POSE: (" + cX + ", " + cY + ")");
+
                 if (distance < minDistance) {
                     minDistance = distance;
                     closestTapeContour = new ContourData(cX, cY, area, length);
                 }
             }
         }
+        Imgproc.circle(frame, new Point(closestTapeContour.x, closestTapeContour.y), 7, new Scalar(0, 0, 255), -1);
 
-        System.out.println("TAPE POSE: (" + closestTapeContour.x + ", " + closestTapeContour.y + ")");
+//        System.out.println("TAPE POSE: (" + closestTapeContour.x + ", " + closestTapeContour.y + ")");
 
         mask.release();
         hierarchy.release();

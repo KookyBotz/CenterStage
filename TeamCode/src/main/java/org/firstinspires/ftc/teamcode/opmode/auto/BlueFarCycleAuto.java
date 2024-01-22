@@ -129,7 +129,6 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
 //                        // // ERROR ADJUST
                         new WaitCommand(5000),
-                        new InstantCommand(() -> portal.setProcessorEnabled(stackPipeline, true)),
                         new WaitCommand(5000),
 //                        new PrintCommand("HERE " + stackPipeline.getStrafeCorrection()),
 //                        new WaitCommand(5000),
@@ -202,6 +201,8 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.addLine(robot.localizer.getPose().toString());
             telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
             telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
+            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
+            telemetry.addLine("PIXEL POSE (" + stackPipeline.getClosestPixelContour().x + " " + stackPipeline.getClosestPixelContour().y);
             System.out.println("CORRECTION: " + -stackPipeline.getStrafeCorrection());
             telemetry.update();
 

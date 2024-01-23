@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizeCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
@@ -154,7 +155,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                         new FirstDepositCommand(),
 
                         new PositionCommand(new Pose(35.75, -29, 0)),
-                        new RelocalizeCommand(),
+//                        new RelocalizeCommand(),
 //
                         new PositionCommand(new Pose(38, 39, -0.02)),
 //
@@ -191,7 +192,8 @@ public class BlueFarCycleAuto extends LinearOpMode {
                                 .andThen(new RelocalizeCommand())
                                 .alongWith(new ThirdDepositCommand()),
 //
-                        new PositionCommand(new Pose(12, -54, 0)),
+                        new PositionCommand(new Pose(12, -54, 0))
+                                .alongWith(new ExtensionCommand(0)),
 
                         new InstantCommand(() -> endTime = timer.seconds()),
                         new InstantCommand(robot::closeCamera)

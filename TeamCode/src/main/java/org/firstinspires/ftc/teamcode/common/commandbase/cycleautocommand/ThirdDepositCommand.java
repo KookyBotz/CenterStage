@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class ThirdDepositCommand extends SequentialCommandGroup {
     public ThirdDepositCommand() {
         super(
-                new WaitCommand(1250),
+                new WaitCommand(700),
                 new ArmCommand(2.82),
                 new ArmFloatCommand(false),
                 new ArmLiftCommand(0.3),
@@ -29,7 +29,7 @@ public class ThirdDepositCommand extends SequentialCommandGroup {
                 new WaitCommand(250),
                 new ArmCommand(2.805),
                 new WaitCommand(750),
-                new ExtensionCommand(0),
+                new ExtensionCommand(75),
                 new WaitCommand(150),
                 new ArmCommand(0.2),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),

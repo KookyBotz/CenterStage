@@ -14,7 +14,7 @@ import java.util.function.DoubleSupplier;
 public class StackRelocalizeCommand extends SequentialCommandGroup {
     public StackRelocalizeCommand(StackPipeline stackPipeline, Pose targetPose) {
         super (
-                new WaitCommand(100), // TODO: lower this. due to processing times with the pipeline, giving this a lenient time period
+//                new WaitCommand(50), // TODO: lower this. due to processing times with the pipeline, giving this a lenient time period
                 new InstantCommand(() -> {
                     double correction = stackPipeline.getStrafeCorrection();
                     System.out.println("CORRECTION342    " + correction);
@@ -23,7 +23,7 @@ public class StackRelocalizeCommand extends SequentialCommandGroup {
                     RobotHardware.getInstance().localizer.setPose(new Pose(currentPose.x + correction, currentPose.y, currentPose.heading));
                     System.out.println("CORRECTION342    " + RobotHardware.getInstance().localizer.getPose());
                 }),
-                new WaitCommand(100),
+//                new WaitCommand(100),
                 new PositionCommand(targetPose)
         );
     }

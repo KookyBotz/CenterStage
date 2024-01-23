@@ -21,10 +21,10 @@ import java.util.List;
 
 public class StackPipeline implements VisionProcessor {
 
-    public static int TOPLEFT_X = 200;
+    public static int TOPLEFT_X = 600;
     public static int TOPLEFT_Y = 450;
 
-    public static int WIDTH = 1520;
+    public static int WIDTH = 1120;
     public static int HEIGHT = 630;
 
 //    public volatile double correctionAmt = 0.0;
@@ -44,7 +44,7 @@ public class StackPipeline implements VisionProcessor {
         Imgproc.cvtColor(frame2, frame2, Imgproc.COLOR_BGR2HLS);
 
         Mat mask = new Mat();
-        Core.inRange(frame2, new Scalar(0, 185, 0), new Scalar(179, 255, 255), mask);
+        Core.inRange(frame2, new Scalar(0, 200, 0), new Scalar(179, 255, 255), mask);
 
         Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(5, 5));
         Imgproc.erode(mask, mask, element);
@@ -135,7 +135,7 @@ public class StackPipeline implements VisionProcessor {
 
     public double getStrafeCorrection() {
 //        correctionAmt = -0.0120*closestTapeContour.x + 12.42;
-        return -0.0120*closestTapeContour.x + 12.42;
+        return -0.0120*(closestTapeContour.x + 400) + 12.26;
     }
 
     public class ContourData {

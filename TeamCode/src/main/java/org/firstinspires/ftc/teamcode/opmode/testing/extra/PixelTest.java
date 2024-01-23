@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionPortal;
 
+import java.util.Locale;
+
 @Config
 @Autonomous(name = "PixelTest")
 public class PixelTest extends LinearOpMode {
@@ -58,6 +60,7 @@ public class PixelTest extends LinearOpMode {
             telemetry.update();
         }
 
+        portal.saveNextFrameRaw(String.format(Locale.US, "CameraFrameCapture-%06d"));
         waitForStart();
 
         while (opModeIsActive()) {

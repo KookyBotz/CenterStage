@@ -89,9 +89,9 @@ public class PositionCommand extends CommandBase {
         double x_rotated = xPower * Math.cos(-robotPose.heading) - yPower * Math.sin(-robotPose.heading);
         double y_rotated = xPower * Math.sin(-robotPose.heading) + yPower * Math.cos(-robotPose.heading);
 
-        hPower = Range.clip(hPower, -0.4, 0.4);
-        x_rotated = Range.clip(x_rotated, -0.5, 0.5);
-        y_rotated = Range.clip(y_rotated, -0.5, 0.5);
+        hPower = Range.clip(hPower, -0.8, 0.8);
+        x_rotated = Range.clip(x_rotated, -1.0, 1.0);
+        y_rotated = Range.clip(y_rotated, -1.0, 1.0);
 
         return new Pose(x_rotated * 1.6, y_rotated, hPower);
     }

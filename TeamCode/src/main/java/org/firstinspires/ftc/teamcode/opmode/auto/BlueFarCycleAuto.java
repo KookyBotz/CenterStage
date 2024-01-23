@@ -136,26 +136,27 @@ public class BlueFarCycleAuto extends LinearOpMode {
 ////                        new WaitCommand(5000),
 //                        new WaitCommand(5000),
                         new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
-                        new PivotCommand(0.51),
+//                        new PivotCommand(0.51),
+//                        new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
 //                                .alongWith()
 //                        new WaitCommand(5000),
 ////                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
 ////                        new WaitCommand(5000),
 //
-                        new FirstStackGrabCommand()
+                        new FirstStackGrabCommand(),
 //
 //
-//                        new PositionCommand(new Pose(35.75, -29, 0))
-//                                .andThen(new RelocalizeCommand())
-//                                .andThen(new PositionCommand(yellowPixelPose)
-//                                        .alongWith(new FirstDepositExtendCommand())),
+                        new PositionCommand(new Pose(35.75, -29, 0))
+                                .andThen(new RelocalizeCommand())
+                                .andThen(new PositionCommand(yellowPixelPose)
+                                        .alongWith(new FirstDepositExtendCommand())),
 //
-//                        new FirstDepositCommand(),
+                        new FirstDepositCommand(),
+
+                        new PositionCommand(new Pose(35.75, -29, 0)),
+                        new RelocalizeCommand(),
 //
-//                        new PositionCommand(new Pose(35.75, -29, 0)),
-//                        new RelocalizeCommand(),
-//
-//                        new PositionCommand(new Pose(38, 39, -0.02)),
+                        new PositionCommand(new Pose(38, 39, -0.02)),
 //
 //                        // ERROR ADJUST
 //                        new WaitCommand(5000),
@@ -163,16 +164,17 @@ public class BlueFarCycleAuto extends LinearOpMode {
 //                        new WaitCommand(5000),
 //                        new PositionCommand(new Pose(38 + stackPipeline.getStrafeCorrection(), 39, -0.02)),
 //                        new WaitCommand(5000),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
 //
-//                        new SecondStackGrabCommand(),
-//
-//
-//                        new PositionCommand(new Pose(35.75, -31.5, 0))
-//                                .andThen(new RelocalizeCommand())
-//                                .alongWith(new SecondDepositCommand()),
+                        new SecondStackGrabCommand(),
 //
 //
-//                        new PositionCommand(new Pose(38, 39.5, -0.02)),
+                        new PositionCommand(new Pose(35.75, -31.5, 0))
+                                .andThen(new RelocalizeCommand())
+                                .alongWith(new SecondDepositCommand()),
+//
+//
+                        new PositionCommand(new Pose(38, 39.5, -0.02)),
 //
 //                        // ERROR ADJUST
 //                        new WaitCommand(5000),
@@ -180,18 +182,19 @@ public class BlueFarCycleAuto extends LinearOpMode {
 //                        new WaitCommand(5000),
 //                        new PositionCommand(new Pose(38, 39.5, -0.02)),
 //                        new WaitCommand(5000),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.5, -0.02)),
 //
-//                        new ThirdStackGrabCommand(),
+                        new ThirdStackGrabCommand(),
+
+
+                        new PositionCommand(new Pose(35.75, -31.5, 0))
+                                .andThen(new RelocalizeCommand())
+                                .alongWith(new ThirdDepositCommand()),
 //
-//
-//                        new PositionCommand(new Pose(35.75, -31.5, 0))
-//                                .andThen(new RelocalizeCommand())
-//                                .alongWith(new ThirdDepositCommand()),
-//
-//                        new PositionCommand(new Pose(12, -54, 0)),
-//
-//                        new InstantCommand(() -> endTime = timer.seconds()),
-//                        new InstantCommand(robot::closeCamera)
+                        new PositionCommand(new Pose(12, -54, 0)),
+
+                        new InstantCommand(() -> endTime = timer.seconds()),
+                        new InstantCommand(robot::closeCamera)
                 )
         );
 

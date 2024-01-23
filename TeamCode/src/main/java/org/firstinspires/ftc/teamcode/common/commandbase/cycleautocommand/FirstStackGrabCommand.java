@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmLiftCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
@@ -15,6 +16,8 @@ import org.firstinspires.ftc.teamcode.common.vision.Location;
 public class FirstStackGrabCommand extends SequentialCommandGroup {
     public FirstStackGrabCommand() {
         super(
+                new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
+                new PivotCommand(0.51),
                 new ExtensionCommand(550),
                 new WaitCommand(500),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, Globals.ALLIANCE == Location.BLUE ? ClawSide.RIGHT : ClawSide.LEFT),

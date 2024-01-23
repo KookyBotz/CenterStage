@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class FirstDepositExtendCommand extends SequentialCommandGroup {
     public FirstDepositExtendCommand() {
         super(
-                new WaitCommand(1250),
+//                new WaitCommand(700),
                 new ArmCommand(3.05),
                 new ArmFloatCommand(false),
                 new ArmLiftCommand(0.3),

@@ -25,7 +25,7 @@ public class SecondStackGrabCommand extends SequentialCommandGroup {
                 new WaitCommand(250),
                 new ArmLiftCommand(0.63),
                 new PivotStateCommand(IntakeSubsystem.PivotState.STORED),
-                new ExtensionCommand(0)
+                new ExtensionCommand(75)
         );
     }
 }

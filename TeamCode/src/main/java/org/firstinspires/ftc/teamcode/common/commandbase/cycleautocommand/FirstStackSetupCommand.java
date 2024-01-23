@@ -15,8 +15,9 @@ public class FirstStackSetupCommand extends SequentialCommandGroup {
                 new ArmLiftCommand(0.68),
                 new WaitCommand(400),
                 new ArmFloatCommand(true),
-                new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.51)
+//                new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
+                new PivotCommand(0.25)
+//                new PivotCommand(0.51)
         );
     }
 }

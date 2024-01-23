@@ -26,7 +26,7 @@ public class ThirdStackGrabCommand extends SequentialCommandGroup {
                 new ArmFloatCommand(false),
                 new ArmCommand(0),
                 new PivotStateCommand(IntakeSubsystem.PivotState.STORED),
-                new ExtensionCommand(0)
+                new ExtensionCommand(75)
         );
     }
 }

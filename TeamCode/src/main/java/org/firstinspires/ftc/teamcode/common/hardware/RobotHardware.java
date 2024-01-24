@@ -383,6 +383,12 @@ public class RobotHardware {
         }
     }
 
+    public List<AprilTagDetection> getAprilTagDetections() {
+        if (aprilTag != null && localizer != null) return aprilTag.getDetections();
+        System.out.println("Active");
+        return null;
+    }
+
     public void startCamera() {
         aprilTag = new AprilTagProcessor.Builder()
                 // calibrated using 3DF Zephyr 7.021

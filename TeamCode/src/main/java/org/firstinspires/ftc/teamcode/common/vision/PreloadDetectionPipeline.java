@@ -10,12 +10,15 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
 
 public class PreloadDetectionPipeline implements VisionProcessor {
-
     private int targetAprilTagID = 0;
+
+    private int preloadedZone = 0;
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
@@ -24,55 +27,56 @@ public class PreloadDetectionPipeline implements VisionProcessor {
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
         List<AprilTagDetection> currentDetections = RobotHardware.getInstance().getAprilTagDetections();
-        for (AprilTagDetection detection : currentDetections) {
-            if (detection.metadata != null) {
-                if (detection.id == targetAprilTagID) {
-                    int leftX = Integer.MAX_VALUE;
-                    int rightX = Integer.MIN_VALUE;
-                    int topY = Integer.MIN_VALUE;
-                    int bottomY = Integer.MAX_VALUE;
+        if (currentDetections != null) {
+            for (AprilTagDetection detection : currentDetections) {
+                if (detection.metadata != null) {
+                    System.out.println("DETECTION ID " + detection.id);
+                    if (detection.id == targetAprilTagID) {
+                        int leftX = Integer.MAX_VALUE;
+                        int rightX = Integer.MIN_VALUE;
+                        int topY = Integer.MIN_VALUE;
+                        int bottomY = Integer.MAX_VALUE;
 
-                    int tagCenterX, tagCenterY;
+                        for (Point point : detection.corners) {
+                            if (point.x < leftX) leftX = (int) point.x;
+                            if (point.x > rightX) rightX = (int) point.x;
+                            if (point.y > topY) topY = (int) point.y;
+                            if (point.y < bottomY) bottomY = (int) point.y;
+                        }
 
-                    for (Point point : detection.corners) {
-                        if (point.x < leftX) leftX = (int) point.x;
-                        if (point.x > rightX) rightX = (int) point.x;
-                        if (point.y > topY) topY = (int) point.y;
-                        if (point.y < bottomY) bottomY = (int) point.y;
+                        int tagCenterX = (int) detection.center.x;
+                        int tagCenterY = (int) detection.center.y;
+
+                        int tagWidth = rightX - leftX;
+                        int tagHeight = topY - bottomY;
+
+                        int inclusionZoneWidth = (int) (tagWidth * 1.5);
+                        int inclusionZoneHeight = (int) (tagHeight * 1.5);
+
+                        int exclusionZoneWidth = (int) (tagWidth * 0.28);
+                        int exclusionZoneHeight = (int) (tagHeight * 0.28);
+
+                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 80, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 80, inclusionZoneWidth, inclusionZoneHeight);
+
+                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 60, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 60, exclusionZoneWidth, exclusionZoneHeight);
+
+                        Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
+                        Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
+
+                        int leftZoneAverage = meanColor(frame, leftInclusionZone, leftExclusionZone);
+                        int rightZoneAverage = meanColor(frame, rightInclusionZone, rightExclusionZone);
+
+                        System.out.println("LEFT: " + leftZoneAverage);
+                        System.out.println("RIGHT: " + rightZoneAverage);
+
+                        preloadedZone = (leftZoneAverage > rightZoneAverage) ? 1 : 2;
                     }
-
-                    tagCenterX = (int) detection.center.x;
-                    tagCenterY = (int) detection.center.y;
-
-                    int tagWidth = rightX - leftX;
-                    int tagHeight = topY - bottomY;
-
-                    double exclusionAmount = 0.28; // % ignored in the middle
-                    int exclusionWidth = (int) ((tagWidth * 1.5) * exclusionAmount);
-                    int exclusionHeight = (int) ((tagHeight * 1.5) * exclusionAmount);
-
-                    int exclusionTopLeftX = tagCenterX - exclusionWidth / 2;
-                    int exclusionTopLeftY = tagCenterY - exclusionHeight / 2;
-
-
-                    int setTagHeight = 0;
-
-                    //
-                    Rect leftInclusionRect = new Rect(tagCenterX - (int) (tagWidth * 1.5), tagCenterY + setTagHeight + (int) (tagHeight * 1.5) , (int) (tagWidth * 1.5), (int) (tagHeight * 1.5));
-                    Rect rightInclusionRect = new Rect(tagCenterX + tagWidth / 2, tagCenterY + setTagHeight + (int) (tagHeight * 1.5), (int) (tagWidth * 1.5), (int) (tagHeight * 1.5));
-
-                    Rect leftExclusionPort = new Rect(,,(int) (tagWidth * 1.5 * 0.28), (int) (tagHeight * 1.5 * 0.28));
-
-
-                    Rect inclusionRect = new Rect(tagCenterX - tagWidth / 2, tagCenterY - tagHeight / 2, tagWidth, tagHeight);
-                    Rect exclusionRect = new Rect(exclusionTopLeftX, exclusionTopLeftY, exclusionWidth, exclusionHeight);
-
-                    // From here, now that we have region size data, we can shift the regions n rows, (value can be grabbed
-                    // from the simulation) and then call the method meanColor(frame, inclusionRect, exclusionRect)
-                    // and thus determine if the mean value falls within our tolerance, of knowing if there is a pixel or not
                 }
             }
         }
+
 
         return null;
     }
@@ -99,6 +103,14 @@ public class PreloadDetectionPipeline implements VisionProcessor {
         }
 
         if (Globals.ALLIANCE == Location.RED) targetAprilTagID += 3;
+    }
+
+    public int getPreloadedZone() {
+        return this.preloadedZone;
+    }
+
+    public int getTargetAprilTagID() {
+        return this.targetAprilTagID;
     }
 
     public int meanColor(Mat frame, Rect inclusionRect, Rect exclusionRect) {

@@ -32,27 +32,37 @@ public class PreloadDetectionPipeline implements VisionProcessor {
                     int topY = Integer.MIN_VALUE;
                     int bottomY = Integer.MAX_VALUE;
 
-                    int tagCenterX = 0, tagCenterY = 0;
+                    int tagCenterX, tagCenterY;
 
                     for (Point point : detection.corners) {
                         if (point.x < leftX) leftX = (int) point.x;
                         if (point.x > rightX) rightX = (int) point.x;
                         if (point.y > topY) topY = (int) point.y;
                         if (point.y < bottomY) bottomY = (int) point.y;
-
-                        tagCenterX = (int) detection.center.x;
-                        tagCenterY = (int) detection.center.y;
                     }
+
+                    tagCenterX = (int) detection.center.x;
+                    tagCenterY = (int) detection.center.y;
 
                     int tagWidth = rightX - leftX;
                     int tagHeight = topY - bottomY;
 
                     double exclusionAmount = 0.28; // % ignored in the middle
-                    int exclusionWidth = (int) (tagWidth * exclusionAmount);
-                    int exclusionHeight = (int) (tagHeight * exclusionAmount);
+                    int exclusionWidth = (int) ((tagWidth * 1.5) * exclusionAmount);
+                    int exclusionHeight = (int) ((tagHeight * 1.5) * exclusionAmount);
 
                     int exclusionTopLeftX = tagCenterX - exclusionWidth / 2;
                     int exclusionTopLeftY = tagCenterY - exclusionHeight / 2;
+
+
+                    int setTagHeight = 0;
+
+                    //
+                    Rect leftInclusionRect = new Rect(tagCenterX - (int) (tagWidth * 1.5), tagCenterY + setTagHeight + (int) (tagHeight * 1.5) , (int) (tagWidth * 1.5), (int) (tagHeight * 1.5));
+                    Rect rightInclusionRect = new Rect(tagCenterX + tagWidth / 2, tagCenterY + setTagHeight + (int) (tagHeight * 1.5), (int) (tagWidth * 1.5), (int) (tagHeight * 1.5));
+
+                    Rect leftExclusionPort = new Rect(,,(int) (tagWidth * 1.5 * 0.28), (int) (tagHeight * 1.5 * 0.28));
+
 
                     Rect inclusionRect = new Rect(tagCenterX - tagWidth / 2, tagCenterY - tagHeight / 2, tagWidth, tagHeight);
                     Rect exclusionRect = new Rect(exclusionTopLeftX, exclusionTopLeftY, exclusionWidth, exclusionHeight);

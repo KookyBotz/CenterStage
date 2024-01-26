@@ -21,7 +21,9 @@ public class PreloadDetectionCommand extends SequentialCommandGroup {
                     System.out.println("SIDE: " + Globals.SIDE);
                     System.out.println("PRELOAD: " + Globals.PRELOAD);
                 }),
-                new PositionCommand(ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose())
+                new PositionCommand(ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose()),
+                new InstantCommand(() -> System.out.println("TARGET POS" + ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose())),
+                new InstantCommand(() -> System.out.println("TARGET INDEX " + Globals.getTargetIndex()))
         );
     }
 }

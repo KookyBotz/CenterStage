@@ -422,12 +422,4 @@ public class RobotHardware {
     public void kill() {
         instance = null;
     }
-
-
-
-    public int getTargetIndex() {
-        int index = 0;
-
-
-    }
 }

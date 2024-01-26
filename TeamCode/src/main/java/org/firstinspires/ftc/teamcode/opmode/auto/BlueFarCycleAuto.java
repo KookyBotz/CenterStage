@@ -100,7 +100,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
         }
 
 //        randomization = propPipeline.getLocation();
-        randomization = Location.CENTER;
+        randomization = Location.RIGHT;
         Globals.RANDOMIZATION = randomization;
         RobotHardware.getInstance().preloadDetectionPipeline.setTargetAprilTagID(randomization);
 
@@ -138,6 +138,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         new PositionCommand(new Pose(35.75, -29, 0))
                                 .andThen(new RelocalizeCommand())
+                                .andThen(new WaitUntilCommand(() -> gamepad1.a))
                                 .andThen(new PreloadDetectionCommand()
                                         .alongWith(new FirstDepositExtendCommand())),
 
@@ -146,31 +147,31 @@ public class BlueFarCycleAuto extends LinearOpMode {
                         new FirstDepositCommand(),
 
                         new PositionCommand(new Pose(35.75, -29, 0)),
-
-                        new PositionCommand(new Pose(38, 39, -0.02)),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
-
-
-                        new SecondStackGrabCommand(),
-
-
-                        new PositionCommand(new Pose(35.75, -31.5, 0))
-                                .andThen(new RelocalizeCommand())
-                                .alongWith(new SecondDepositCommand()),
-
-
-                        new PositionCommand(new Pose(38, 39.5, -0.02)),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
-
-                        new ThirdStackGrabCommand(),
-
-
-                        new PositionCommand(new Pose(35.75, -31.5, 0))
-                                .andThen(new RelocalizeCommand())
-                                .alongWith(new ThirdDepositCommand()),
-
-                        new PositionCommand(new Pose(12, -54, 0))
-                                .alongWith(new ExtensionCommand(0)),
+//
+//                        new PositionCommand(new Pose(38, 39, -0.02)),
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
+//
+//
+//                        new SecondStackGrabCommand(),
+//
+//
+//                        new PositionCommand(new Pose(35.75, -31.5, 0))
+//                                .andThen(new RelocalizeCommand())
+//                                .alongWith(new SecondDepositCommand()),
+//
+//
+//                        new PositionCommand(new Pose(38, 39.5, -0.02)),
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
+//
+//                        new ThirdStackGrabCommand(),
+//
+//
+//                        new PositionCommand(new Pose(35.75, -31.5, 0))
+//                                .andThen(new RelocalizeCommand())
+//                                .alongWith(new ThirdDepositCommand()),
+//
+//                        new PositionCommand(new Pose(12, -54, 0))
+//                                .alongWith(new ExtensionCommand(0)),
 
                         new InstantCommand(() -> endTime = timer.seconds()),
                         new InstantCommand(robot::closeCamera)

@@ -43,11 +43,10 @@ public class Globals {
     public static int getTargetIndex() {
         int index = 0;
 
-        index += (SIDE == Location.BLUE ? 0 : 6);
-        index += (PRELOAD == Location.RIGHT ? 1 : 0);
-        if (RANDOMIZATION == Location.LEFT) index += 1;
-        else if (RANDOMIZATION == Location.CENTER) index += 3;
-        else if (RANDOMIZATION == Location.RIGHT) index += 5;
+        index += (ALLIANCE == Location.BLUE ? 0 : 6);
+        index += (PRELOAD == Location.RIGHT ? 0 : 1);
+        if (RANDOMIZATION == Location.CENTER) index += 2;
+        else if (RANDOMIZATION == Location.RIGHT) index += 4;
 
         return index;
     }

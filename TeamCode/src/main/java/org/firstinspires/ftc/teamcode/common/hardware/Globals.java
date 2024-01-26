@@ -9,6 +9,9 @@ public class Globals {
      * Match constants.
      */
     public static Location ALLIANCE = Location.RED;
+    public static Location RANDOMIZATION = Location.LEFT;
+    public static Location PRELOAD = Location.LEFT;
+
     public static boolean IS_AUTO = false;
 
     /**
@@ -35,5 +38,17 @@ public class Globals {
     public static void stopIntaking() {
         IS_SCORING = false;
         IS_INTAKING = false;
+    }
+
+    public static int getTargetIndex() {
+        int index = 0;
+
+        index += (SIDE == Location.BLUE ? 0 : 6);
+        index += (PRELOAD == Location.RIGHT ? 1 : 0);
+        if (RANDOMIZATION == Location.LEFT) index += 1;
+        else if (RANDOMIZATION == Location.CENTER) index += 3;
+        else if (RANDOMIZATION == Location.RIGHT) index += 5;
+
+        return index;
     }
 }

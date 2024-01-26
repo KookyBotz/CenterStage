@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -85,6 +86,8 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
 //        portal.setProcessorEnabled(stackPipeline, true);
 
+        FtcDashboard.getInstance().startCameraStream(RobotHardware.getInstance().preloadDetectionPipeline, 0);
+
         while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             telemetry.addLine("initializing... please wait");
             telemetry.update();
@@ -98,26 +101,20 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
 //        randomization = propPipeline.getLocation();
         randomization = Location.CENTER;
+        Globals.RANDOMIZATION = randomization;
         RobotHardware.getInstance().preloadDetectionPipeline.setTargetAprilTagID(randomization);
-//        portal.close();
-//        portal.setProcessorEnabled(propPipeline, false);
-//        portal.setProcessorEnabled(stackPipeline, true);
 
         Pose purplePixelPose;
-        Pose yellowPixelPose;
 
         switch (randomization) {
             case LEFT:
                 purplePixelPose = new Pose(37.75, 25, Math.PI / 2);
-                yellowPixelPose = new Pose(34.75, -29, 0);
                 break;
             case RIGHT:
                 purplePixelPose = new Pose(37.75, 39.35, 0.75);
-                yellowPixelPose = new Pose(28.75, -29, 0);
                 break;
             default:
                 purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
-                yellowPixelPose = new Pose(31.75, -29, 0);
                 break;
         }
 
@@ -126,8 +123,8 @@ public class BlueFarCycleAuto extends LinearOpMode {
                         new InstantCommand(timer::reset),
 
                         new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
-                                .alongWith(new PurplePixelExtendCommand(randomization)),
-//
+                                .alongWith(new PurplePixelExtendCommand()),
+
                         new PositionCommand(purplePixelPose),
 
                         new PurplePixelDepositCommand(),
@@ -135,15 +132,17 @@ public class BlueFarCycleAuto extends LinearOpMode {
                         new PositionCommand(new Pose(38, 39.25, -0.02))
                                 .alongWith(new FirstStackSetupCommand()),
                         new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
-//
+
                         new FirstStackGrabCommand(),
-//
-//
+
+
                         new PositionCommand(new Pose(35.75, -29, 0))
                                 .andThen(new RelocalizeCommand())
-                                .andThen(new PreloadDetectionCommand(yellowPixelPose)
+                                .andThen(new PreloadDetectionCommand()
                                         .alongWith(new FirstDepositExtendCommand())),
-//
+
+
+
                         new FirstDepositCommand(),
 
                         new PositionCommand(new Pose(35.75, -29, 0)),

@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -420,5 +421,13 @@ public class RobotHardware {
 
     public void kill() {
         instance = null;
+    }
+
+
+
+    public int getTargetIndex() {
+        int index = 0;
+
+
     }
 }

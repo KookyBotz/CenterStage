@@ -1,15 +1,18 @@
 package org.firstinspires.ftc.teamcode.common.vision;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-import com.arcrobotics.ftclib.command.Robot;
 
+import org.firstinspires.ftc.robotcore.external.function.Consumer;
+import org.firstinspires.ftc.robotcore.external.function.Continuation;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -17,8 +20,12 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class PreloadDetectionPipeline implements VisionProcessor {
+public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSource {
+    private final AtomicReference<Bitmap> lastFrame =
+            new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
+
     private int targetAprilTagID = 0;
 
     private Location preloadedZone = Location.CENTER;
@@ -29,10 +36,9 @@ public class PreloadDetectionPipeline implements VisionProcessor {
 //        this.aprilTag = aprilTag;
 //    }
 
-//    public PreloadDetectionPipeline()
-
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
+        lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
     }
 
     @Override
@@ -42,7 +48,6 @@ public class PreloadDetectionPipeline implements VisionProcessor {
         if (currentDetections != null) {
             for (AprilTagDetection detection : currentDetections) {
                 if (detection.metadata != null) {
-                    System.out.println("DETECTION ID " + detection.id);
                     if (detection.id == targetAprilTagID) {
                         int leftX = Integer.MAX_VALUE;
                         int rightX = Integer.MIN_VALUE;
@@ -80,14 +85,17 @@ public class PreloadDetectionPipeline implements VisionProcessor {
                         int leftZoneAverage = meanColor(frame, leftInclusionZone, leftExclusionZone);
                         int rightZoneAverage = meanColor(frame, rightInclusionZone, rightExclusionZone);
 
-                        System.out.println("LEFT: " + leftZoneAverage);
-                        System.out.println("RIGHT: " + rightZoneAverage);
-
                         preloadedZone = (leftZoneAverage > rightZoneAverage) ? Location.LEFT : Location.RIGHT;
+                        System.out.println("PRELOADED ZONE: " + preloadedZone);
+                        Globals.PRELOAD = preloadedZone;
                     }
                 }
             }
         }
+
+        Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
+        Utils.matToBitmap(frame, b);
+        lastFrame.set(b);
 
         return null;
     }
@@ -137,5 +145,10 @@ public class PreloadDetectionPipeline implements VisionProcessor {
         }
 
         return sum / count;
+    }
+
+    @Override
+    public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
+        continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
     }
 }

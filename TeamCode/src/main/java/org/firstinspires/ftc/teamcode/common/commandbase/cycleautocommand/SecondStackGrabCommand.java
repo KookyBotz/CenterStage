@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmFloa
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmLiftCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
@@ -18,6 +19,8 @@ public class SecondStackGrabCommand extends SequentialCommandGroup {
         super(
                 new ArmFloatCommand(true),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.BLUE ? ClawSide.RIGHT : ClawSide.LEFT),
+                new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
+                new PivotCommand(0.48),
                 new WaitCommand(250),
                 new ExtensionCommand(600),
                 new WaitCommand(500),

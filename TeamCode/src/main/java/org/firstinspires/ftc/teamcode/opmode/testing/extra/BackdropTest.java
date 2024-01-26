@@ -23,16 +23,18 @@ public class BackdropTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Globals.ALLIANCE = Location.BLUE;
+        Globals.ALLIANCE = Location.RED;
         Globals.SIDE = Location.CLOSE;
-
-        preloadPipeline = new PreloadDetectionPipeline();
-        preloadPipeline.setTargetAprilTagID(Location.CENTER);
 
         aprilTag = new AprilTagProcessor.Builder()
                 // calibrated using 3DF Zephyr 7.021
                 .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
                 .build();
+
+//        preloadPipeline = new PreloadDetectionPipeline(aprilTag);
+        preloadPipeline.setTargetAprilTagID(Location.LEFT);
+
+
 
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))

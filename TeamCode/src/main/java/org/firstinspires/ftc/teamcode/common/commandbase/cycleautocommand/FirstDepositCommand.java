@@ -24,8 +24,8 @@ public class FirstDepositCommand extends SequentialCommandGroup {
                 new ArmCommand(0.2),
                 new ArmLiftCommand(0.735),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.48)
+                new PivotStateCommand(IntakeSubsystem.PivotState.STORED)
+//                new PivotCommand(0.48)
         );
     }
 }

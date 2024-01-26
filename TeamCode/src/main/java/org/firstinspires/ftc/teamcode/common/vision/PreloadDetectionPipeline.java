@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode.common.vision;
 
 import android.graphics.Canvas;
 
+import com.arcrobotics.ftclib.command.Robot;
+
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -18,7 +21,15 @@ import java.util.List;
 public class PreloadDetectionPipeline implements VisionProcessor {
     private int targetAprilTagID = 0;
 
-    private int preloadedZone = 0;
+    private Location preloadedZone = Location.CENTER;
+
+//    private AprilTagProcessor aprilTag;
+
+//    public PreloadDetectionPipeline(AprilTagProcessor aprilTag) {
+//        this.aprilTag = aprilTag;
+//    }
+
+//    public PreloadDetectionPipeline()
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
@@ -56,11 +67,11 @@ public class PreloadDetectionPipeline implements VisionProcessor {
                         int exclusionZoneWidth = (int) (tagWidth * 0.28);
                         int exclusionZoneHeight = (int) (tagHeight * 0.28);
 
-                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 80, inclusionZoneWidth, inclusionZoneHeight);
-                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 80, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 130, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 130, inclusionZoneWidth, inclusionZoneHeight);
 
-                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 60, exclusionZoneWidth, exclusionZoneHeight);
-                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 60, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 110, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 110, exclusionZoneWidth, exclusionZoneHeight);
 
                         Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
                         Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
@@ -71,12 +82,11 @@ public class PreloadDetectionPipeline implements VisionProcessor {
                         System.out.println("LEFT: " + leftZoneAverage);
                         System.out.println("RIGHT: " + rightZoneAverage);
 
-                        preloadedZone = (leftZoneAverage > rightZoneAverage) ? 1 : 2;
+                        preloadedZone = (leftZoneAverage > rightZoneAverage) ? Location.LEFT : Location.RIGHT;
                     }
                 }
             }
         }
-
 
         return null;
     }
@@ -105,7 +115,7 @@ public class PreloadDetectionPipeline implements VisionProcessor {
         if (Globals.ALLIANCE == Location.RED) targetAprilTagID += 3;
     }
 
-    public int getPreloadedZone() {
+    public Location getPreloadedZone() {
         return this.preloadedZone;
     }
 

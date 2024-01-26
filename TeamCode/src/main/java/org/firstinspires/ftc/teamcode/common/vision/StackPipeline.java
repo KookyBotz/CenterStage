@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.common.vision;
 
 import android.graphics.Canvas;
 
+import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -89,7 +91,7 @@ public class StackPipeline implements VisionProcessor {
             double length = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
             double area = Imgproc.contourArea(contour);
 
-            if (length >= 100 && area >= 3000) {
+            if (length >= 70 && area >= 2500) {
                 Moments M = Imgproc.moments(contour);
 
                 int cX = (int) (M.get_m10() / M.get_m00());
@@ -135,7 +137,7 @@ public class StackPipeline implements VisionProcessor {
 
     public double getStrafeCorrection() {
 //        correctionAmt = -0.0120*closestTapeContour.x + 12.42;
-        return -0.0120*(closestTapeContour.x + 400) + 12.26;
+        return Range.clip(-0.0120*(closestTapeContour.x + 400) + 12.26, -3, 3);
     }
 
     public class ContourData {

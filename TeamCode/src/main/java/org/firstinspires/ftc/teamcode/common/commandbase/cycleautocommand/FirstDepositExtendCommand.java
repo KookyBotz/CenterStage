@@ -20,7 +20,7 @@ public class FirstDepositExtendCommand extends SequentialCommandGroup {
                 new WaitCommand(200),
                 new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),
                 new WaitCommand(300),
-                new ExtensionCommand(535),
+                new ExtensionCommand(510),
                 new WaitCommand(750)
         );
     }

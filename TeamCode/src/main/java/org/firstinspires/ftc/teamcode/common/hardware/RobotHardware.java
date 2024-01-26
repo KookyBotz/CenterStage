@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -108,6 +109,8 @@ public class RobotHardware {
     public MecanumDrivetrain drivetrain;
     public DroneSubsystem drone;
     public HangSubsystem hang;
+
+    public PreloadDetectionPipeline preloadDetectionPipeline;
 
     private final Object imuLock = new Object();
     @GuardedBy("imuLock")
@@ -216,6 +219,8 @@ public class RobotHardware {
         InverseKinematics.calculateTarget(3, 0);
 
         modules = hardwareMap.getAll(LynxModule.class);
+
+        this.preloadDetectionPipeline = new PreloadDetectionPipeline();
 
         for (LynxModule m : modules) {
             m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -399,7 +404,7 @@ public class RobotHardware {
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .addProcessor(aprilTag)
+                .addProcessors(aprilTag, preloadDetectionPipeline)
                 .enableLiveView(false)
                 .build();
     }

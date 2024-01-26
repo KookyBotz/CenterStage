@@ -23,7 +23,7 @@ public class BackdropTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Globals.ALLIANCE = Location.RED;
+        Globals.ALLIANCE = Location.BLUE;
         Globals.SIDE = Location.CLOSE;
 
         aprilTag = new AprilTagProcessor.Builder()
@@ -32,7 +32,7 @@ public class BackdropTest extends LinearOpMode {
                 .build();
 
 //        preloadPipeline = new PreloadDetectionPipeline(aprilTag);
-        preloadPipeline.setTargetAprilTagID(Location.LEFT);
+        preloadPipeline.setTargetAprilTagID(Location.CENTER);
 
 
 

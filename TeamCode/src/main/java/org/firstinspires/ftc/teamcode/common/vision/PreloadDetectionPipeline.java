@@ -24,7 +24,7 @@ public class PreloadDetectionPipeline implements VisionProcessor {
     private Location preloadedZone = Location.CENTER;
 
 //    private AprilTagProcessor aprilTag;
-
+//
 //    public PreloadDetectionPipeline(AprilTagProcessor aprilTag) {
 //        this.aprilTag = aprilTag;
 //    }
@@ -37,6 +37,7 @@ public class PreloadDetectionPipeline implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+//        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         List<AprilTagDetection> currentDetections = RobotHardware.getInstance().getAprilTagDetections();
         if (currentDetections != null) {
             for (AprilTagDetection detection : currentDetections) {
@@ -67,11 +68,11 @@ public class PreloadDetectionPipeline implements VisionProcessor {
                         int exclusionZoneWidth = (int) (tagWidth * 0.28);
                         int exclusionZoneHeight = (int) (tagHeight * 0.28);
 
-                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 130, inclusionZoneWidth, inclusionZoneHeight);
-                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 130, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 80, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 80, inclusionZoneWidth, inclusionZoneHeight);
 
-                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 110, exclusionZoneWidth, exclusionZoneHeight);
-                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 110, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 60, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 60, exclusionZoneWidth, exclusionZoneHeight);
 
                         Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
                         Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);

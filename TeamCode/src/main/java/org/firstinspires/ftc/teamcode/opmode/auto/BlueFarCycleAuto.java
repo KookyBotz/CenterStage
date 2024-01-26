@@ -190,7 +190,8 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.addLine(robot.localizer.getPose().toString());
             telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
             telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
-            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
+            telemetry.addData("BACKDROP", RobotHardware.getInstance().preloadDetectionPipeline.getPreloadedZone());
+//            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
 //            telemetry.addLine("PIXEL POSE (" + stackPipeline.getClosestPixelContour().x + " " + stackPipeline.getClosestPixelContour().y);
             telemetry.update();
 

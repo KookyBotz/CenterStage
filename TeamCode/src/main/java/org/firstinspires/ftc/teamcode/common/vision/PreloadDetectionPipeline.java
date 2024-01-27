@@ -73,11 +73,11 @@ public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSo
                         int exclusionZoneWidth = (int) (tagWidth * 0.28);
                         int exclusionZoneHeight = (int) (tagHeight * 0.28);
 
-                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 90, inclusionZoneWidth, inclusionZoneHeight);
-                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 90, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect leftInclusionZone = new Rect(tagCenterX - inclusionZoneWidth, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
+                        Rect rightInclusionZone = new Rect(tagCenterX, tagCenterY - 110, inclusionZoneWidth, inclusionZoneHeight);
 
-                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 70, exclusionZoneWidth, exclusionZoneHeight);
-                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 70, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect leftExclusionZone = new Rect(tagCenterX - (int) (inclusionZoneWidth * 0.64), tagCenterY - 90, exclusionZoneWidth, exclusionZoneHeight);
+                        Rect rightExclusionZone = new Rect(tagCenterX + (int) (inclusionZoneWidth * 0.28), tagCenterY - 90, exclusionZoneWidth, exclusionZoneHeight);
 
                         Imgproc.rectangle(frame, leftInclusionZone, new Scalar(0, 255, 0), 7);
                         Imgproc.rectangle(frame, rightInclusionZone, new Scalar(0, 255, 0), 7);
@@ -133,18 +133,29 @@ public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSo
     }
 
     public int meanColor(Mat frame, Rect inclusionRect, Rect exclusionRect) {
+        if (frame == null) { System.out.println("frame is bad"); return 0;  }
+
         int sum = 0;
         int count = 0;
         for (int y = inclusionRect.y; y < inclusionRect.y + inclusionRect.height; y++) {
             for (int x = inclusionRect.x; x < inclusionRect.x + inclusionRect.width; x++) {
-                if (!(x >= exclusionRect.x && x < exclusionRect.x + exclusionRect.width && y >= inclusionRect.y && y < inclusionRect.y + inclusionRect.height)) {
-                    sum += frame.get(y, x)[0];
+                if (x < 0 || x >= frame.cols() || y < 0 || y >= frame.rows()) {
+                    continue;
+                }
+
+                if (x >= exclusionRect.x && x < exclusionRect.x + exclusionRect.width && y >= exclusionRect.y && y < exclusionRect.y + exclusionRect.height) {
+                    continue;
+                }
+
+                double[] data = frame.get(y, x);
+                if (data != null && data.length > 0) {
+                    sum += data[0];
                     count++;
                 }
             }
         }
 
-        return sum / count;
+        return count > 0 ? sum / count : 0;
     }
 
     @Override

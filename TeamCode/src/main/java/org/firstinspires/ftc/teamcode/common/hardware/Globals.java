@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
+import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 
 public class Globals {
@@ -11,6 +13,7 @@ public class Globals {
     public static Location ALLIANCE = Location.RED;
     public static Location RANDOMIZATION = Location.LEFT;
     public static Location PRELOAD = Location.LEFT;
+    public static Location ROUTE = Location.STAGEDOOR;
 
     public static boolean IS_AUTO = false;
 
@@ -43,11 +46,16 @@ public class Globals {
     public static int getTargetIndex() {
         int index = 0;
 
-        index += (ALLIANCE == Location.BLUE ? 0 : 6);
-        index += (PRELOAD == Location.RIGHT ? 0 : 1);
+        if (PRELOAD == Location.RIGHT) index += 0;
+        else if (PRELOAD == Location.LEFT) index += 1;
+
         if (RANDOMIZATION == Location.CENTER) index += 2;
         else if (RANDOMIZATION == Location.RIGHT) index += 4;
 
-        return index;
+        System.out.println("CURRENT INDEX");
+        System.out.println(index);
+        System.out.println(Range.clip(index, 0, 5));
+
+        return Range.clip(index, 0, 5);
     }
 }

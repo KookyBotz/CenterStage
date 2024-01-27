@@ -11,19 +11,11 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
 
-public class PreloadDetectionCommand extends SequentialCommandGroup {
+public class PreloadDetectionCommand extends PositionCommand {
 
     public PreloadDetectionCommand() {
         super(
-                new InstantCommand(() -> {
-                    System.out.println("SUMMARY");
-                    System.out.println("RANDOMIZATION: " + Globals.RANDOMIZATION);
-                    System.out.println("SIDE: " + Globals.SIDE);
-                    System.out.println("PRELOAD: " + Globals.PRELOAD);
-                }),
-                new PositionCommand(ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose()),
-                new InstantCommand(() -> System.out.println("TARGET POS" + ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose())),
-                new InstantCommand(() -> System.out.println("TARGET INDEX " + Globals.getTargetIndex()))
+                ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose()
         );
     }
 }

@@ -6,9 +6,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.PrintCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -17,42 +15,32 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PreloadDetectionCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
-import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
-import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
-import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
-import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackSetupCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PreloadDetectionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PurplePixelDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PurplePixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.SecondDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.SecondStackGrabCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.ThirdDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.ThirdStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
 @Autonomous(name = "🔵 Blue Far Cycle Auto1")
 public class BlueFarCycleAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-
-    private double loopTime = 0.0;
     private final ElapsedTime timer = new ElapsedTime();
+    private double loopTime = 0.0;
     private double endTime = 0;
 
-//    private PropPipeline propPipeline;
+    //    private PropPipeline propPipeline;
     private StackPipeline stackPipeline;
     private VisionPortal portal;
     private Location randomization;
@@ -64,6 +52,9 @@ public class BlueFarCycleAuto extends LinearOpMode {
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Location.BLUE;
         Globals.SIDE = Location.FAR;
+        Globals.ROUTE = Location.WALL;
+
+        telemetry = FtcDashboard.getInstance().getTelemetry();
 
         robot.init(hardwareMap);
 
@@ -135,13 +126,25 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         new FirstStackGrabCommand(),
 
+                        // MIDDLE AUTO PATH
+//                        new PositionCommand(new Pose(35.75, -35, 0))
+//                        new PositionCommand(new Pose(35.75, -29, 0))
 
-                        new PositionCommand(new Pose(35.75, -29, 0))
+                        // WALL AUTO PATH
+                        new PositionCommand(new Pose(59.8, 31.8, 0)),
+                        new PositionCommand(new Pose(59.8, -30, 0)),
+                        new PositionCommand(new Pose(28.75, -35, 0))
                                 .andThen(new RelocalizeCommand())
-                                .andThen(new WaitUntilCommand(() -> gamepad1.a))
-                                .andThen(new PreloadDetectionCommand()
-                                        .alongWith(new FirstDepositExtendCommand())),
+                                .andThen(new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, false)))
+//                                .andThen(new WaitUntilCommand(() -> gamepad1.a))
+                                .andThen(new PreloadDetectionCommand())
+                                .andThen(new FirstDepositExtendCommand()),
 
+//                        new PositionCommand(new Pose(35.75, -29, 0))
+//                                .andThen(new RelocalizeCommand())
+//                                .andThen(new WaitUntilCommand(() -> gamepad1.a))
+//                                .andThen(new PreloadDetectionCommand()
+//                                        .alongWith(new FirstDepositExtendCommand())),
 
 
                         new FirstDepositCommand(),
@@ -191,6 +194,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
             telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
             telemetry.addData("BACKDROP", RobotHardware.getInstance().preloadDetectionPipeline.getPreloadedZone());
+            telemetry.addData("INDEX", Globals.getTargetIndex());
 //            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
 //            telemetry.addLine("PIXEL POSE (" + stackPipeline.getClosestPixelContour().x + " " + stackPipeline.getClosestPixelContour().y);
             telemetry.update();

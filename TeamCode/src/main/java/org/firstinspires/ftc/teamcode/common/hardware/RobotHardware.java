@@ -40,6 +40,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
@@ -204,6 +205,7 @@ public class RobotHardware {
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
         intakePivotActuator.setOffset(-0.05);
+//        intakePivotActuator
 
         this.podLeft = new WEncoder(new MotorEx(hardwareMap, "dtFrontRightMotor").encoder);
         this.podFront = new WEncoder(new MotorEx(hardwareMap, "dtBackRightMotor").encoder);
@@ -421,5 +423,9 @@ public class RobotHardware {
 
     public void kill() {
         instance = null;
+    }
+
+    public void setProcessorEnabled(VisionProcessor processor, boolean enabled) {
+        this.visionPortal.setProcessorEnabled(processor, enabled);
     }
 }

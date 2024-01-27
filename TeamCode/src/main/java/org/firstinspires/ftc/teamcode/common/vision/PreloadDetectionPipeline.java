@@ -86,8 +86,7 @@ public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSo
                         int rightZoneAverage = meanColor(frame, rightInclusionZone, rightExclusionZone);
 
                         preloadedZone = (leftZoneAverage > rightZoneAverage) ? Location.LEFT : Location.RIGHT;
-                        System.out.println("PRELOADED ZONE: " + preloadedZone);
-                        Globals.PRELOAD = preloadedZone;
+//                        System.out.println("PRELOADED ZONE: " + preloadedZone);
                     }
                 }
             }

@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -48,7 +47,7 @@ public class RedFarPreloadAuto extends LinearOpMode {
 
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Location.RED;
-        Globals.SIDE = Location.FAR;
+        Globals.ROUTE = Location.WALL;
 
         robot.init(hardwareMap);
 

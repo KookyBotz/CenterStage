@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.centerstage.ScoringPositions;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.Extensi
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
+import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
 public class FirstDepositCommand extends SequentialCommandGroup {
@@ -26,7 +28,8 @@ public class FirstDepositCommand extends SequentialCommandGroup {
                 new ArmCommand(0.2),
                 new ArmLiftCommand(0.735),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                new PivotStateCommand(IntakeSubsystem.PivotState.STORED)
+                new PivotStateCommand(IntakeSubsystem.PivotState.STORED),
+                new WaitUntilCommand(() -> RobotHardware.getInstance().armActuator.hasReached())
         );
     }
 }

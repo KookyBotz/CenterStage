@@ -3,12 +3,10 @@ package org.firstinspires.ftc.teamcode.opmode.testing.extra;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
-import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -24,7 +22,7 @@ public class BackdropTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Globals.ALLIANCE = Location.BLUE;
-        Globals.SIDE = Location.CLOSE;
+        Globals.ROUTE = Location.CLOSE;
 
         aprilTag = new AprilTagProcessor.Builder()
                 // calibrated using 3DF Zephyr 7.021

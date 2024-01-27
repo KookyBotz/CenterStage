@@ -49,7 +49,7 @@ public class BlueClosePreloadAuto extends LinearOpMode {
 
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Location.BLUE;
-        Globals.SIDE = Location.CLOSE;
+        Globals.ROUTE = Location.CLOSE;
 
         robot.init(hardwareMap);
 

@@ -61,6 +61,8 @@ public class PositionCommand extends CommandBase {
 
         Pose robotPose = robot.localizer.getPose();
 
+        System.out.println("ROBOT TARGET: " + targetPose);
+
         Pose powers = getPower(robotPose);
         drivetrain.set(powers);
     }

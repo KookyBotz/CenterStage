@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.vision;
 
 import static org.firstinspires.ftc.teamcode.common.hardware.Globals.ALLIANCE;
-import static org.firstinspires.ftc.teamcode.common.hardware.Globals.SIDE;
+import static org.firstinspires.ftc.teamcode.common.hardware.Globals.ROUTE;
 
 import android.graphics.Canvas;
 
@@ -71,13 +71,15 @@ public class PropPipeline implements VisionProcessor {
         Rect leftZoneArea;
         Rect centerZoneArea;
 
-        if (ALLIANCE == Location.RED && SIDE == Location.FAR || ALLIANCE == Location.BLUE && SIDE == Location.CLOSE) {
-            leftZoneArea = new Rect(redLeftX, redLeftY, leftWidth, leftHeight);
-            centerZoneArea = new Rect(redCenterX, redCenterY, centerWidth, centerHeight);
-        } else {
-            leftZoneArea = new Rect(blueLeftX, blueLeftY, leftWidth, leftHeight);
-            centerZoneArea = new Rect(blueCenterX, blueCenterY, centerWidth, centerHeight);
-        }
+//        if (ALLIANCE == Location.RED && SIDE == Location. || ALLIANCE == Location.BLUE && ROUTE == Location.CLOSE) {
+//            leftZoneArea = new Rect(redLeftX, redLeftY, leftWidth, leftHeight);
+//            centerZoneArea = new Rect(redCenterX, redCenterY, centerWidth, centerHeight);
+//        } else {
+//
+//        }
+
+        leftZoneArea = new Rect(blueLeftX, blueLeftY, leftWidth, leftHeight);
+        centerZoneArea = new Rect(blueCenterX, blueCenterY, centerWidth, centerHeight);
 
         Mat leftZone = frame.submat(leftZoneArea);
         Mat centerZone = frame.submat(centerZoneArea);

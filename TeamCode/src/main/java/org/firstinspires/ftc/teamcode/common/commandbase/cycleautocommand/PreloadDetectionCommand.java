@@ -5,11 +5,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.common.centerstage.ScoringPositions;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
-import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
-import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
-import org.firstinspires.ftc.teamcode.common.vision.Location;
-import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
 
 public class PreloadDetectionCommand extends SequentialCommandGroup {
 
@@ -17,12 +13,15 @@ public class PreloadDetectionCommand extends SequentialCommandGroup {
         super(
                 new InstantCommand(() -> {
                     System.out.println("SUMMARY");
+//                    Globals.PRELOAD = RobotHardware.getInstance().preloadDetectionPipeline.getPreloadedZone();
                     System.out.println("RANDOMIZATION: " + Globals.RANDOMIZATION);
-                    System.out.println("SIDE: " + Globals.SIDE);
+                    System.out.println("SIDE: " + Globals.ROUTE);
                     System.out.println("PRELOAD: " + Globals.PRELOAD);
                 }),
+                new InstantCommand(() -> System.out.println("TARGET POS2" + ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose())),
+                new InstantCommand(() -> System.out.println("TARGET INDEX " + Globals.getTargetIndex())),
                 new PositionCommand(ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose()),
-                new InstantCommand(() -> System.out.println("TARGET POS" + ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose())),
+                new InstantCommand(() -> System.out.println("TARGET POS2" + ScoringPositions.YELLOW_PIXEL_POSITIONS[Globals.getTargetIndex()].getTargetPose())),
                 new InstantCommand(() -> System.out.println("TARGET INDEX " + Globals.getTargetIndex()))
         );
     }

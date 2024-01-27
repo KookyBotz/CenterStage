@@ -4,7 +4,8 @@ import org.firstinspires.ftc.teamcode.common.vision.Location;
 
 public class Globals {
 
-    public static Location SIDE = Location.FAR;
+    public static Location SIDE = Location.CLOSE;
+    public static Location ROUTE = Location.WALL;
     /**
      * Match constants.
      */

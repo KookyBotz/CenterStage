@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Autonomous(name = "LocalizationTest")
-@Disabled
+//@Disabled
 public class LocalizationTest extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
@@ -42,7 +42,7 @@ public class LocalizationTest extends CommandOpMode {
         robot.read();
 
 //        robot.startIMUThread(this);
-        robot.localizer.setPose(new Pose(-63.65, 39.35, -Math.PI / 2));
+        robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
 //        robot.reset();
 //        robot.setStartOffset(Math.PI / 2);
 

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.opmode.testing.extra;
 import android.util.Size;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -21,7 +20,7 @@ public class PipelineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Globals.ALLIANCE = Location.BLUE;
-        Globals.SIDE = Location.CLOSE;
+        Globals.ROUTE = Location.CLOSE;
 
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()

@@ -24,11 +24,13 @@ import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.Purple
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
@@ -40,7 +42,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
     private double loopTime = 0.0;
     private double endTime = 0;
 
-    //    private PropPipeline propPipeline;
+        private PropPipeline propPipeline;
     private StackPipeline stackPipeline;
     private VisionPortal portal;
     private Location randomization;
@@ -62,14 +64,14 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
 
-//        propPipeline = new PropPipeline();
+        propPipeline = new PropPipeline();
 
         stackPipeline = new StackPipeline();
 
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
                 .setCameraResolution(new Size(1920, 1080))
-                .addProcessor(stackPipeline)
+                .addProcessors(stackPipeline, propPipeline)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
                 .setAutoStopLiveView(true)
@@ -77,7 +79,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
 //        portal.setProcessorEnabled(stackPipeline, true);
 
-        FtcDashboard.getInstance().startCameraStream(RobotHardware.getInstance().preloadDetectionPipeline, 0);
+        FtcDashboard.getInstance().startCameraStream(stackPipeline, 0);
 
         while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             telemetry.addLine("initializing... please wait");
@@ -86,12 +88,12 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
         while (opModeInInit()) {
             telemetry.addLine("ready");
-//            telemetry.addData("position", propPipeline.getLocation());
+            telemetry.addData("position", propPipeline.getLocation());
             telemetry.update();
         }
 
-//        randomization = propPipeline.getLocation();
-        randomization = Location.RIGHT;
+        randomization = propPipeline.getLocation();
+//        randomization = Location.RIGHT;
         Globals.RANDOMIZATION = randomization;
         RobotHardware.getInstance().preloadDetectionPipeline.setTargetAprilTagID(randomization);
 
@@ -102,7 +104,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                 purplePixelPose = new Pose(37.75, 25, Math.PI / 2);
                 break;
             case RIGHT:
-                purplePixelPose = new Pose(37.75, 39.35, 0.75);
+                purplePixelPose = new Pose(37.75, 39.35, 0.95);
                 break;
             default:
                 purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
@@ -113,10 +115,10 @@ public class BlueFarCycleAuto extends LinearOpMode {
                 new SequentialCommandGroup(
                         new InstantCommand(timer::reset),
 
-                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
-                                .alongWith(new PurplePixelExtendCommand()),
+//                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
 
-                        new PositionCommand(purplePixelPose),
+                        new PositionCommand(purplePixelPose)
+                                .alongWith(new PurplePixelExtendCommand()),
 
                         new PurplePixelDepositCommand(),
 
@@ -131,7 +133,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 //                        new PositionCommand(new Pose(35.75, -29, 0))
 
                         // WALL AUTO PATH
-                        new PositionCommand(new Pose(59.8, 31.8, 0)),
+                        new PositionCommand(new Pose(59.8, 34.8, 0)),
                         new PositionCommand(new Pose(59.8, -30, 0)),
                         new PositionCommand(new Pose(28.75, -35, 0))
                                 .andThen(new RelocalizeCommand())
@@ -149,7 +151,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         new FirstDepositCommand(),
 
-                        new PositionCommand(new Pose(35.75, -29, 0)),
+//                        new PositionCommand(new Pose(35.75, -29, 0)),
 //
 //                        new PositionCommand(new Pose(38, 39, -0.02)),
 //                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
@@ -173,8 +175,8 @@ public class BlueFarCycleAuto extends LinearOpMode {
 //                                .andThen(new RelocalizeCommand())
 //                                .alongWith(new ThirdDepositCommand()),
 //
-//                        new PositionCommand(new Pose(12, -54, 0))
-//                                .alongWith(new ExtensionCommand(0)),
+                        new PositionCommand(new Pose(12, -54, 0))
+                                .alongWith(new ExtensionCommand(0)),
 
                         new InstantCommand(() -> endTime = timer.seconds()),
                         new InstantCommand(robot::closeCamera)
@@ -195,6 +197,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
             telemetry.addData("BACKDROP", RobotHardware.getInstance().preloadDetectionPipeline.getPreloadedZone());
             telemetry.addData("INDEX", Globals.getTargetIndex());
+//            telemetry.addData("arm pos", robot.extensionActuator.getPosition());
 //            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
 //            telemetry.addLine("PIXEL POSE (" + stackPipeline.getClosestPixelContour().x + " " + stackPipeline.getClosestPixelContour().y);
             telemetry.update();

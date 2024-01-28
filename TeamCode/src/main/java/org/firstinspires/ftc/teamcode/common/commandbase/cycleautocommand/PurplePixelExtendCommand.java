@@ -14,7 +14,7 @@ public class PurplePixelExtendCommand extends SequentialCommandGroup {
     public PurplePixelExtendCommand() {
         super(
                 new ArmCommand(-0.04),
-                new ExtensionCommand(Globals.RANDOMIZATION == Location.CENTER ? 150 : 75),
+                new ExtensionCommand(Globals.RANDOMIZATION == Location.CENTER ? 150 : 150),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
                 new PivotCommand(0.48)
         );

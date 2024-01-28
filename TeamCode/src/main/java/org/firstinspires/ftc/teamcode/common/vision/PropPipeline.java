@@ -22,23 +22,23 @@ public class PropPipeline implements VisionProcessor {
 
     private final Mat hsv = new Mat();
 
-    public static int redLeftX = (int) (815 / 1.5);
-    public static int redLeftY = (int) (550 / 1.5);
+    public static int redLeftX = (int) (815);
+    public static int redLeftY = (int) (550);
 
-    public static int redCenterX = (int) (1365 / 1.5);
-    public static int redCenterY = (int) (475 / 1.5);
+    public static int redCenterX = (int) (1365);
+    public static int redCenterY = (int) (475);
 
-    public static int blueLeftX = (int) (240 / 1.5);
-    public static int blueLeftY = (int) (525 / 1.5);
+    public static int blueLeftX = (int) (240);
+    public static int blueLeftY = (int) (525);
 
-    public static int blueCenterX = (int) (925 / 1.5);
-    public static int blueCenterY = (int) (485 / 1.5);
+    public static int blueCenterX = (int) (925);
+    public static int blueCenterY = (int) (485);
 
-    public static int leftWidth = (int) (175 / 1.5);
-    public static int leftHeight = (int) (100 / 1.5);
+    public static int leftWidth = (int) (175);
+    public static int leftHeight = (int) (100);
 
-    public static int centerWidth = (int) (125 / 1.5);
-    public static int centerHeight = (int) (125 / 1.5);
+    public static int centerWidth = (int) (125);
+    public static int centerHeight = (int) (125);
 
     public static double BLUE_TRESHOLD = 70;
     public static double RED_TRESHOLD = 100;

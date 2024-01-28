@@ -22,9 +22,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSource {
-    private final AtomicReference<Bitmap> lastFrame =
-            new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
+public class PreloadDetectionPipeline implements VisionProcessor {
 
     private int targetAprilTagID = 0;
 
@@ -38,7 +36,7 @@ public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSo
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
-        lastFrame.set(Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565));
+
     }
 
     @Override
@@ -85,6 +83,9 @@ public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSo
                         int leftZoneAverage = meanColor(frame, leftInclusionZone, leftExclusionZone);
                         int rightZoneAverage = meanColor(frame, rightInclusionZone, rightExclusionZone);
 
+                        System.out.println("LEFTAVG " + leftZoneAverage);
+                        System.out.println("RIGHTAVG " + rightZoneAverage);
+
                         preloadedZone = (leftZoneAverage > rightZoneAverage) ? Location.LEFT : Location.RIGHT;
                         System.out.println("PRELOADED ZONE: " + preloadedZone);
                         Globals.PRELOAD = preloadedZone;
@@ -93,9 +94,7 @@ public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSo
             }
         }
 
-        Bitmap b = Bitmap.createBitmap(frame.width(), frame.height(), Bitmap.Config.RGB_565);
-        Utils.matToBitmap(frame, b);
-        lastFrame.set(b);
+
 
         return null;
     }
@@ -158,8 +157,5 @@ public class PreloadDetectionPipeline implements VisionProcessor, CameraStreamSo
         return count > 0 ? sum / count : 0;
     }
 
-    @Override
-    public void getFrameBitmap(Continuation<? extends Consumer<Bitmap>> continuation) {
-        continuation.dispatch(bitmapConsumer -> bitmapConsumer.accept(lastFrame.get()));
-    }
+
 }

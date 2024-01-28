@@ -152,7 +152,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                                 new PositionCommand(new Pose(14, 39.25, Math.PI / 2)),
                                 () -> Globals.RANDOMIZATION == Location.RIGHT)
                                 .alongWith(new FirstStackSetupCommand()),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(16, 39.25, 0)),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(17, 39.25, 0)),
 
                         new FirstStackGrabCommand(),
 
@@ -168,7 +168,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         // STAGEDOOR AUTO PATH
                         new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
-                        new PositionCommand(new Pose(10, -30, 0)),
+                        new PositionCommand(new Pose(17, -32, 0)),
                         new PositionCommand(new Pose(28.75, -35, 0)),
 
 

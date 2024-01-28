@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
+import org.firstinspires.ftc.teamcode.common.subsystem.HangSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
@@ -128,6 +129,10 @@ public class Duo extends CommandOpMode {
         }
 
         if (gamepad2.right_bumper && gamepad2.left_bumper) robot.drone.updateState(DroneSubsystem.DroneState.FIRED);
+
+        if (Math.abs(gamepad2.right_trigger) > 0.5) robot.hang.updateState(HangSubsystem.HangState.EXTENDING);
+        else if (Math.abs(gamepad2.left_trigger) > 0.5) robot.hang.updateState(HangSubsystem.HangState.RETRACTING);
+        else robot.hang.updateState(HangSubsystem.HangState.DISABLED);
 
         lastJoystickUp = currentJoystickUp;
         lastJoystickDown = currentJoystickDown;

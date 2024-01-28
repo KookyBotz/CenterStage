@@ -46,7 +46,7 @@ public class MecanumDrivetrain extends WSubsystem implements Drivetrain {
             for (int i = 0; i < wheelSpeeds.length; i++) {
                 wheelSpeeds[i] = Math.abs(wheelSpeeds[i]) < 0.01 ?
                         wheelSpeeds[i] * correction :
-                        (wheelSpeeds[i] + Math.signum(wheelSpeeds[i]) * 0.07) * correction;
+                        (wheelSpeeds[i] + Math.signum(wheelSpeeds[i]) * 0.085) * correction;
             }
 
         }

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class FirstStackSetupCommand extends SequentialCommandGroup {
     public FirstStackSetupCommand() {
         super(
-                new ArmLiftCommand(0.68),
+                new ArmLiftCommand(0.695),
                 new WaitCommand(400),
                 new ArmFloatCommand(true),
 //                new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),

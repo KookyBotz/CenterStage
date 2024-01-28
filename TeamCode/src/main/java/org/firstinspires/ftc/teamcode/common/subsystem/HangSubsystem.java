@@ -8,11 +8,6 @@ public class HangSubsystem extends WSubsystem {
 
     private HangState hangState = HangState.DISABLED;
 
-    public enum HangState {
-        ACTIVE,
-        DISABLED
-    }
-
     public HangSubsystem() {
         if (robot.leftHang != null && robot.rightHang != null) this.updateState(HangState.DISABLED);
     }
@@ -23,7 +18,14 @@ public class HangSubsystem extends WSubsystem {
 
     @Override
     public void periodic() {
-
+        switch (hangState) {
+            case EXTENDING:
+                setPower(1);
+            case RETRACTING:
+                setPower(-1);
+            case DISABLED:
+                setPower(0);
+        }
     }
 
     @Override
@@ -36,6 +38,11 @@ public class HangSubsystem extends WSubsystem {
 
     }
 
+    public void setPower(double power) {
+        robot.leftHang.setPower(power);
+        robot.rightHang.setPower(power);
+    }
+
     @Override
     public void reset() {
         this.updateState(HangState.DISABLED);
@@ -43,5 +50,11 @@ public class HangSubsystem extends WSubsystem {
 
     public HangState getHangState() {
         return this.hangState;
+    }
+
+    public enum HangState {
+        EXTENDING,
+        RETRACTING,
+        DISABLED
     }
 }

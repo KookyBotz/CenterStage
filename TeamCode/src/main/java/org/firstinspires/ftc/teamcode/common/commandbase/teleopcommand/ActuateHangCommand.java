@@ -17,7 +17,7 @@ public class ActuateHangCommand extends ConditionalCommand {
                         new InstantCommand(() -> RobotHardware.getInstance().rightHang.setPower(value))
                 ),
                 new WaitCommand(0),
-                () -> RobotHardware.getInstance().hang.getHangState() == HangSubsystem.HangState.ACTIVE
+                () -> RobotHardware.getInstance().hang.getHangState() == HangSubsystem.HangState.EXTENDING
         );
     }
 }

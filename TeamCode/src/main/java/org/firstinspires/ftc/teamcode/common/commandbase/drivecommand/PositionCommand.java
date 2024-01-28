@@ -17,10 +17,10 @@ public class PositionCommand extends CommandBase {
     Drivetrain drivetrain;
     public Pose targetPose;
 
-    public static double xP = 0.0725;
+    public static double xP = 0.07;
     public static double xD = 0.012;
 
-    public static double yP = 0.0725;
+    public static double yP = 0.07;
     public static double yD = 0.012;
 
     public static double hP = 1;
@@ -97,10 +97,10 @@ public class PositionCommand extends CommandBase {
         double y_rotated = xPower * Math.sin(-robotPose.heading) + yPower * Math.cos(-robotPose.heading);
 
         hPower = Range.clip(hPower, -MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
-        x_rotated = Range.clip(x_rotated, -MAX_TRANSLATIONAL_SPEED, MAX_TRANSLATIONAL_SPEED);
+        x_rotated = Range.clip(x_rotated, -MAX_TRANSLATIONAL_SPEED / 1.85, MAX_TRANSLATIONAL_SPEED / 1.85);
         y_rotated = Range.clip(y_rotated, -MAX_TRANSLATIONAL_SPEED, MAX_TRANSLATIONAL_SPEED);
 
-        return new Pose(x_rotated * 1.6, y_rotated, hPower);
+        return new Pose(x_rotated * 1.85, y_rotated, hPower);
     }
 
     @Override

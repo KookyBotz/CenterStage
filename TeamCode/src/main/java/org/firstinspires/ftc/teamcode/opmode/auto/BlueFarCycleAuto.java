@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.DepositRetractionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackGrabCommand;
@@ -25,7 +26,12 @@ import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.Purple
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmFloatCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmLiftCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
@@ -103,13 +109,13 @@ public class BlueFarCycleAuto extends LinearOpMode {
         if (Globals.ROUTE == Location.STAGEDOOR) {
             switch (randomization) {
                 case LEFT:
-                    purplePixelPose = new Pose(51.25, 36.25, 2.16);
+                    purplePixelPose = new Pose(49.25, 36.25, 2.16);
                     break;
                 case RIGHT:
-                    purplePixelPose = new Pose(53, 41, 1.17);
+                    purplePixelPose = new Pose(53, 40, 1.17);
                     break;
                 default:
-                    purplePixelPose = new Pose(42.5, 35.5, 1.88);
+                    purplePixelPose = new Pose(42.5, 36.5, 1.88);
                     break;
             }
         } else {
@@ -152,9 +158,10 @@ public class BlueFarCycleAuto extends LinearOpMode {
                                 new PositionCommand(new Pose(14, 39.25, Math.PI / 2)),
                                 () -> Globals.RANDOMIZATION == Location.RIGHT)
                                 .alongWith(new FirstStackSetupCommand()),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(17, 39.25, 0)),
-
+                        new PositionCommand(new Pose(14.95, 40.25, 0)),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(14.95, 40.25, 0)),
                         new FirstStackGrabCommand(),
+                        new WaitCommand(10000),
 
                         // MIDDLE AUTO PATH
 //                        new PositionCommand(new Pose(35.75, -35, 0))
@@ -168,10 +175,8 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         // STAGEDOOR AUTO PATH
                         new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
-                        new PositionCommand(new Pose(17, -32, 0)),
-                        new PositionCommand(new Pose(28.75, -35, 0)),
-
-
+                        new PositionCommand(new Pose(12, -32, 0)),
+                        new PreloadDetectionCommand(),
                         new RelocalizeCommand(),
                         new WaitCommand(50),
                         new PreloadDetectionCommand(),
@@ -187,6 +192,25 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
 
                         new FirstDepositCommand(),
+                        new ExtensionCommand(300),
+                        new ClawCommand(IntakeSubsystem.ClawState.CLOSED, (Globals.ALLIANCE == Location.BLUE ? ClawSide.LEFT : ClawSide.RIGHT)),
+
+                        new SequentialCommandGroup(
+                                new WaitCommand(250),
+                                new ArmCommand(2.82),
+                                new ArmFloatCommand(false),
+                                new ArmLiftCommand(0.3),
+                                new WaitCommand(400),
+                                new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),
+                                new ExtensionCommand(475),
+                                new WaitCommand(750),
+                                new ClawCommand(IntakeSubsystem.ClawState.OPEN, (Globals.ALLIANCE == Location.BLUE ? ClawSide.RIGHT : ClawSide.LEFT)),
+                                new WaitCommand(250)
+
+                        )
+                                .alongWith(new PositionCommand(new Pose(36.25, -35.25, 0))),
+                        new DepositRetractionCommand(),
+
 
 //                        new PositionCommand(new Pose(35.75, -29, 0)),
 //
@@ -212,11 +236,12 @@ public class BlueFarCycleAuto extends LinearOpMode {
 //                                .andThen(new RelocalizeCommand())
 //                                .alongWith(new ThirdDepositCommand()),
 //
-                        new PositionCommand(new Pose(12, -54, 0))
+                        new PositionCommand(new Pose(12, -52, 0))
                                 .alongWith(new ExtensionCommand(0)),
 
                         new InstantCommand(() -> endTime = timer.seconds()),
-                        new InstantCommand(robot::closeCamera)
+                        new InstantCommand(robot::closeCamera),
+                        new InstantCommand(() -> requestOpModeStop())
                 )
         );
 

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
 @TeleOp
-@Disabled
+//@Disabled
 public class ClimbTest extends OpMode {
     private CRServoImplEx left, right;
 
@@ -23,6 +23,7 @@ public class ClimbTest extends OpMode {
     @Override
     public void loop() {
         left.setPower(gamepad1.left_stick_y);
-        right.setPower(gamepad1.right_stick_y);
+        right.setPower(-gamepad1.left_stick_y);
+
     }
 }

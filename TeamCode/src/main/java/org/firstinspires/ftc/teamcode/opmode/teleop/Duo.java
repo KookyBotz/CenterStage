@@ -26,7 +26,6 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.HangSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
-import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 
 @Config
@@ -38,8 +37,10 @@ public class Duo extends CommandOpMode {
     private GamepadEx gamepadEx2;
 
     private double loopTime = 0.0;
-    private boolean lastJoystickUp = false;
-    private boolean lastJoystickDown = false;
+    private boolean lastJoystickUpRight = false;
+    private boolean lastJoystickDownRight = false;
+//    private boolean lastJoystickUpLeft = false;
+//    private boolean lastJoystickDownLeft = false;
     private boolean extendIntake = true;
 
     @Override
@@ -119,14 +120,28 @@ public class Duo extends CommandOpMode {
         // G1 - Drivetrain Control
         robot.drivetrain.set(new Pose(gamepad1.left_stick_x, -gamepad1.left_stick_y, MathUtils.joystickScalar(-gamepad1.left_trigger + gamepad1.right_trigger, 0.01)), 0);
 
-        boolean currentJoystickUp = gamepad1.right_stick_y < -0.5 || gamepad2.right_stick_y < -0.5;
-        boolean currentJoystickDown = gamepad1.right_stick_y > 0.5 || gamepad2.right_stick_y > 0.5;
+        boolean currentJoystickUpRight = gamepad1.right_stick_y < -0.5 || gamepad2.right_stick_y < -0.5;
+        boolean currentJoystickDownRight = gamepad1.right_stick_y > 0.5 || gamepad2.right_stick_y > 0.5;
+        boolean currentJoystickUpLeft = gamepad2.left_stick_y < -0.5;
+        boolean currentJoystickDownLeft = gamepad2.left_stick_y > 0.5;
 
-        if (currentJoystickDown && !lastJoystickDown) {
+        if (currentJoystickDownRight && !lastJoystickDownRight) {
             CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, -1));
-        } else if (currentJoystickUp && !lastJoystickUp) {
+        } else if (currentJoystickUpRight && !lastJoystickUpRight) {
             CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, 1));
         }
+
+//        if (currentJoystickDownLeft && !lastJoystickDownLeft) {
+//            CommandScheduler.getInstance().schedule(new IntakeHeightCommand(robot, -1));
+//        } else if (currentJoystickUpLeft && !lastJoystickUpLeft) {
+//            CommandScheduler.getInstance().schedule(new IntakeHeightCommand(robot, 1));
+//        }
+
+        robot.leftHang.setPower(gamepad2.left_stick_y);
+        robot.rightHang.setPower(-gamepad2.left_stick_y);
+
+//        left.setPower(gamepad1.left_stick_y);
+//        right.setPower(-gamepad1.left_stick_y);
 
         if (gamepad2.right_bumper && gamepad2.left_bumper) robot.drone.updateState(DroneSubsystem.DroneState.FIRED);
 
@@ -134,8 +149,10 @@ public class Duo extends CommandOpMode {
         else if (Math.abs(gamepad2.left_trigger) > 0.5) robot.hang.updateState(HangSubsystem.HangState.RETRACTING);
         else robot.hang.updateState(HangSubsystem.HangState.DISABLED);
 
-        lastJoystickUp = currentJoystickUp;
-        lastJoystickDown = currentJoystickDown;
+        lastJoystickUpRight = currentJoystickUpRight;
+        lastJoystickDownRight = currentJoystickDownRight;
+//        lastJoystickUpLeft = currentJoystickUpLeft;
+//        lastJoystickDownLeft = currentJoystickDownLeft;
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

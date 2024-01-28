@@ -42,8 +42,8 @@ import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Autonomous(name = "🔵 Blue Far Cycle Auto")
-public class BlueFarCycleAuto extends LinearOpMode {
+@Autonomous(name = "🔴 Red Far Cycle Auto")
+public class RedFarCycleAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private final ElapsedTime timer = new ElapsedTime();
     private double loopTime = 0.0;
@@ -59,7 +59,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = true;
-        Globals.ALLIANCE = Location.BLUE;
+        Globals.ALLIANCE = Location.RED;
         Globals.SIDE = Location.FAR;
         Globals.ROUTE = Location.STAGEDOOR;
 
@@ -69,7 +69,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
         robot.intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
 
-        robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
+        robot.localizer.setPose(new Pose(-63.65, 39.35, -Math.PI / 2));
 
         propPipeline = new PropPipeline();
 
@@ -100,7 +100,6 @@ public class BlueFarCycleAuto extends LinearOpMode {
         }
 
         randomization = propPipeline.getLocation();
-//        randomization = Location.RIGHT;
         Globals.RANDOMIZATION = randomization;
         RobotHardware.getInstance().preloadDetectionPipeline.setTargetAprilTagID(randomization);
 
@@ -109,25 +108,25 @@ public class BlueFarCycleAuto extends LinearOpMode {
         if (Globals.ROUTE == Location.STAGEDOOR) {
             switch (randomization) {
                 case LEFT:
-                    purplePixelPose = new Pose(49.25, 36.25, 2.16);
+                    purplePixelPose = new Pose(-49.25, 36.25, -2.16);
                     break;
                 case RIGHT:
-                    purplePixelPose = new Pose(53, 40, 1.17);
+                    purplePixelPose = new Pose(-53, 40, -1.17);
                     break;
                 default:
-                    purplePixelPose = new Pose(42.5, 36.5, 1.88);
+                    purplePixelPose = new Pose(-42.5, 36.5, -1.88);
                     break;
             }
         } else {
             switch (randomization) {
                 case LEFT:
-                    purplePixelPose = new Pose(37.75, 25, Math.PI / 2);
+                    purplePixelPose = new Pose(-37.75, 25, -Math.PI / 2);
                     break;
                 case RIGHT:
-                    purplePixelPose = new Pose(37.75, 38.95, 0.95);
+                    purplePixelPose = new Pose(-37.75, 38.95, -0.95);
                     break;
                 default:
-                    purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
+                    purplePixelPose = new Pose(-37.75, 39.35, -Math.PI / 2);
                     break;
             }
         }
@@ -154,12 +153,12 @@ public class BlueFarCycleAuto extends LinearOpMode {
                         // Starting auto sequence for stagedoor auto
 //                        new PositionCommand(new Pose(14, 39.25, 0))
                         new ConditionalCommand(
-                                new PositionCommand(new Pose(14, 37.25, Math.PI / 2)),
-                                new PositionCommand(new Pose(14, 39.25, Math.PI / 2)),
+                                new PositionCommand(new Pose(-14, 37.25, -Math.PI / 2)),
+                                new PositionCommand(new Pose(-14, 39.25, -Math.PI / 2)),
                                 () -> Globals.RANDOMIZATION == Location.RIGHT)
                                 .alongWith(new FirstStackSetupCommand()),
-                        new PositionCommand(new Pose(14.95, 40.25, 0)),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(14.95, 40.25, 0)),
+                        new PositionCommand(new Pose(-14.95, 40.25, 0)),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(-14.95, 40.25, 0)),
                         new FirstStackGrabCommand(),
                         new WaitCommand(10000),
 
@@ -175,7 +174,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         // STAGEDOOR AUTO PATH
                         new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
-                        new PositionCommand(new Pose(12, -32, 0)),
+                        new PositionCommand(new Pose(-12, -32, 0)),
                         new PreloadDetectionCommand(),
                         new RelocalizeCommand(),
                         new WaitCommand(50),
@@ -208,7 +207,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                                 new WaitCommand(250)
 
                         )
-                                .alongWith(new PositionCommand(new Pose(36.25, -35.25, 0))),
+                                .alongWith(new PositionCommand(new Pose(-36.25, -35.25, 0))),
                         new DepositRetractionCommand(),
 
 
@@ -236,7 +235,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 //                                .andThen(new RelocalizeCommand())
 //                                .alongWith(new ThirdDepositCommand()),
 //
-                        new PositionCommand(new Pose(12, -52, 0))
+                        new PositionCommand(new Pose(-12, -52, 0))
                                 .alongWith(new ExtensionCommand(0)),
 
                         new InstantCommand(() -> endTime = timer.seconds()),

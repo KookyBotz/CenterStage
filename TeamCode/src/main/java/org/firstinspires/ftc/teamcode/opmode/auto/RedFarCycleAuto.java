@@ -107,10 +107,10 @@ public class RedFarCycleAuto extends LinearOpMode {
 
         if (Globals.ROUTE == Location.STAGEDOOR) {
             switch (randomization) {
-                case LEFT:
+                case RIGHT:
                     purplePixelPose = new Pose(-49.25, 36.25, -2.16);
                     break;
-                case RIGHT:
+                case LEFT:
                     purplePixelPose = new Pose(-53, 40, -1.17);
                     break;
                 default:
@@ -119,10 +119,10 @@ public class RedFarCycleAuto extends LinearOpMode {
             }
         } else {
             switch (randomization) {
-                case LEFT:
+                case RIGHT:
                     purplePixelPose = new Pose(-37.75, 25, -Math.PI / 2);
                     break;
-                case RIGHT:
+                case LEFT:
                     purplePixelPose = new Pose(-37.75, 38.95, -0.95);
                     break;
                 default:
@@ -155,7 +155,7 @@ public class RedFarCycleAuto extends LinearOpMode {
                         new ConditionalCommand(
                                 new PositionCommand(new Pose(-14, 37.25, -Math.PI / 2)),
                                 new PositionCommand(new Pose(-14, 39.25, -Math.PI / 2)),
-                                () -> Globals.RANDOMIZATION == Location.RIGHT)
+                                () -> Globals.RANDOMIZATION == Location.LEFT)
                                 .alongWith(new FirstStackSetupCommand()),
                         new PositionCommand(new Pose(-14.95, 40.25, 0)),
                         new StackRelocalizeCommand(stackPipeline, new Pose(-14.95, 40.25, 0)),

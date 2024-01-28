@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -214,10 +215,11 @@ public class RobotHardware {
         this.droneTrigger = new WServo(hardwareMap.get(Servo.class, "drone"));
 
         // TODO: Configure config names
-//        this.leftHang = hardwareMap.get(CRServoImplEx.class, "leftHang");
-//        this.leftHang.setPwmRange(new PwmControl.PwmRange(500, 2500));
-//        this.rightHang = hardwareMap.get(CRServoImplEx.class, "rightHang");
-//        this.rightHang.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        this.leftHang = hardwareMap.get(CRServoImplEx.class, "left");
+        this.leftHang.setPwmRange(new PwmControl.PwmRange(500, 2500));
+        this.rightHang = hardwareMap.get(CRServoImplEx.class, "right");
+        this.rightHang.setPwmRange(new PwmControl.PwmRange(500, 2500));
+//        this.rightHang.setDirection(DcMotorSimple.Direction.REVERSE);
 
         InverseKinematics.calculateTarget(3, 0);
 

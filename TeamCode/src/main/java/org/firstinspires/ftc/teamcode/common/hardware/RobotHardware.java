@@ -37,7 +37,10 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
@@ -108,6 +111,8 @@ public class RobotHardware {
     public MecanumDrivetrain drivetrain;
     public DroneSubsystem drone;
     public HangSubsystem hang;
+
+    public PreloadDetectionPipeline preloadDetectionPipeline;
 
     private final Object imuLock = new Object();
     @GuardedBy("imuLock")
@@ -200,6 +205,7 @@ public class RobotHardware {
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);
         intakePivotActuator.setOffset(-0.05);
+//        intakePivotActuator
 
         this.podLeft = new WEncoder(new MotorEx(hardwareMap, "dtFrontRightMotor").encoder);
         this.podFront = new WEncoder(new MotorEx(hardwareMap, "dtBackRightMotor").encoder);
@@ -216,6 +222,8 @@ public class RobotHardware {
         InverseKinematics.calculateTarget(3, 0);
 
         modules = hardwareMap.getAll(LynxModule.class);
+
+        this.preloadDetectionPipeline = new PreloadDetectionPipeline();
 
         for (LynxModule m : modules) {
             m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -383,6 +391,12 @@ public class RobotHardware {
         }
     }
 
+    public List<AprilTagDetection> getAprilTagDetections() {
+        if (aprilTag != null && localizer != null) return aprilTag.getDetections();
+        System.out.println("Active");
+        return null;
+    }
+
     public void startCamera() {
         aprilTag = new AprilTagProcessor.Builder()
                 // calibrated using 3DF Zephyr 7.021
@@ -393,9 +407,11 @@ public class RobotHardware {
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .addProcessor(aprilTag)
+                .addProcessors(aprilTag, preloadDetectionPipeline)
                 .enableLiveView(false)
                 .build();
+
+        visionPortal.setProcessorEnabled(preloadDetectionPipeline, false);
     }
 
     public VisionPortal.CameraState getCameraState() {
@@ -409,5 +425,9 @@ public class RobotHardware {
 
     public void kill() {
         instance = null;
+    }
+
+    public void setProcessorEnabled(VisionProcessor processor, boolean enabled) {
+        this.visionPortal.setProcessorEnabled(processor, enabled);
     }
 }

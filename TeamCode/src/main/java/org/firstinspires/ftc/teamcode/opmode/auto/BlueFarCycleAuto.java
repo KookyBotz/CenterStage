@@ -2,10 +2,11 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.PrintCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -15,40 +16,34 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
-import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
-import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
-import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackSetupCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PreloadDetectionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PurplePixelDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.PurplePixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.SecondDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.SecondStackGrabCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.ThirdDepositCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.ThirdStackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.StackRelocalizeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
+import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
 @Autonomous(name = "🔵 Blue Far Cycle Auto1")
 public class BlueFarCycleAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-
-    private double loopTime = 0.0;
     private final ElapsedTime timer = new ElapsedTime();
+    private double loopTime = 0.0;
     private double endTime = 0;
 
-//    private PropPipeline propPipeline;
+    private PropPipeline propPipeline;
     private StackPipeline stackPipeline;
     private VisionPortal portal;
     private Location randomization;
@@ -60,6 +55,9 @@ public class BlueFarCycleAuto extends LinearOpMode {
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Location.BLUE;
         Globals.SIDE = Location.FAR;
+        Globals.ROUTE = Location.STAGEDOOR;
+
+        telemetry = FtcDashboard.getInstance().getTelemetry();
 
         robot.init(hardwareMap);
 
@@ -67,19 +65,22 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
         robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
 
-//        propPipeline = new PropPipeline();
+        propPipeline = new PropPipeline();
+
         stackPipeline = new StackPipeline();
 
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
                 .setCameraResolution(new Size(1920, 1080))
-                .addProcessor(stackPipeline)
+                .addProcessors(stackPipeline, propPipeline)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)
                 .setAutoStopLiveView(true)
                 .build();
 
 //        portal.setProcessorEnabled(stackPipeline, true);
+
+        FtcDashboard.getInstance().startCameraStream(stackPipeline, 0);
 
         while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             telemetry.addLine("initializing... please wait");
@@ -88,109 +89,128 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
         while (opModeInInit()) {
             telemetry.addLine("ready");
-//            telemetry.addData("position", propPipeline.getLocation());
+            telemetry.addData("position", propPipeline.getLocation());
             telemetry.update();
         }
 
-//        randomization = propPipeline.getLocation();
-        randomization = Location.CENTER;
-//        portal.close();
-//        portal.setProcessorEnabled(propPipeline, false);
-//        portal.setProcessorEnabled(stackPipeline, true);
+        randomization = propPipeline.getLocation();
+//        randomization = Location.RIGHT;
+        Globals.RANDOMIZATION = randomization;
+        RobotHardware.getInstance().preloadDetectionPipeline.setTargetAprilTagID(randomization);
 
         Pose purplePixelPose;
-        Pose yellowPixelPose;
 
-        switch (randomization) {
-            case LEFT:
-                purplePixelPose = new Pose(37.75, 25, Math.PI / 2);
-                yellowPixelPose = new Pose(38.75, -29, 0);
-                break;
-            case RIGHT:
-                purplePixelPose = new Pose(37.75, 39.35, 0.75);
-                yellowPixelPose = new Pose(28.75, -29, 0);
-                break;
-            default:
-                purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
-                yellowPixelPose = new Pose(31.75, -29, 0);
-                break;
+        if (Globals.ROUTE == Location.STAGEDOOR) {
+            switch (randomization) {
+                case LEFT:
+                    purplePixelPose = new Pose(51.25, 36.25, 2.16);
+                    break;
+                case RIGHT:
+                    purplePixelPose = new Pose(53, 41, 1.17);
+                    break;
+                default:
+                    purplePixelPose = new Pose(42.5, 35.5, 1.88);
+                    break;
+            }
+        } else {
+            switch (randomization) {
+                case LEFT:
+                    purplePixelPose = new Pose(37.75, 25, Math.PI / 2);
+                    break;
+                case RIGHT:
+                    purplePixelPose = new Pose(37.75, 38.95, 0.95);
+                    break;
+                default:
+                    purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
+                    break;
+            }
         }
+
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new InstantCommand(timer::reset),
-//                        new PositionCommand(new Pose(38, 39.25, -0.02))
 
-                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
-                                .alongWith(new PurplePixelExtendCommand(randomization)),
-//
-                        new PositionCommand(purplePixelPose),
+//                        new PositionCommand(new Pose(37.75, 39.35, Math.PI / 2))
+
+                        new PositionCommand(purplePixelPose)
+                                .alongWith(new PurplePixelExtendCommand()),
 
                         new PurplePixelDepositCommand(),
 
-                        new PositionCommand(new Pose(38, 39.25, -0.02))
-                                .alongWith(new FirstStackSetupCommand()),
+                        // Starting auto sequence for both wall and middle auto
+//                        new PositionCommand(new Pose(38, 39.25, 0))
+//                                .alongWith(new FirstStackSetupCommand()),
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, 0)),
+//
+//                        new FirstStackGrabCommand(),
 
-//
-//////                        // // ERROR ADJUST
-////                        new WaitCommand(5000)
-////                        new WaitCommand(5000),
-//                        new WaitCommand(5000),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
-//                        new PivotCommand(0.51),
-//                        new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-//                                .alongWith()
-//                        new WaitCommand(5000),
-////                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.25, -0.02)),
-////                        new WaitCommand(5000),
-//
+                        // Starting auto sequence for stagedoor auto
+//                        new PositionCommand(new Pose(14, 39.25, 0))
+                        new ConditionalCommand(
+                                new PositionCommand(new Pose(14, 37.25, Math.PI / 2)),
+                                new PositionCommand(new Pose(14, 39.25, Math.PI / 2)),
+                                () -> Globals.RANDOMIZATION == Location.RIGHT)
+                                .alongWith(new FirstStackSetupCommand()),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(17, 39.25, 0)),
+
                         new FirstStackGrabCommand(),
-//
-//
-                        new PositionCommand(new Pose(35.75, -29, 0))
-                                .andThen(new RelocalizeCommand())
-                                .andThen(new PositionCommand(yellowPixelPose)
-                                        .alongWith(new FirstDepositExtendCommand())),
-//
+
+                        // MIDDLE AUTO PATH
+//                        new PositionCommand(new Pose(35.75, -35, 0))
+//                        new PositionCommand(new Pose(35.75, -29, 0))
+
+                        // WALL AUTO PATH
+//                        new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
+//                        new PositionCommand(new Pose(59, 34.8, 0)),
+//                        new PositionCommand(new Pose(56, -30, 0)),
+//                        new PositionCommand(new Pose(28.75, -35, 0)),
+
+                        // STAGEDOOR AUTO PATH
+                        new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
+                        new PositionCommand(new Pose(17, -32, 0)),
+                        new PositionCommand(new Pose(28.75, -35, 0)),
+
+
+                        new RelocalizeCommand(),
+                        new WaitCommand(50),
+                        new PreloadDetectionCommand(),
+
+                        new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, false)),
+                        new FirstDepositExtendCommand(),
+
+//                        new PositionCommand(new Pose(35.75, -29, 0))
+//                                .andThen(new RelocalizeCommand())
+//                                .andThen(new WaitUntilCommand(() -> gamepad1.a))
+//                                .andThen(new PreloadDetectionCommand()
+//                                        .alongWith(new FirstDepositExtendCommand())),
+
+
                         new FirstDepositCommand(),
 
-                        new PositionCommand(new Pose(35.75, -29, 0)),
-//                        new RelocalizeCommand(),
+//                        new PositionCommand(new Pose(35.75, -29, 0)),
 //
-                        new PositionCommand(new Pose(38, 39, -0.02)),
-//
-//                        // ERROR ADJUST
-//                        new WaitCommand(5000),
-//                        new PrintCommand("HERE " + stackPipeline.getStrafeCorrection()),
-//                        new WaitCommand(5000),
-//                        new PositionCommand(new Pose(38 + stackPipeline.getStrafeCorrection(), 39, -0.02)),
-//                        new WaitCommand(5000),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
-//
-                        new SecondStackGrabCommand(),
+//                        new PositionCommand(new Pose(38, 39, -0.02)),
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
 //
 //
-                        new PositionCommand(new Pose(35.75, -31.5, 0))
-                                .andThen(new RelocalizeCommand())
-                                .alongWith(new SecondDepositCommand()),
+//                        new SecondStackGrabCommand(),
 //
 //
-                        new PositionCommand(new Pose(38, 39.5, -0.02)),
+//                        new PositionCommand(new Pose(35.75, -31.5, 0))
+//                                .andThen(new RelocalizeCommand())
+//                                .alongWith(new SecondDepositCommand()),
 //
-//                        // ERROR ADJUST
-//                        new WaitCommand(5000),
-//                        new PrintCommand("HERE " + stackPipeline.getStrafeCorrection()),
-//                        new WaitCommand(5000),
+//
 //                        new PositionCommand(new Pose(38, 39.5, -0.02)),
-//                        new WaitCommand(5000),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39.5, -0.02)),
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
 //
-                        new ThirdStackGrabCommand(),
-
-
-                        new PositionCommand(new Pose(35.75, -31.5, 0))
-                                .andThen(new RelocalizeCommand())
-                                .alongWith(new ThirdDepositCommand()),
+//                        new ThirdStackGrabCommand(),
+//
+//
+//                        new PositionCommand(new Pose(35.75, -31.5, 0))
+//                                .andThen(new RelocalizeCommand())
+//                                .alongWith(new ThirdDepositCommand()),
 //
                         new PositionCommand(new Pose(12, -54, 0))
                                 .alongWith(new ExtensionCommand(0)),
@@ -211,8 +231,12 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
             telemetry.addLine(robot.localizer.getPose().toString());
             telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
-            telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
-            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
+//            telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
+            telemetry.addData("BACKDROP", RobotHardware.getInstance().preloadDetectionPipeline.getPreloadedZone());
+            telemetry.addData("INDEX", Globals.getTargetIndex());
+//            telemetry.addData("TARGET POSE", )
+//            telemetry.addData("arm pos", robot.extensionActuator.getPosition());
+//            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
 //            telemetry.addLine("PIXEL POSE (" + stackPipeline.getClosestPixelContour().x + " " + stackPipeline.getClosestPixelContour().y);
             telemetry.update();
 

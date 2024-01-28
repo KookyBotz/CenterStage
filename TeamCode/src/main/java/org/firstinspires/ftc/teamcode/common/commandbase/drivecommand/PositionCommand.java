@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 @Config
 public class PositionCommand extends CommandBase {
     Drivetrain drivetrain;
-    Pose targetPose;
+    public Pose targetPose;
 
     public static double xP = 0.0725;
     public static double xD = 0.012;
@@ -41,9 +41,13 @@ public class PositionCommand extends CommandBase {
     public static double STABLE_MS = 250;
     public static double DEAD_MS = 2500;
 
+    private final double  MAX_TRANSLATIONAL_SPEED = 0.5;
+    private final double  MAX_ROTATIONAL_SPEED = 0.4;
+
     public PositionCommand(Pose targetPose) {
         this.drivetrain = robot.drivetrain;
         this.targetPose = targetPose;
+
 
 
         xController.reset();
@@ -60,6 +64,9 @@ public class PositionCommand extends CommandBase {
         if (stable == null) stable = new ElapsedTime();
 
         Pose robotPose = robot.localizer.getPose();
+
+//        System.out.println("TARGET POSE " + targetPose);
+
 
         Pose powers = getPower(robotPose);
         drivetrain.set(powers);
@@ -89,9 +96,9 @@ public class PositionCommand extends CommandBase {
         double x_rotated = xPower * Math.cos(-robotPose.heading) - yPower * Math.sin(-robotPose.heading);
         double y_rotated = xPower * Math.sin(-robotPose.heading) + yPower * Math.cos(-robotPose.heading);
 
-        hPower = Range.clip(hPower, -0.8, 0.8);
-        x_rotated = Range.clip(x_rotated, -1.0, 1.0);
-        y_rotated = Range.clip(y_rotated, -1.0, 1.0);
+        hPower = Range.clip(hPower, -MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
+        x_rotated = Range.clip(x_rotated, -MAX_TRANSLATIONAL_SPEED, MAX_TRANSLATIONAL_SPEED);
+        y_rotated = Range.clip(y_rotated, -MAX_TRANSLATIONAL_SPEED, MAX_TRANSLATIONAL_SPEED);
 
         return new Pose(x_rotated * 1.6, y_rotated, hPower);
     }

@@ -103,7 +103,7 @@ public class RedFarPreloadAuto extends LinearOpMode {
                         new InstantCommand(timer::reset),
 
                         new PositionCommand(new Pose(-37.75, 39.35, -Math.PI / 2))
-                                .alongWith(new PurplePixelExtendCommand(randomization)),
+                                .alongWith(new PurplePixelExtendCommand()),
 
                         new PositionCommand(purplePixelPose),
 

@@ -20,7 +20,8 @@ public class StackRelocalizeCommand extends SequentialCommandGroup {
                     System.out.println("CORRECTION342    " + correction);
                     Pose currentPose = RobotHardware.getInstance().localizer.getPose();
                     System.out.println("CORRECTION342    " + currentPose);
-                    RobotHardware.getInstance().localizer.setPose(new Pose(currentPose.x + correction, currentPose.y, currentPose.heading));
+                    if (Math.abs(correction) > 0.5) RobotHardware.getInstance().localizer.setPose(new Pose(currentPose.x + correction, currentPose.y, currentPose.heading));
+
                     System.out.println("CORRECTION342    " + RobotHardware.getInstance().localizer.getPose());
                 }),
 //                new WaitCommand(100),

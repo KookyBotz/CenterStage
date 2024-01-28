@@ -17,39 +17,27 @@ import org.opencv.imgproc.Imgproc;
 
 public class PropPipeline implements VisionProcessor {
     private static final boolean DEBUG = false;
-
-    private volatile Location location = Location.RIGHT;
-
-    private final Mat hsv = new Mat();
-
     public static int redLeftX = (int) (815);
     public static int redLeftY = (int) (550);
-
     public static int redCenterX = (int) (1365);
     public static int redCenterY = (int) (475);
-
     public static int blueLeftX = (int) (240);
     public static int blueLeftY = (int) (525);
-
     public static int blueCenterX = (int) (925);
     public static int blueCenterY = (int) (485);
-
     public static int leftWidth = (int) (175);
     public static int leftHeight = (int) (100);
-
     public static int centerWidth = (int) (125);
     public static int centerHeight = (int) (125);
-
     public static double BLUE_TRESHOLD = 70;
     public static double RED_TRESHOLD = 100;
-
+    private final Mat hsv = new Mat();
     public double leftColor = 0.0;
     public double centerColor = 0.0;
-
     public Scalar left = new Scalar(0, 0, 0);
     public Scalar center = new Scalar(0, 0, 0);
-
     Telemetry telemetry;
+    private volatile Location location = Location.RIGHT;
 
 //    Location ALLIANCE = Location.RED;
 

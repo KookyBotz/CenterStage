@@ -5,7 +5,6 @@ import android.graphics.Canvas;
 
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.function.Consumer;
 import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
@@ -29,17 +28,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class StackPipeline implements VisionProcessor, CameraStreamSource {
 
+    public static int TOPLEFT_X = 600;
+    public static int TOPLEFT_Y = 450;
+    public static int WIDTH = 1120;
+    public static int HEIGHT = 630;
     private final AtomicReference<Bitmap> lastFrame =
             new AtomicReference<>(Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565));
 
-    public static int TOPLEFT_X = 600;
-    public static int TOPLEFT_Y = 450;
-
-    public static int WIDTH = 1120;
-    public static int HEIGHT = 630;
-
 //    public volatile double correctionAmt = 0.0;
-
     ContourData closestPixelContour = new ContourData(0, 0, 0, 0);
     ContourData closestTapeContour = new ContourData(0, 0, 0, 0);
 
@@ -108,7 +104,7 @@ public class StackPipeline implements VisionProcessor, CameraStreamSource {
 
                 double distance = Math.sqrt(Math.pow(cX - 976, 2) + Math.pow(cY - 138, 2));
 
-                System.out.println("TAPE POSE: (" + cX + ", " + cY + ")");
+//                System.out.println("TAPE POSE: (" + cX + ", " + cY + ")");
 
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -150,7 +146,7 @@ public class StackPipeline implements VisionProcessor, CameraStreamSource {
 
     public double getStrafeCorrection() {
 //        correctionAmt = -0.0120*closestTapeContour.x + 12.42;
-        return Range.clip(-0.0120*(closestTapeContour.x + 400) + 12.26, -3, 3);
+        return Range.clip(-0.0120 * (closestTapeContour.x + 400) + 12.26, -3, 3);
     }
 
     @Override

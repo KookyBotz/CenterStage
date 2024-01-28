@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 @Config
 public class PositionCommand extends CommandBase {
     Drivetrain drivetrain;
-    Pose targetPose;
+    public Pose targetPose;
 
     public static double xP = 0.0725;
     public static double xD = 0.012;
@@ -49,6 +49,7 @@ public class PositionCommand extends CommandBase {
         this.targetPose = targetPose;
 
 
+
         xController.reset();
         yController.reset();
         hController.reset();
@@ -63,6 +64,9 @@ public class PositionCommand extends CommandBase {
         if (stable == null) stable = new ElapsedTime();
 
         Pose robotPose = robot.localizer.getPose();
+
+//        System.out.println("TARGET POSE " + targetPose);
+
 
         Pose powers = getPower(robotPose);
         drivetrain.set(powers);

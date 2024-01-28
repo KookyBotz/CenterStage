@@ -410,6 +410,8 @@ public class RobotHardware {
                 .addProcessors(aprilTag, preloadDetectionPipeline)
                 .enableLiveView(false)
                 .build();
+
+        visionPortal.setProcessorEnabled(preloadDetectionPipeline, false);
     }
 
     public VisionPortal.CameraState getCameraState() {

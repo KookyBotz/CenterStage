@@ -1,18 +1,12 @@
 package org.firstinspires.ftc.teamcode.common.vision;
 
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 
-
-import org.firstinspires.ftc.robotcore.external.function.Consumer;
-import org.firstinspires.ftc.robotcore.external.function.Continuation;
-import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -20,7 +14,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class PreloadDetectionPipeline implements VisionProcessor {
 
@@ -83,8 +76,8 @@ public class PreloadDetectionPipeline implements VisionProcessor {
                         int leftZoneAverage = meanColor(frame, leftInclusionZone, leftExclusionZone);
                         int rightZoneAverage = meanColor(frame, rightInclusionZone, rightExclusionZone);
 
-                        System.out.println("LEFTAVG " + leftZoneAverage);
-                        System.out.println("RIGHTAVG " + rightZoneAverage);
+//                        System.out.println("LEFTAVG " + leftZoneAverage);
+//                        System.out.println("RIGHTAVG " + rightZoneAverage);
 
                         preloadedZone = (leftZoneAverage > rightZoneAverage) ? Location.LEFT : Location.RIGHT;
                         System.out.println("PRELOADED ZONE: " + preloadedZone);
@@ -95,7 +88,6 @@ public class PreloadDetectionPipeline implements VisionProcessor {
         }
 
 
-
         return null;
     }
 
@@ -104,9 +96,17 @@ public class PreloadDetectionPipeline implements VisionProcessor {
 
     }
 
+    public Location getPreloadedZone() {
+        return this.preloadedZone;
+    }
+
+    public int getTargetAprilTagID() {
+        return this.targetAprilTagID;
+    }
+
     public void setTargetAprilTagID(Location preloadLocation) {
         targetAprilTagID = 0;
-        switch(preloadLocation) {
+        switch (preloadLocation) {
             case LEFT:
                 targetAprilTagID = 1;
                 break;
@@ -123,16 +123,11 @@ public class PreloadDetectionPipeline implements VisionProcessor {
         if (Globals.ALLIANCE == Location.RED) targetAprilTagID += 3;
     }
 
-    public Location getPreloadedZone() {
-        return this.preloadedZone;
-    }
-
-    public int getTargetAprilTagID() {
-        return this.targetAprilTagID;
-    }
-
     public int meanColor(Mat frame, Rect inclusionRect, Rect exclusionRect) {
-        if (frame == null) { System.out.println("frame is bad"); return 0;  }
+        if (frame == null) {
+            System.out.println("frame is bad");
+            return 0;
+        }
 
         int sum = 0;
         int count = 0;

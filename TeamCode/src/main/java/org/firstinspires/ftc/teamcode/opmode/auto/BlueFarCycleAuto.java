@@ -5,15 +5,17 @@ import android.util.Size;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
+import org.firstinspires.ftc.teamcode.common.centerstage.ScoringPosition;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackGrabCommand;
@@ -42,7 +44,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
     private double loopTime = 0.0;
     private double endTime = 0;
 
-        private PropPipeline propPipeline;
+    private PropPipeline propPipeline;
     private StackPipeline stackPipeline;
     private VisionPortal portal;
     private Location randomization;
@@ -122,9 +124,9 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         new PurplePixelDepositCommand(),
 
-                        new PositionCommand(new Pose(38, 39.25, -0.02))
+                        new PositionCommand(new Pose(38, 39.25, 0))
                                 .alongWith(new FirstStackSetupCommand()),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, 0)),
 
                         new FirstStackGrabCommand(),
 
@@ -133,14 +135,20 @@ public class BlueFarCycleAuto extends LinearOpMode {
 //                        new PositionCommand(new Pose(35.75, -29, 0))
 
                         // WALL AUTO PATH
-                        new PositionCommand(new Pose(59.8, 34.8, 0)),
-                        new PositionCommand(new Pose(59.8, -30, 0)),
-                        new PositionCommand(new Pose(28.75, -35, 0))
-                                .andThen(new RelocalizeCommand())
-                                .andThen(new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, false)))
-//                                .andThen(new WaitUntilCommand(() -> gamepad1.a))
-                                .andThen(new PreloadDetectionCommand())
-                                .andThen(new FirstDepositExtendCommand()),
+                        new PositionCommand(new Pose(59, 34.8, 0)),
+                        new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
+                        new PositionCommand(new Pose(56, -30, 0)),
+                        new PositionCommand(new Pose(28.75, -35, 0)),
+
+                        // STAGEDOOR AUTO PATH
+
+
+                        new RelocalizeCommand(),
+                        new WaitCommand(50),
+                        new PreloadDetectionCommand(),
+
+                        new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, false)),
+                        new FirstDepositExtendCommand(),
 
 //                        new PositionCommand(new Pose(35.75, -29, 0))
 //                                .andThen(new RelocalizeCommand())
@@ -194,9 +202,10 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.addData("hz ", 1000000000 / (loop - loopTime));
             telemetry.addLine(robot.localizer.getPose().toString());
             telemetry.addData("Runtime: ", endTime == 0 ? timer.seconds() : endTime);
-            telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
+//            telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
             telemetry.addData("BACKDROP", RobotHardware.getInstance().preloadDetectionPipeline.getPreloadedZone());
             telemetry.addData("INDEX", Globals.getTargetIndex());
+//            telemetry.addData("TARGET POSE", )
 //            telemetry.addData("arm pos", robot.extensionActuator.getPosition());
 //            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);
 //            telemetry.addLine("PIXEL POSE (" + stackPipeline.getClosestPixelContour().x + " " + stackPipeline.getClosestPixelContour().y);

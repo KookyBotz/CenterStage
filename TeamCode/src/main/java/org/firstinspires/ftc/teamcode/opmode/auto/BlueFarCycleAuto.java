@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
-import org.firstinspires.ftc.teamcode.common.centerstage.ScoringPosition;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstDepositExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.FirstStackGrabCommand;
@@ -56,7 +55,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
         Globals.IS_AUTO = true;
         Globals.ALLIANCE = Location.BLUE;
         Globals.SIDE = Location.FAR;
-        Globals.ROUTE = Location.WALL;
+        Globals.ROUTE = Location.STAGEDOOR;
 
         telemetry = FtcDashboard.getInstance().getTelemetry();
 
@@ -101,17 +100,32 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
         Pose purplePixelPose;
 
-        switch (randomization) {
-            case LEFT:
-                purplePixelPose = new Pose(37.75, 25, Math.PI / 2);
-                break;
-            case RIGHT:
-                purplePixelPose = new Pose(37.75, 39.35, 0.95);
-                break;
-            default:
-                purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
-                break;
+        if (Globals.ROUTE == Location.STAGEDOOR) {
+            switch (randomization) {
+                case LEFT:
+                    purplePixelPose = new Pose(51.25, 36.25, 2.16);
+                    break;
+                case RIGHT:
+                    purplePixelPose = new Pose(53, 41, 1.17);
+                    break;
+                default:
+                    purplePixelPose = new Pose(42.5, 35.5, 1.88);
+                    break;
+            }
+        } else {
+            switch (randomization) {
+                case LEFT:
+                    purplePixelPose = new Pose(37.75, 25, Math.PI / 2);
+                    break;
+                case RIGHT:
+                    purplePixelPose = new Pose(37.75, 38.95, 0.95);
+                    break;
+                default:
+                    purplePixelPose = new Pose(37.75, 39.35, Math.PI / 2);
+                    break;
+            }
         }
+
 
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
@@ -124,9 +138,21 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         new PurplePixelDepositCommand(),
 
-                        new PositionCommand(new Pose(38, 39.25, 0))
+                        // Starting auto sequence for both wall and middle auto
+//                        new PositionCommand(new Pose(38, 39.25, 0))
+//                                .alongWith(new FirstStackSetupCommand()),
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, 0)),
+//
+//                        new FirstStackGrabCommand(),
+
+                        // Starting auto sequence for stagedoor auto
+//                        new PositionCommand(new Pose(14, 39.25, 0))
+                        new ConditionalCommand(
+                                new PositionCommand(new Pose(14, 37.25, Math.PI / 2)),
+                                new PositionCommand(new Pose(14, 39.25, Math.PI / 2)),
+                                () -> Globals.RANDOMIZATION == Location.RIGHT)
                                 .alongWith(new FirstStackSetupCommand()),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, 0)),
+                        new StackRelocalizeCommand(stackPipeline, new Pose(16, 39.25, 0)),
 
                         new FirstStackGrabCommand(),
 
@@ -135,12 +161,15 @@ public class BlueFarCycleAuto extends LinearOpMode {
 //                        new PositionCommand(new Pose(35.75, -29, 0))
 
                         // WALL AUTO PATH
-                        new PositionCommand(new Pose(59, 34.8, 0)),
-                        new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
-                        new PositionCommand(new Pose(56, -30, 0)),
-                        new PositionCommand(new Pose(28.75, -35, 0)),
+//                        new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
+//                        new PositionCommand(new Pose(59, 34.8, 0)),
+//                        new PositionCommand(new Pose(56, -30, 0)),
+//                        new PositionCommand(new Pose(28.75, -35, 0)),
 
                         // STAGEDOOR AUTO PATH
+                        new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
+                        new PositionCommand(new Pose(10, -30, 0)),
+                        new PositionCommand(new Pose(28.75, -35, 0)),
 
 
                         new RelocalizeCommand(),

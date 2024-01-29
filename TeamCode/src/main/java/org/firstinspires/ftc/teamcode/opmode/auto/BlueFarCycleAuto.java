@@ -4,6 +4,7 @@ import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -63,7 +64,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
         Globals.SIDE = Location.FAR;
         Globals.ROUTE = Location.STAGEDOOR;
 
-        telemetry = FtcDashboard.getInstance().getTelemetry();
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
 
         robot.init(hardwareMap);
 

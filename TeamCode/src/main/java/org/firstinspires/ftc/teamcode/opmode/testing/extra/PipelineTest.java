@@ -20,13 +20,13 @@ public class PipelineTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Globals.ALLIANCE = Location.BLUE;
+        Globals.ALLIANCE = Location.RED;
         Globals.SIDE = Location.CLOSE;
 
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
-                .setCameraResolution(new Size(1280, 720))
+                .setCameraResolution(new Size(1920, 1080))
                 .addProcessor(propPipeline)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)

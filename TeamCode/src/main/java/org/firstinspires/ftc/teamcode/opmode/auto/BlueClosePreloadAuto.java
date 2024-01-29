@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import android.util.Size;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -51,6 +53,8 @@ public class BlueClosePreloadAuto extends LinearOpMode {
         Globals.ALLIANCE = Location.BLUE;
         Globals.SIDE = Location.CLOSE;
 
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
+
         robot.init(hardwareMap);
 
         robot.intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
@@ -60,7 +64,7 @@ public class BlueClosePreloadAuto extends LinearOpMode {
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
-                .setCameraResolution(new Size(1280, 720))
+                .setCameraResolution(new Size(1920, 1080))
                 .addProcessor(propPipeline)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .enableLiveView(true)

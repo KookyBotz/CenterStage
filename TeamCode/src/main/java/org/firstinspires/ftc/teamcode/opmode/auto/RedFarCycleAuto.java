@@ -4,6 +4,7 @@ import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -63,7 +64,7 @@ public class RedFarCycleAuto extends LinearOpMode {
         Globals.SIDE = Location.FAR;
         Globals.ROUTE = Location.STAGEDOOR;
 
-        telemetry = FtcDashboard.getInstance().getTelemetry();
+        telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
 
         robot.init(hardwareMap);
 
@@ -157,8 +158,8 @@ public class RedFarCycleAuto extends LinearOpMode {
                                 new PositionCommand(new Pose(-14, 39.25, -Math.PI / 2)),
                                 () -> Globals.RANDOMIZATION == Location.LEFT)
                                 .alongWith(new FirstStackSetupCommand()),
-                        new PositionCommand(new Pose(-14.95, 40.25, 0)),
-                        new StackRelocalizeCommand(stackPipeline, new Pose(-14.95, 40.25, 0)),
+                        new PositionCommand(new Pose(-14.95, 39.25, 0)),
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(-14.95, 40.25, 0)),
                         new FirstStackGrabCommand(),
                         new WaitCommand(10000),
 

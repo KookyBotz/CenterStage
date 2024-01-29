@@ -52,10 +52,13 @@ public class Globals {
         if (RANDOMIZATION == Location.CENTER) index += 2;
         else if (RANDOMIZATION == Location.RIGHT) index += 4;
 
+        if (ALLIANCE == Location.RED) index += 6;
+
         System.out.println("CURRENT INDEX");
         System.out.println(index);
-        System.out.println(Range.clip(index, 0, 5));
+//        System.out.println(Range.clip(index, 0, 11));
 
-        return Range.clip(index, 0, 5);
+//        return Range.clip(index, 0, 5);
+        return index;
     }
 }

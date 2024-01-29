@@ -16,7 +16,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class PropPipeline implements VisionProcessor {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     public static int redLeftX = (int) (815);
     public static int redLeftY = (int) (550);
     public static int redCenterX = (int) (1365);

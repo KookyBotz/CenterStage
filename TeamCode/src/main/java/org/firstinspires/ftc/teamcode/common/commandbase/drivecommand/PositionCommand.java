@@ -43,12 +43,11 @@ public class PositionCommand extends CommandBase {
 
     private final double  MAX_TRANSLATIONAL_SPEED = 0.5;
     private final double  MAX_ROTATIONAL_SPEED = 0.4;
+    private final double K_STATIC = 1.85;
 
     public PositionCommand(Pose targetPose) {
         this.drivetrain = robot.drivetrain;
         this.targetPose = targetPose;
-
-
 
         xController.reset();
         yController.reset();
@@ -97,10 +96,10 @@ public class PositionCommand extends CommandBase {
         double y_rotated = xPower * Math.sin(-robotPose.heading) + yPower * Math.cos(-robotPose.heading);
 
         hPower = Range.clip(hPower, -MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
-        x_rotated = Range.clip(x_rotated, -MAX_TRANSLATIONAL_SPEED / 1.85, MAX_TRANSLATIONAL_SPEED / 1.85);
+        x_rotated = Range.clip(x_rotated, -MAX_TRANSLATIONAL_SPEED / K_STATIC, MAX_TRANSLATIONAL_SPEED / K_STATIC);
         y_rotated = Range.clip(y_rotated, -MAX_TRANSLATIONAL_SPEED, MAX_TRANSLATIONAL_SPEED);
 
-        return new Pose(x_rotated * 1.85, y_rotated, hPower);
+        return new Pose(x_rotated * K_STATIC, y_rotated, hPower);
     }
 
     @Override

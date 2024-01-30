@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -77,8 +78,7 @@ public class Duo extends CommandOpMode {
                                         new ClawDepositCommand(),
                                         new ConditionalCommand(
                                                 new IntakeRetractCommand(),
-                                                new IntakeExtendCommand(extendIntake ? 500 : 100)
-                                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
+                                                new IntakeExtendCommand(extendIntake ? 500 : 100),
                                                 () -> Globals.IS_INTAKING
                                         ),
                                         () -> Globals.IS_SCORING
@@ -90,13 +90,17 @@ public class Duo extends CommandOpMode {
                                 new InstantCommand(Globals::startScoring),
                                 new ArmCommand(2.94),
                                 new PivotStateCommand(IntakeSubsystem.PivotState.SCORING)
-                        )).whenReleased(new SequentialCommandGroup(
-                                new DepositRetractionCommand()
-                                )
-                );
+                        ));
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)));
+                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)
+                        .alongWith(new ConditionalCommand(
+                                new InstantCommand(() -> gamepad1.rumble(200))
+                                        .alongWith(new WaitCommand(300))
+                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
+                                new InstantCommand(() -> gamepad1.rumble(200)),
+                                () -> extendIntake
+                        ))));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand()
@@ -164,8 +168,9 @@ public class Duo extends CommandOpMode {
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("intake index", robot.extension.getStackHeightIndex());
-        telemetry.addData("intake height", robot.extension.getStackHeight());
+//        telemetry.addData("intake index", robot.extension.getStackHeightIndex());
+//        telemetry.addData("intake height", robot.extension.getStackHeight());
+        telemetry.addData("lift ticks", robot.extensionActuator.getPosition() / 26);
         loopTime = loop;
         telemetry.update();
     }

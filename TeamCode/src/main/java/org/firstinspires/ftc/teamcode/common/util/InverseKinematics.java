@@ -12,7 +12,7 @@ public class InverseKinematics {
         double ticks_per_inch = 26;
 
         double d_retracted = 11.7416379163791637916379;
-        double d_extended = 33.44;
+        double d_extended = 35.44;
 
         double t_y = (5 + 22.5 * ((target_backdrop_height) / 10.0)) + perp_backdrop_distance * Math.sin(Math.PI / 6) + height_backdrop_distance * Math.sin(2 * Math.PI / 3);
         double t_x = -(((20.125 * t_y) / 30.0) - backdrop_front + distance_sensor_input + perp_backdrop_distance * Math.cos(Math.PI / 6) + height_backdrop_distance * Math.cos(2 * Math.PI / 3));
@@ -34,6 +34,7 @@ public class InverseKinematics {
         t_angle = Math.atan2(diff_y, diff_x);
         t_extension = MathUtils.clamp(Math.hypot(diff_x, diff_y), d_retracted, d_extended);
 
+        System.out.println("EXT: " + Math.hypot(diff_x, diff_y));
         t_extension -= d_retracted;
         t_extension *= ticks_per_inch;
     }

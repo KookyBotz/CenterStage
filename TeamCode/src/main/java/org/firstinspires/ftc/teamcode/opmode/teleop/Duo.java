@@ -40,7 +40,7 @@ public class Duo extends CommandOpMode {
     private double loopTime = 0.0;
     private boolean lastJoystickUpRight = false;
     private boolean lastJoystickDownRight = false;
-//    private boolean lastJoystickUpLeft = false;
+//    private boolean lastJoystickitUpLeft = false;
 //    private boolean lastJoystickDownLeft = false;
     private boolean extendIntake = true;
 
@@ -106,10 +106,12 @@ public class Duo extends CommandOpMode {
                 .whenPressed(new DepositRetractionCommand()
                         .alongWith(new InstantCommand(() -> gamepad2.rumble(200))));
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
-                        .whenPressed(new IntakeHeightCommand(robot, 1));
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
-                .whenPressed(new IntakeHeightCommand(robot, -1));
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                        .whenPressed(new IntakeHeightCommand(robot, 1));
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//                .whenPressed(new IntakeHeightCommand(robot, -1));
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(new IntakeHeightCommand(robot, 0));
 
         robot.read();
         while (opModeInInit()) {
@@ -162,7 +164,8 @@ public class Duo extends CommandOpMode {
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("height", robot.extension.getBackdropHeight());
+        telemetry.addData("intake index", robot.extension.getStackHeightIndex());
+        telemetry.addData("intake height", robot.extension.getStackHeight());
         loopTime = loop;
         telemetry.update();
     }

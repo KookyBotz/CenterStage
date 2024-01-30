@@ -13,12 +13,9 @@ public class IntakeHeightCommand extends SequentialCommandGroup {
 
     public IntakeHeightCommand(RobotHardware robot, int increment) {
         super(
-                new InstantCommand(() -> robot.extension.incrementBackdropHeight(increment)),
+                new InstantCommand(() -> robot.extension.incrementStackHeight(increment)),
                 new ConditionalCommand(
-                        new SequentialCommandGroup(
-                                new ArmFloatCommand(true),
-                                new ArmLiftCommand(robot.extension.getStackHeight())
-                        ),
+                        new InstantCommand(() -> robot.armLiftServo.setPosition(robot.extension.getStackHeight())),
                         new InstantCommand(),
                         () -> Globals.IS_INTAKING
                 )

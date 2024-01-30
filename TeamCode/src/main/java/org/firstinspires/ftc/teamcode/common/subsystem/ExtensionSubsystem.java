@@ -16,10 +16,19 @@ public class ExtensionSubsystem extends WSubsystem {
 
     private final RobotHardware robot = RobotHardware.getInstance();
     private int backdropHeight = 0;
+    private int stackHeight = 0;
     public IntSupplier liftTicks;
     public DoubleSupplier armAngle;
 
     public double feedforward = 0.0;
+
+    private double[] stackHeights = {
+            0.565,
+            0.5975,
+            0.63,
+            0.6625,
+            0.695
+    };
 
     public ExtensionSubsystem() {
         this.liftTicks = () -> robot.intSubscriber(Sensors.SensorType.EXTENSION_ENCODER);
@@ -86,8 +95,20 @@ public class ExtensionSubsystem extends WSubsystem {
         return backdropHeight;
     }
 
+    public double getStackHeight() {
+        return stackHeights[getStackHeightIndex()];
+    }
+
+    public int getStackHeightIndex() {
+        return stackHeight;
+    }
+
     public void incrementBackdropHeight(int amount) {
         this.backdropHeight = (int) MathUtils.clamp(getBackdropHeight() + amount, 0, 11);
+    }
+
+    public void incremementStackHeight(int amount) {
+        this.stackHeight = (int) MathUtils.clamp(getStackHeight() + amount, 0, 4);
     }
 
     public void setBackdropHeight(int amount) {

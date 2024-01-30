@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositEx
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositRetractionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.HeightChangeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeHeightCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -76,14 +77,15 @@ public class Duo extends CommandOpMode {
                                         new ClawDepositCommand(),
                                         new ConditionalCommand(
                                                 new IntakeRetractCommand(),
-                                                new IntakeExtendCommand(extendIntake ? 500 : 100),
+                                                new IntakeExtendCommand(extendIntake ? 500 : 100)
+                                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
                                                 () -> Globals.IS_INTAKING
                                         ),
                                         () -> Globals.IS_SCORING
                                 ))
                 );
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.Y )
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
                         .whenPressed(new SequentialCommandGroup(
                                 new InstantCommand(Globals::startScoring),
                                 new ArmCommand(2.94),
@@ -97,10 +99,17 @@ public class Duo extends CommandOpMode {
                 .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand()));
+                .whenPressed(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand()
+                        .alongWith(new InstantCommand(() -> gamepad2.rumble(200)))));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new DepositRetractionCommand());
+                .whenPressed(new DepositRetractionCommand()
+                        .alongWith(new InstantCommand(() -> gamepad2.rumble(200))));
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+                        .whenPressed(new IntakeHeightCommand(robot, 1));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+                .whenPressed(new IntakeHeightCommand(robot, -1));
 
         robot.read();
         while (opModeInInit()) {
@@ -122,8 +131,8 @@ public class Duo extends CommandOpMode {
 
         boolean currentJoystickUpRight = gamepad1.right_stick_y < -0.5 || gamepad2.right_stick_y < -0.5;
         boolean currentJoystickDownRight = gamepad1.right_stick_y > 0.5 || gamepad2.right_stick_y > 0.5;
-        boolean currentJoystickUpLeft = gamepad2.left_stick_y < -0.5;
-        boolean currentJoystickDownLeft = gamepad2.left_stick_y > 0.5;
+//        boolean currentJoystickUpLeft = gamepad2.left_stick_y < -0.5;
+//        boolean currentJoystickDownLeft = gamepad2.left_stick_y > 0.5;
 
         if (currentJoystickDownRight && !lastJoystickDownRight) {
             CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, -1));
@@ -139,9 +148,6 @@ public class Duo extends CommandOpMode {
 
         robot.leftHang.setPower(gamepad2.left_stick_y);
         robot.rightHang.setPower(-gamepad2.left_stick_y);
-
-//        left.setPower(gamepad1.left_stick_y);
-//        right.setPower(-gamepad1.left_stick_y);
 
         if (gamepad2.right_bumper && gamepad2.left_bumper) robot.drone.updateState(DroneSubsystem.DroneState.FIRED);
 

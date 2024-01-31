@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
 import org.firstinspires.ftc.teamcode.common.util.MathUtils;
+import org.firstinspires.ftc.teamcode.common.util.logging.CSVInterface;
+import org.firstinspires.ftc.teamcode.common.util.logging.LogType;
+import org.firstinspires.ftc.teamcode.common.util.logging.Logger;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -20,6 +23,13 @@ public class ExtensionSubsystem extends WSubsystem {
     public DoubleSupplier armAngle;
 
     public double feedforward = 0.0;
+
+    private double power = 0.0;
+    private double maxPower = 0.0;
+    private double count = 0.0;
+
+    public static boolean LOGGING = false;
+    private boolean written = false;
 
     public ExtensionSubsystem() {
         this.liftTicks = () -> robot.intSubscriber(Sensors.SensorType.EXTENSION_ENCODER);
@@ -58,6 +68,30 @@ public class ExtensionSubsystem extends WSubsystem {
 
         double error = robot.extensionActuator.getOverallTargetPosition() - robot.extensionActuator.getPosition();
         double feedforward = 0.1 * Math.abs(Math.cos(robot.armActuator.getPosition())) * Math.signum(error);
+
+        if (LOGGING) {
+
+            if (!RobotHardware.getInstance().armActuator.hasReached()) {
+                Logger.logData(LogType.ARM_POSITION, String.valueOf(RobotHardware.getInstance().armActuator.getPosition()));
+                Logger.logData(LogType.ARM_POWER, String.valueOf(RobotHardware.getInstance().armActuator.getPower()));
+                Logger.logData(LogType.ARM_TARGET_POSITION, String.valueOf(RobotHardware.getInstance().armActuator.getTargetPosition()));
+
+                double curPower = RobotHardware.getInstance().armActuator.getPower();
+                power += curPower;
+                count += 1.0;
+                if (Math.abs(curPower) > Math.abs(maxPower)) {
+                    maxPower = curPower;
+                }
+            }
+
+            if (RobotHardware.getInstance().armActuator.hasReached() && !written) {
+                System.out.println("ARM POWER " + (power / count));
+                Logger.logData(LogType.ARM_POWER_AVERAGE, String.valueOf(power / count));
+                Logger.logData(LogType.ARM_MAX_POWER, String.valueOf(maxPower));
+                CSVInterface.log();
+                written = true;
+            }
+        }
 
 
 //        robot.extensionActuator.updateFeedforward(Math.abs(error) > 10 ? feedforward : 0);

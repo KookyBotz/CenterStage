@@ -94,10 +94,10 @@ public class Duo extends CommandOpMode {
                 );
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)));
+                .whenPressed(new InstantCommand(() -> extendIntake = !extendIntake));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand()));
+                .whenPressed(new DepositExtendCommand());
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(new DepositRetractionCommand());

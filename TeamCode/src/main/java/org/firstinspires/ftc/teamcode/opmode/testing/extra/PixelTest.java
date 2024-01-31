@@ -91,15 +91,15 @@ public class PixelTest extends LinearOpMode {
                 telemetry.addData("CORRECTION", stackPipeline.getStrafeCorrection());
                 telemetry.update();
 
-                Logger.logData(LogType.TAPE_CENTROID_X, String.valueOf(data.x));
-                Logger.logData(LogType.TAPE_CENTROID_Y, String.valueOf(data.y));
-                Logger.logData(LogType.TAPE_CONTOUR_AREA, String.valueOf(data.area));
-                Logger.logData(LogType.TAPE_CONTOUR_LENGTH, String.valueOf(data.length));
+//                Logger.logData(LogType.TAPE_CENTROID_X, String.valueOf(data.x));
+//                Logger.logData(LogType.TAPE_CENTROID_Y, String.valueOf(data.y));
+//                Logger.logData(LogType.TAPE_CONTOUR_AREA, String.valueOf(data.area));
+//                Logger.logData(LogType.TAPE_CONTOUR_LENGTH, String.valueOf(data.length));
             }
 
             previousState = currentState;
         }
 
-        CSVInterface.log();
+//        CSVInterface.log();
     }
 }

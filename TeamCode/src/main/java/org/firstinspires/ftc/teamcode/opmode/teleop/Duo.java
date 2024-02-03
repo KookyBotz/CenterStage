@@ -41,7 +41,7 @@ public class Duo extends CommandOpMode {
     private double loopTime = 0.0;
     private boolean lastJoystickUpRight = false;
     private boolean lastJoystickDownRight = false;
-//    private boolean lastJoystickitUpLeft = false;
+    //    private boolean lastJoystickitUpLeft = false;
 //    private boolean lastJoystickDownLeft = false;
     private boolean extendIntake = true;
 
@@ -86,20 +86,20 @@ public class Duo extends CommandOpMode {
                 );
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
-                        .whenPressed(new SequentialCommandGroup(
-                                new InstantCommand(Globals::startScoring),
-                                new ArmCommand(2.94),
-                                new PivotStateCommand(IntakeSubsystem.PivotState.SCORING)
-                        ));
+                .whenPressed(new SequentialCommandGroup(
+                        new InstantCommand(Globals::startScoring),
+                        new ArmCommand(2.94),
+                        new PivotStateCommand(IntakeSubsystem.PivotState.SCORING)
+                ));
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.X)
                 .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)
                         .alongWith(new ConditionalCommand(
                                 new InstantCommand(() -> gamepad1.rumble(200))
-                                        .alongWith(new WaitCommand(300))
-                                        .alongWith(new InstantCommand(() -> gamepad1.rumble(200))),
+                                        .andThen(new WaitCommand(300)
+                                                .andThen(new InstantCommand(() -> gamepad1.rumble(200)))),
                                 new InstantCommand(() -> gamepad1.rumble(200)),
-                                () -> extendIntake
+                                () -> !extendIntake
                         ))));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)

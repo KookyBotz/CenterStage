@@ -78,7 +78,7 @@ public class Duo extends CommandOpMode {
                                         new ClawDepositCommand(),
                                         new ConditionalCommand(
                                                 new IntakeRetractCommand(),
-                                                new IntakeExtendCommand(extendIntake ? 500 : 100),
+                                                new IntakeExtendCommand(extendIntake ? 500 : 125),
                                                 () -> Globals.IS_INTAKING
                                         ),
                                         () -> Globals.IS_SCORING

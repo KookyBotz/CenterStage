@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class DepositRetractionCommand extends SequentialCommandGroup {
     public DepositRetractionCommand() {
         super(
-                new ExtensionCommand(75),
+                new ExtensionCommand(25),
                 new WaitCommand(50),
                 new ArmCommand(0.2),
                 new ArmLiftCommand(0.3),

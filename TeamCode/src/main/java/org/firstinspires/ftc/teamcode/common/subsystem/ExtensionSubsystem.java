@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.common.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.hardware.Sensors;
@@ -16,10 +15,23 @@ public class ExtensionSubsystem extends WSubsystem {
 
     private final RobotHardware robot = RobotHardware.getInstance();
     private int backdropHeight = 0;
+    private int stackHeight = 1;
     public IntSupplier liftTicks;
     public DoubleSupplier armAngle;
 
     public double feedforward = 0.0;
+
+    private double[] stackHeights = { // 0.0325
+            0.435,
+            0.4675,
+            0.5,
+            0.5325,
+            0.565,
+            0.5975,
+            0.63,
+            0.6625,
+            0.695
+    };
 
     public ExtensionSubsystem() {
         this.liftTicks = () -> robot.intSubscriber(Sensors.SensorType.EXTENSION_ENCODER);
@@ -86,8 +98,20 @@ public class ExtensionSubsystem extends WSubsystem {
         return backdropHeight;
     }
 
+    public double getStackHeight() {
+        return stackHeights[getStackHeightIndex()];
+    }
+
+    public int getStackHeightIndex() {
+        return stackHeight;
+    }
+
     public void incrementBackdropHeight(int amount) {
         this.backdropHeight = (int) MathUtils.clamp(getBackdropHeight() + amount, 0, 11);
+    }
+
+    public void incrementStackHeight(int amount) {
+        this.stackHeight = (int) MathUtils.clamp(getStackHeightIndex() + amount, 0, 8);
     }
 
     public void setBackdropHeight(int amount) {

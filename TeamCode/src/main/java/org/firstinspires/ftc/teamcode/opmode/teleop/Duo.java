@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositEx
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.DepositRetractionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.HeightChangeCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeExtendCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeHeightCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.teleopcommand.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -39,7 +41,7 @@ public class Duo extends CommandOpMode {
     private double loopTime = 0.0;
     private boolean lastJoystickUpRight = false;
     private boolean lastJoystickDownRight = false;
-//    private boolean lastJoystickUpLeft = false;
+    //    private boolean lastJoystickitUpLeft = false;
 //    private boolean lastJoystickDownLeft = false;
     private boolean extendIntake = true;
 
@@ -76,31 +78,44 @@ public class Duo extends CommandOpMode {
                                         new ClawDepositCommand(),
                                         new ConditionalCommand(
                                                 new IntakeRetractCommand(),
-                                                new IntakeExtendCommand(extendIntake ? 500 : 100),
+                                                new IntakeExtendCommand(extendIntake ? 500 : 125),
                                                 () -> Globals.IS_INTAKING
                                         ),
                                         () -> Globals.IS_SCORING
                                 ))
                 );
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.Y )
-                        .whenPressed(new SequentialCommandGroup(
-                                new InstantCommand(Globals::startScoring),
-                                new ArmCommand(2.94),
-                                new PivotStateCommand(IntakeSubsystem.PivotState.SCORING)
-                        )).whenReleased(new SequentialCommandGroup(
-                                new DepositRetractionCommand()
-                                )
-                );
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
+                .whenPressed(new SequentialCommandGroup(
+                        new InstantCommand(Globals::startScoring),
+                        new ArmCommand(2.94),
+                        new PivotStateCommand(IntakeSubsystem.PivotState.SCORING)
+                ));
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)));
+                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)
+                        .alongWith(new ConditionalCommand(
+                                new InstantCommand(() -> gamepad1.rumble(200))
+                                        .andThen(new WaitCommand(300)
+                                                .andThen(new InstantCommand(() -> gamepad1.rumble(200)))),
+                                new InstantCommand(() -> gamepad1.rumble(200)),
+                                () -> !extendIntake
+                        ))));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand()));
+                .whenPressed(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand()
+                        .alongWith(new InstantCommand(() -> gamepad2.rumble(200)))));
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new DepositRetractionCommand());
+                .whenPressed(new DepositRetractionCommand()
+                        .alongWith(new InstantCommand(() -> gamepad2.rumble(200))));
+
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP)
+//                        .whenPressed(new IntakeHeightCommand(robot, 1));
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN)
+//                .whenPressed(new IntakeHeightCommand(robot, -1));
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT)
+//                .whenPressed(new IntakeHeightCommand(robot, 0));
 
         robot.read();
         while (opModeInInit()) {
@@ -122,8 +137,8 @@ public class Duo extends CommandOpMode {
 
         boolean currentJoystickUpRight = gamepad1.right_stick_y < -0.5 || gamepad2.right_stick_y < -0.5;
         boolean currentJoystickDownRight = gamepad1.right_stick_y > 0.5 || gamepad2.right_stick_y > 0.5;
-        boolean currentJoystickUpLeft = gamepad2.left_stick_y < -0.5;
-        boolean currentJoystickDownLeft = gamepad2.left_stick_y > 0.5;
+//        boolean currentJoystickUpLeft = gamepad2.left_stick_y < -0.5;
+//        boolean currentJoystickDownLeft = gamepad2.left_stick_y > 0.5;
 
         if (currentJoystickDownRight && !lastJoystickDownRight) {
             CommandScheduler.getInstance().schedule(new HeightChangeCommand(robot, -1));
@@ -140,9 +155,6 @@ public class Duo extends CommandOpMode {
         robot.leftHang.setPower(gamepad2.left_stick_y);
         robot.rightHang.setPower(-gamepad2.left_stick_y);
 
-//        left.setPower(gamepad1.left_stick_y);
-//        right.setPower(-gamepad1.left_stick_y);
-
         if (gamepad2.right_bumper && gamepad2.left_bumper) robot.drone.updateState(DroneSubsystem.DroneState.FIRED);
 
         if (Math.abs(gamepad2.right_trigger) > 0.5) robot.hang.updateState(HangSubsystem.HangState.EXTENDING);
@@ -156,7 +168,9 @@ public class Duo extends CommandOpMode {
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
-        telemetry.addData("height", robot.extension.getBackdropHeight());
+//        telemetry.addData("intake index", robot.extension.getStackHeightIndex());
+//        telemetry.addData("intake height", robot.extension.getStackHeight());
+        telemetry.addData("lift ticks", robot.extensionActuator.getPosition() / 26);
         loopTime = loop;
         telemetry.update();
     }

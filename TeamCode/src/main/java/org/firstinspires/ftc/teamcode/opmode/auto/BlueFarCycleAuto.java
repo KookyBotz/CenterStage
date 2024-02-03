@@ -212,6 +212,12 @@ public class BlueFarCycleAuto extends LinearOpMode {
                                 .alongWith(new PositionCommand(new Pose(36.25, -35.25, 0))),
                         new DepositRetractionCommand(),
 
+//                        new PositionCommand(new Pose(12, -32, 0)),
+
+//
+//                        new PositionCommand(new Pose(38, 39, -0.02)),
+//                        new StackRelocalizeCommand(stackPipeline, new Pose(38, 39, -0.02)),
+
 
 //                        new PositionCommand(new Pose(35.75, -29, 0)),
 //

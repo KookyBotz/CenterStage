@@ -29,7 +29,7 @@ public class SecondDepositCommand extends SequentialCommandGroup {
                 new WaitCommand(250),
                 new ArmCommand(2.805),
                 new WaitCommand(750),
-                new ExtensionCommand(75),
+                new ExtensionCommand(25),
                 new WaitCommand(150),
                 new ArmCommand(0.2),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),

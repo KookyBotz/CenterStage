@@ -15,6 +15,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Autonomous(name = "BackdropTest")
+@Disabled
 public class BackdropTest extends LinearOpMode {
 
     private PreloadDetectionPipeline preloadPipeline;

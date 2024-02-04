@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 
 @Autonomous(name = "LocalizationTest")
-//@Disabled
+@Disabled
 public class LocalizationTest extends CommandOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();

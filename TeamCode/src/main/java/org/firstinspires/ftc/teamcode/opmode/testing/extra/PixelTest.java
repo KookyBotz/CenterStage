@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -26,6 +27,7 @@ import java.util.Locale;
 
 @Config
 @Autonomous(name = "PixelTest")
+@Disabled
 public class PixelTest extends LinearOpMode {
 
     private StackPipeline stackPipeline;

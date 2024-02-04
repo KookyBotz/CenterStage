@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 
 public class ScoringPositions {
 
-    private static int extension = 365;
+    private static int extension = 375;
     private static double armAngle = 2.98;
     public static final ScoringPosition[] YELLOW_PIXEL_POSITIONS = {
             new ScoringPosition(new Pose(42.75, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE LEFT LEFT

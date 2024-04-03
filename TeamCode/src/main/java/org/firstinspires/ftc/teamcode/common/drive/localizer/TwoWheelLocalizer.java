@@ -37,12 +37,12 @@ import java.util.function.DoubleSupplier;
 public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
     private final RobotHardware robot = RobotHardware.getInstance();
 
-    public static double TICKS_PER_REV = 4096;
+    public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 0.689;
     public static double GEAR_RATIO = 1;
 
-    public static double TRACK_WIDTH = 10.818897;
-    public static double FORWARD_OFFSET = 4.307086;
+    public static double TRACK_WIDTH =      10.79960; //10.73495;
+    public static double FORWARD_OFFSET =    4.69008; //4.65059
 
     public final DoubleSupplier positionLeft, positionRight, positionFront, imuAngle;
 
@@ -52,9 +52,9 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        positionLeft = () -> robot.doubleSubscriber(Sensors.SensorType.POD_LEFT);
-        positionRight = () -> robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT);
-        positionFront = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_FRONT);
+        positionLeft = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_LEFT) / 0.99747368421052631578947368421053;
+        positionRight = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT) / 0.99747368421052631578947368421053;
+        positionFront = () -> robot.doubleSubscriber(Sensors.SensorType.POD_FRONT) / 0.99157894736842105263157894736842;
         imuAngle = robot::getAngle;
     }
 

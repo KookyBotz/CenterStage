@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+@Disabled
 @Autonomous(name = "BackdropTest")
 public class BackdropTest extends LinearOpMode {
 

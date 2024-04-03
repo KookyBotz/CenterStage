@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 
 @Config
 @TeleOp(name = "ServoTest")
+@Disabled
 public class ServoTest extends OpMode {
     private WServo servo1;
     private WServo servo2;

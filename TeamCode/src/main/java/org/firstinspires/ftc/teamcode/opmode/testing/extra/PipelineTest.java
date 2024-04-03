@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous(name = "PipelineTest")
+@Disabled
 public class PipelineTest extends LinearOpMode {
 
     private PropPipeline propPipeline;

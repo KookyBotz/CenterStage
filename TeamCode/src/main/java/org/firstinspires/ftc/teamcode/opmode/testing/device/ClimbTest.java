@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.CRServoImplEx;
 import com.qualcomm.robotcore.hardware.PwmControl;
 
 @TeleOp
-//@Disabled
+@Disabled
 public class ClimbTest extends OpMode {
     private CRServoImplEx left, right;
 

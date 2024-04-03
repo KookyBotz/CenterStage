@@ -14,6 +14,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
+
 public class FunAlgoTest extends LinearOpMode {
 
     private static final boolean USE_WEBCAM = true;

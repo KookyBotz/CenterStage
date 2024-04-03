@@ -6,7 +6,7 @@ import com.arcrobotics.ftclib.controller.PIDFController;
 
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDriveConstants;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Vector2D;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.path.GVFPathFollower;
@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.common.util.MathUtils;
 @Config
 public class GVFCommand extends CommandBase {
     GVFPathFollower controller;
-    ThreeWheelLocalizer localizer;
+    FusedLocalizer localizer;
     HermitePath path;
     Drivetrain drivetrain;
 
@@ -50,7 +50,7 @@ public class GVFCommand extends CommandBase {
     public static double hahaFunnyDelta = 0.0;
     public static Pose funny = new Pose(0, 0, 0);
 
-    public GVFCommand(Drivetrain drivetrain, ThreeWheelLocalizer localizer, HermitePath path) {
+    public GVFCommand(Drivetrain drivetrain, FusedLocalizer localizer, HermitePath path) {
         this.drivetrain = drivetrain;
         this.localizer = localizer;
         this.path = path;

@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.common.hardware;
 
 import android.util.Size;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -21,13 +19,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.TwoWheelLocalizer;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagConstants;
+import org.firstinspires.ftc.teamcode.common.drive.localizer.FusedLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.subsystem.DroneSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.ExtensionSubsystem;
@@ -38,7 +34,6 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WActuatorGroup;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
-import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.vision.PreloadDetectionPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
@@ -64,6 +59,9 @@ public class RobotHardware {
     // extension
     public AbsoluteAnalogEncoder armPitchEncoder;
     public AnalogInput armPitchEnc;
+
+    public AnalogInput leftDistSensor;
+    public AnalogInput rightDistSensor;
 
     public DcMotorEx extensionMotor;
     public DcMotorEx armMotor;
@@ -122,7 +120,7 @@ public class RobotHardware {
     private double imuAngle = 0;
     private double imuOffset = 0;
     private double startOffset = 0;
-    public ThreeWheelLocalizer localizer;
+    public FusedLocalizer localizer;
 
 
     public HashMap<Sensors.SensorType, Object> values;
@@ -178,6 +176,10 @@ public class RobotHardware {
         armPitchEncoder.setInverted(true);
         armPitchEncoder.setWraparound(true);
 
+        this.leftDistSensor = hardwareMap.get(AnalogInput.class, "leftDist");
+        this.rightDistSensor = hardwareMap.get(AnalogInput.class, "rightDist");
+
+
         this.extensionActuator = new WActuatorGroup(
                 () -> intSubscriber(Sensors.SensorType.EXTENSION_ENCODER), extensionMotor)
                 .setPIDController(new PIDController(0.008, 0.0, 0.0004))
@@ -208,9 +210,9 @@ public class RobotHardware {
         intakePivotActuator.setOffset(-0.05);
 //        intakePivotActuator
 
-        this.podLeft = new WEncoder(new MotorEx(hardwareMap, "dtFrontRightMotor").encoder);
+        this.podLeft = new WEncoder(new MotorEx(hardwareMap, "dtBackLeftMotor").encoder);
         this.podFront = new WEncoder(new MotorEx(hardwareMap, "dtBackRightMotor").encoder);
-        this.podRight = new WEncoder(new MotorEx(hardwareMap, "dtBackLeftMotor").encoder);
+        this.podRight = new WEncoder(new MotorEx(hardwareMap, "dtFrontRightMotor").encoder);
 
         this.droneTrigger = new WServo(hardwareMap.get(Servo.class, "drone"));
 
@@ -238,16 +240,18 @@ public class RobotHardware {
         extension = new ExtensionSubsystem();
         intake = new IntakeSubsystem();
         if (Globals.IS_AUTO) {
-            localizer = new ThreeWheelLocalizer();
+            localizer = new FusedLocalizer();
 
             startCamera();
 
-//            synchronized (imuLock) {
-//                imu = hardwareMap.get(BNO055IMU.class, "imu");
-//                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-//                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-//                imu.initialize(parameters);
-//            }
+            synchronized (imuLock) {
+                imu = hardwareMap.get(BNO055IMU.class, "imu");
+                BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+                parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+                imu.initialize(parameters);
+            }
+
+            imuOffset = AngleUnit.normalizeRadians(imu.getAngularOrientation().firstAngle);
         } else {
             drone = new DroneSubsystem();
             hang = new HangSubsystem();
@@ -282,22 +286,28 @@ public class RobotHardware {
         intake.periodic();
         extension.periodic();
         drivetrain.periodic();
-        if (Globals.IS_AUTO) localizer.periodic();
+        if (Globals.IS_AUTO) {
+            localizer.periodic();
+        }
     }
 
     public void startIMUThread(LinearOpMode opMode) {
         imuThread = new Thread(() -> {
             while (!opMode.isStopRequested()) {
                 synchronized (imuLock) {
-                    imuAngle = AngleUnit.normalizeRadians(imu.getAngularOrientation().firstAngle + startOffset);
+                    imuAngle = AngleUnit.normalizeRadians(imu.getAngularOrientation().firstAngle);
                 }
             }
         });
         imuThread.start();
     }
 
+    public void readIMU() {
+        imuAngle = AngleUnit.normalizeRadians(imu.getAngularOrientation().firstAngle);
+    }
+
     public double getAngle() {
-        return AngleUnit.normalizeRadians(imuAngle - imuOffset);
+        return AngleUnit.normalizeRadians(imuAngle - imuOffset + startOffset);
     }
 
     public void reset() {
@@ -308,7 +318,7 @@ public class RobotHardware {
         imuOffset = imuAngle;
     }
 
-    public void setStartOffset(double off) {
+    public void setIMUStartOffset(double off) {
         startOffset = off;
     }
 
@@ -361,15 +371,15 @@ public class RobotHardware {
                     switch (detection.id) {
                         case 1:
                         case 4:
-                            backdropPositions.add(new Pose(detection.ftcPose).add(new Pose(6, 0, 0)));
+                            backdropPositions.add(new Pose(detection.ftcPose, localizer.getPose().heading).add(new Pose(6, 0, 0)));
                             break;
                         case 2:
                         case 5:
-                            backdropPositions.add(new Pose(detection.ftcPose));
+                            backdropPositions.add(new Pose(detection.ftcPose, localizer.getPose().heading));
                             break;
                         case 3:
                         case 6:
-                            backdropPositions.add(new Pose(detection.ftcPose).subt(new Pose(6, 0, 0)));
+                            backdropPositions.add(new Pose(detection.ftcPose, localizer.getPose().heading).subt(new Pose(6, 0, 0)));
                             break;
                         default:
                             break;
@@ -378,12 +388,12 @@ public class RobotHardware {
             }
 
             Pose backdropPosition = backdropPositions.stream().reduce(Pose::add).orElse(new Pose());
-            backdropPosition = backdropPosition.divide(new Pose(backdropPositions.size(), backdropPositions.size(), backdropPositions.size()));
+            backdropPosition = backdropPosition.scale(1.0 / backdropPositions.size());
 
 
             Pose globalTagPosition = localizer.getPose().x > 0 ?
-                    AprilTagLocalizer.convertBlueBackdropPoseToGlobal(backdropPosition) :
-                    AprilTagLocalizer.convertRedBackdropPoseToGlobal(backdropPosition);
+                    AprilTagConstants.convertBlueBackdropPoseToGlobal(backdropPosition) :
+                    AprilTagConstants.convertRedBackdropPoseToGlobal(backdropPosition);
 
             if (Double.isNaN(globalTagPosition.x) || Double.isNaN(globalTagPosition.y) || Double.isNaN(globalTagPosition.heading)) return null;
 

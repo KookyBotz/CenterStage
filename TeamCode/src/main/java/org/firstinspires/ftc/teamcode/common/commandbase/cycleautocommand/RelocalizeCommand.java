@@ -14,13 +14,9 @@ public class RelocalizeCommand extends SequentialCommandGroup {
         super.addCommands(
                 // don't ask
                 new WaitCommand(50),
-                new InstantCommand(() -> {
-                    a = RobotHardware.getInstance().getAprilTagPosition();
-                }),
+                new InstantCommand(() -> a = RobotHardware.getInstance().getAprilTagPosition()),
                 new WaitCommand(50),
-                new InstantCommand(() -> {
-                    b = RobotHardware.getInstance().getAprilTagPosition();
-                }),
+                new InstantCommand(() -> b = RobotHardware.getInstance().getAprilTagPosition()),
                 new WaitCommand(50),
                 new InstantCommand(() -> {
                     c = RobotHardware.getInstance().getAprilTagPosition();

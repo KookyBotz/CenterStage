@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.ThreeWheelLocalizer;
-import org.firstinspires.ftc.teamcode.common.drive.localizer.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
@@ -43,7 +41,7 @@ public class PositionCommand extends CommandBase {
 
     private final double  MAX_TRANSLATIONAL_SPEED = 0.5;
     private final double  MAX_ROTATIONAL_SPEED = 0.4;
-    private final double K_STATIC = 1.85;
+    private final double X_GAIN = 1.85;
 
     public PositionCommand(Pose targetPose) {
         this.drivetrain = robot.drivetrain;
@@ -96,10 +94,10 @@ public class PositionCommand extends CommandBase {
         double y_rotated = xPower * Math.sin(-robotPose.heading) + yPower * Math.cos(-robotPose.heading);
 
         hPower = Range.clip(hPower, -MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
-        x_rotated = Range.clip(x_rotated, -MAX_TRANSLATIONAL_SPEED / K_STATIC, MAX_TRANSLATIONAL_SPEED / K_STATIC);
+        x_rotated = Range.clip(x_rotated, -MAX_TRANSLATIONAL_SPEED / X_GAIN, MAX_TRANSLATIONAL_SPEED / X_GAIN);
         y_rotated = Range.clip(y_rotated, -MAX_TRANSLATIONAL_SPEED, MAX_TRANSLATIONAL_SPEED);
 
-        return new Pose(x_rotated * K_STATIC, y_rotated, hPower);
+        return new Pose(x_rotated * X_GAIN, y_rotated, hPower);
     }
 
     @Override

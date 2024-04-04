@@ -121,7 +121,7 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
         // obstructions can only make the sensor think we are closer to the wall
         if (Math.abs(distanceMeasurement) < Math.abs(robotPose.x)
                 || Math.abs(distanceMeasurement) - Math.abs(robotPose.x) < 2) {
-            setLateral(distanceMeasurement);
+//            setLateral(distanceMeasurement);
             DTimer.reset();
         }
     }

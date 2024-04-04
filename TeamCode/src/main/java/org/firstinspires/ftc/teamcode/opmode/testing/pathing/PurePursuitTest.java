@@ -29,8 +29,8 @@ public class PurePursuitTest extends CommandOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private double loopTime = 0.0;
 
-    private Pose INTAKE = new Pose(11.25, 39.35, 0.04);
-    private Pose DEPOSIT = new Pose(19, -30.5, 0.195);
+    private Pose INTAKE = new Pose(11.25, 39.35, 0);
+    private Pose DEPOSIT = new Pose(11.25, -35, 0);
 
     @Override
     public void initialize() {
@@ -46,39 +46,39 @@ public class PurePursuitTest extends CommandOpMode {
         robot.localizer.setPose(new Pose(16.85, 39.35, 0));
 
         PurePursuitPath depositPath = new PurePursuitPath(
-                new Waypoint(INTAKE, 15),
-                new Waypoint(new Point(16, -18.5), 15),
-                new Waypoint(DEPOSIT, 15)
+                new Waypoint(INTAKE, 12),
+//                new Waypoint(new Point(16, -18.5), 12),
+                new Waypoint(DEPOSIT, 12)
         );
 
         PurePursuitPath intakePath = new PurePursuitPath(
-                new Waypoint(DEPOSIT, 15),
-                new Waypoint(new Point(11.25, 27.35), 15),
-                new Waypoint(INTAKE, 15)
+                new Waypoint(DEPOSIT, 12),
+//                new Waypoint(new Point(11.25, 27.35), 12),
+                new Waypoint(INTAKE, 12)
         );
 
         PurePursuitPath depositPath2 = new PurePursuitPath(
-                new Waypoint(INTAKE, 15),
-                new Waypoint(new Point(16, -18.5), 15),
-                new Waypoint(DEPOSIT, 15)
+                new Waypoint(INTAKE, 12),
+//                new Waypoint(new Point(16, -18.5), 12),
+                new Waypoint(DEPOSIT, 12)
         );
 
         PurePursuitPath intakePath2 = new PurePursuitPath(
-                new Waypoint(DEPOSIT, 15),
-                new Waypoint(new Point(11.25, 27.35), 15),
-                new Waypoint(INTAKE, 15)
+                new Waypoint(DEPOSIT, 12),
+//                new Waypoint(new Point(11.25, 27.35), 12),
+                new Waypoint(INTAKE, 12)
         );
 
         PurePursuitPath depositPath3 = new PurePursuitPath(
-                new Waypoint(INTAKE, 15),
-                new Waypoint(new Point(16, -18.5), 15),
-                new Waypoint(DEPOSIT, 15)
+                new Waypoint(INTAKE, 12),
+//                new Waypoint(new Point(16, -18.5), 12),
+                new Waypoint(DEPOSIT, 12)
         );
 
         PurePursuitPath intakePath3 = new PurePursuitPath(
-                new Waypoint(DEPOSIT, 15),
-                new Waypoint(new Point(11.25, 27.35), 15),
-                new Waypoint(INTAKE, 15)
+                new Waypoint(DEPOSIT, 12),
+//                new Waypoint(new Point(11.25, 27.35), 12),
+                new Waypoint(INTAKE, 12)
         );
 
 
@@ -128,10 +128,13 @@ public class PurePursuitTest extends CommandOpMode {
 
 //        if (gamepad1.a) robot.localizer.setLateral(robot.getAprilTagPosition());
 
+        if (gamepad1.b) robot.localizer.setLateral(robot.localizer.distanceMeasurement);
+
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         telemetry.addData("pose: ", robot.localizer.getPose());
         telemetry.addData("atag: ", robot.getAprilTagPosition());
+        telemetry.addData("x: ", robot.localizer.distanceMeasurement);
         telemetry.update();
         loopTime = loop;
 

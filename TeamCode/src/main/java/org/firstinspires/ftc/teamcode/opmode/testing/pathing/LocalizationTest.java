@@ -76,12 +76,7 @@ public class LocalizationTest extends CommandOpMode {
         loopTime = loop;
         telemetry.addData("tag", globalTagPosition.toString());
         telemetry.addData("three", currentPose.toString());
-        telemetry.addData("distance", robot.localizer.distanceMeasurements.stream()
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0));
-
-        telemetry.addData("velo", robot.localizer.getPoseVelocity() == null ? 0 :robot.localizer.getPoseVelocity().getHeading());
+        telemetry.addData("x", robot.localizer.distanceMeasurement);
         telemetry.update();
 
 //        if (gamepad1.a && flag) {

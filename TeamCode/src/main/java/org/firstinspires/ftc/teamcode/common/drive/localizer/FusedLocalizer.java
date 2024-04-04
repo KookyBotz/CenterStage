@@ -36,13 +36,14 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
 
     public final DoubleSupplier positionLeft, positionRight, positionFront;
 
+    public double distanceMeasurement;
+
     private final ElapsedTime IMUTimer;
+    private final ElapsedTime DTimer;
 
     private Pose offset = new Pose();
 
-    private final double VOLTAGE_TO_INCHES = 73.529411;
     private final Pose SENSOR_POSE = new Pose(2, 4.5, 0);
-    public final LinkedList<Double> distanceMeasurements = new LinkedList<>();
 
     public FusedLocalizer() {
         super(Arrays.asList(
@@ -56,6 +57,7 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
         positionFront = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_FRONT) / 0.99157894736842105263157894736842;
 
         IMUTimer = new ElapsedTime();
+        DTimer = new ElapsedTime();
     }
 
     public static double encoderTicksToInches(double ticks) {
@@ -104,36 +106,28 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
             robotPose = getPose();
         }
 
-        if (robotPose.y < 24 && robotPose.y > -4) distanceMeasurements.clear();
-        if (Math.abs(robotPose.heading) > Math.PI / 6) distanceMeasurements.clear();
-        if (Math.hypot(velocity.getX(), velocity.getY())> 24) distanceMeasurements.clear();
+        if (robotPose.y < 20 && robotPose.y > -4) return;
+        if (Math.abs(robotPose.heading) > Math.PI / 6) return;
+        if (Math.abs(velocity.getY()) > 4) return;
+        if (DTimer.milliseconds() < 100) return;
 
-        double distSensorReading;
+        distanceMeasurement = 0;
         if (robotPose.x >= 0) {
-            distSensorReading = 70.5 - calculateDistance(robot.rightDistSensor.getVoltage(), robotPose.heading);
+            distanceMeasurement = 70.5 - calculateDistance(robot.rightDistSensor.getVoltage(), robotPose.heading);
         } else {
-            distSensorReading = calculateDistance(robot.leftDistSensor.getVoltage(), robotPose.heading) - 70.5;
+            distanceMeasurement = calculateDistance(robot.leftDistSensor.getVoltage(), robotPose.heading) - 70.5;
         }
 
-        // obstructions can only make the sensor think we are closer
-        if (Math.abs(distSensorReading) < Math.abs(robotPose.x)
-                || Math.abs(distSensorReading) - Math.abs(robotPose.x) < 2) {
-            distanceMeasurements.add(distSensorReading);
-        } else {
-            distanceMeasurements.clear();
+        // obstructions can only make the sensor think we are closer to the wall
+        if (Math.abs(distanceMeasurement) < Math.abs(robotPose.x)
+                || Math.abs(distanceMeasurement) - Math.abs(robotPose.x) < 2) {
+            setLateral(distanceMeasurement);
+            DTimer.reset();
         }
-
-        if (distanceMeasurements.size() >= 100) {
-            setLateral(distanceMeasurements.stream()
-                    .mapToDouble(Double::doubleValue)
-                    .average()
-                    .orElse(0));
-            distanceMeasurements.clear();
-        }
-
     }
 
     public double calculateDistance(double v, double h) {
+        double VOLTAGE_TO_INCHES = 73.529411;
         double dist = (v * VOLTAGE_TO_INCHES) + SENSOR_POSE.y;
         double cosd = Math.cos(h) * dist;
         double offset = Math.sin(h) * SENSOR_POSE.x;

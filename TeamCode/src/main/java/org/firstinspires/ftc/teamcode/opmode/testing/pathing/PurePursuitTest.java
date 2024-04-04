@@ -132,10 +132,6 @@ public class PurePursuitTest extends CommandOpMode {
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
         telemetry.addData("pose: ", robot.localizer.getPose());
         telemetry.addData("atag: ", robot.getAprilTagPosition());
-        telemetry.addData("distance", robot.localizer.distanceMeasurements.stream()
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0));
         telemetry.update();
         loopTime = loop;
 

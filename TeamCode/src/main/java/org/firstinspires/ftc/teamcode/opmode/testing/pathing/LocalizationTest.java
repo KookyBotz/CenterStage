@@ -43,7 +43,7 @@ public class LocalizationTest extends CommandOpMode {
 //        robot.startLocalizerThread(this, twoWheelLocalizer);
 
 
-        robot.localizer.setPose(new Pose(16.25, 39.35, 0));
+        robot.localizer.setPose(new Pose());
 
         while (!isStarted()) {
             telemetry.addLine("auto in init");
@@ -77,6 +77,8 @@ public class LocalizationTest extends CommandOpMode {
         telemetry.addData("tag", globalTagPosition.toString());
         telemetry.addData("three", currentPose.toString());
         telemetry.addData("x", robot.localizer.distanceMeasurement);
+        telemetry.addData("h", robot.getAngle());
+        telemetry.addData("left-right", robot.localizer.positionLeft.getAsDouble()-robot.localizer.positionRight.getAsDouble());
         telemetry.update();
 
 //        if (gamepad1.a && flag) {

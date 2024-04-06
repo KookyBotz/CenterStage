@@ -31,8 +31,8 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 0.689;
     public static double GEAR_RATIO = 1;
 
-    public static double TRACK_WIDTH = 10.79960; //10.73495;
-    public static double FORWARD_OFFSET = 4.49008; //4.69008; //4.65059
+    public static double TRACK_WIDTH =   10.75471;
+    public static double FORWARD_OFFSET = 4.32780;
 
     public final DoubleSupplier positionLeft, positionRight, positionFront;
 
@@ -52,8 +52,8 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        positionLeft = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_LEFT) / 0.99747368421052631578947368421053;
-        positionRight = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT) / 0.99747368421052631578947368421053;
+        positionLeft = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_LEFT);
+        positionRight = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT);
         positionFront = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_FRONT) / 0.99157894736842105263157894736842;
 
         IMUTimer = new ElapsedTime();
@@ -102,15 +102,13 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
         if (IMUTimer.milliseconds() > 500) {
             IMUTimer.reset();
             robot.readIMU();
-            setHeading(robot.getAngle());
+//            setHeading(robot.getAngle());
             robotPose = getPose();
         }
 
-        if (robotPose.y < 20 && robotPose.y > -4) return;
-        if (Math.abs(robotPose.heading) > Math.PI / 6) return;
-        if (Math.abs(velocity.getY()) > 4) return;
         if (DTimer.milliseconds() < 100) return;
 
+        DTimer.reset();
         distanceMeasurement = 0;
         if (robotPose.x >= 0) {
             distanceMeasurement = 70.5 - calculateDistance(robot.rightDistSensor.getVoltage(), robotPose.heading);
@@ -121,8 +119,8 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
         // obstructions can only make the sensor think we are closer to the wall
         if (Math.abs(distanceMeasurement) < Math.abs(robotPose.x)
                 || Math.abs(distanceMeasurement) - Math.abs(robotPose.x) < 2) {
-            setLateral(distanceMeasurement);
-            DTimer.reset();
+//            setLateral(distanceMeasurement);
+//            DTimer.reset();
         }
     }
 

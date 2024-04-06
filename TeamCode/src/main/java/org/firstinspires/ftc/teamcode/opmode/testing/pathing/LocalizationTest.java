@@ -86,6 +86,8 @@ public class LocalizationTest extends CommandOpMode {
 //            flag = false;
 ////            localizer.setPose(globalTagPosition);
 //        }
+
+        if (gamepad1.a) robot.localizer.setLateral(robot.localizer.distanceMeasurement);
 //
         robot.write();
 

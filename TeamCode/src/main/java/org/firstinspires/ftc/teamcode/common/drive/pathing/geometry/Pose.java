@@ -26,10 +26,10 @@ public class Pose extends Point {
         this(0, 0, 0);
     }
 
-    public Pose(AprilTagPoseFtc ftcPose, double heading) {
+    public Pose(AprilTagPoseFtc ftcPose) {
+        this.heading = Math.toRadians(-ftcPose.yaw);
         this.x = ftcPose.x * Math.cos(heading) - ftcPose.y * Math.sin(heading);
         this.y = ftcPose.x * Math.sin(heading) + ftcPose.y * Math.cos(heading);
-        this.heading = heading;
     }
 
     public void set(Pose other) {

@@ -371,15 +371,15 @@ public class RobotHardware {
                     switch (detection.id) {
                         case 1:
                         case 4:
-                            backdropPositions.add(new Pose(detection.ftcPose, localizer.getPose().heading).add(new Pose(6, 0, 0)));
+                            backdropPositions.add(new Pose(detection.ftcPose).add(new Pose(6, 0, 0)));
                             break;
                         case 2:
                         case 5:
-                            backdropPositions.add(new Pose(detection.ftcPose, localizer.getPose().heading));
+                            backdropPositions.add(new Pose(detection.ftcPose));
                             break;
                         case 3:
                         case 6:
-                            backdropPositions.add(new Pose(detection.ftcPose, localizer.getPose().heading).subt(new Pose(6, 0, 0)));
+                            backdropPositions.add(new Pose(detection.ftcPose).subt(new Pose(6, 0, 0)));
                             break;
                         default:
                             break;

@@ -31,7 +31,7 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 0.689;
     public static double GEAR_RATIO = 1;
 
-    public static double TRACK_WIDTH =   10.75471;
+    public static double TRACK_WIDTH =   10.67769;
     public static double FORWARD_OFFSET = 4.32780;
 
     public final DoubleSupplier positionLeft, positionRight, positionFront;
@@ -40,8 +40,6 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
 
     private final ElapsedTime IMUTimer;
     private final ElapsedTime DTimer;
-
-    private Pose offset = new Pose();
 
     private final Pose SENSOR_POSE = new Pose(2, 4.5, 0);
 
@@ -52,8 +50,8 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        positionLeft = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_LEFT);
-        positionRight = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT);
+        positionLeft = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_LEFT) / 1.0085106382978723404255319148936;
+        positionRight = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_RIGHT) / 1.0085106382978723404255319148936;
         positionFront = () -> -robot.doubleSubscriber(Sensors.SensorType.POD_FRONT) / 0.99157894736842105263157894736842;
 
         IMUTimer = new ElapsedTime();
@@ -95,7 +93,7 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
         Pose2d velocity = getPoseVelocity();
 
         // dont use imu if turning fast
-        if (velocity == null || Math.abs(velocity.getHeading()) > Math.PI / 4) return;
+//        if (velocity == null || Math.abs(velocity.getHeading()) > Math.PI / 4) return;
 
         // imu shenanigans
         // throttle to save loop times
@@ -106,9 +104,6 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
             robotPose = getPose();
         }
 
-        if (DTimer.milliseconds() < 100) return;
-
-        DTimer.reset();
         distanceMeasurement = 0;
         if (robotPose.x >= 0) {
             distanceMeasurement = 70.5 - calculateDistance(robot.rightDistSensor.getVoltage(), robotPose.heading);
@@ -117,11 +112,11 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
         }
 
         // obstructions can only make the sensor think we are closer to the wall
-        if (Math.abs(distanceMeasurement) < Math.abs(robotPose.x)
-                || Math.abs(distanceMeasurement) - Math.abs(robotPose.x) < 2) {
+//        if (Math.abs(distanceMeasurement) < Math.abs(robotPose.x)
+//                || Math.abs(distanceMeasurement) - Math.abs(robotPose.x) < 2) {
 //            setLateral(distanceMeasurement);
 //            DTimer.reset();
-        }
+//        }
     }
 
     public double calculateDistance(double v, double h) {
@@ -134,11 +129,11 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
 
     public Pose getPose() {
         Pose2d pose = getPoseEstimate();
-        return new Pose(-pose.getY(), pose.getX(), pose.getHeading()).add(offset);
+        return new Pose(-pose.getY(), pose.getX(), pose.getHeading());
     }
 
     public void setPose(Pose pose) {
-        offset = offset.subt(getPose()).add(pose);
+        super.setPoseEstimate(new Pose2d(pose.y, -pose.x, pose.heading));
     }
 
     public void setLateral(double x) {

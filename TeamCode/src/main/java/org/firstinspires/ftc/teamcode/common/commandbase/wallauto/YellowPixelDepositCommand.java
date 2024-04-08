@@ -18,8 +18,9 @@ public class YellowPixelDepositCommand extends SequentialCommandGroup {
                 new ClawCommand(IntakeSubsystem.ClawState.INTERMEDIATE, Globals.ALLIANCE == Location.BLUE ? ClawSide.RIGHT : ClawSide.LEFT),
                 new WaitCommand(250),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                new ArmCommand(0.2),
                 new ExtensionCommand(0),
+                new WaitCommand(50),
+                new ArmCommand(0.2),
                 new WaitCommand(100),
                 new PivotStateCommand(IntakeSubsystem.PivotState.STORED)
         );

@@ -18,7 +18,8 @@ public class IntakeSubsystem extends WSubsystem {
     public enum ClawState {
         CLOSED,
         INTERMEDIATE,
-        OPEN
+        OPEN,
+        AUTO
     }
 
     public enum PivotState {
@@ -108,10 +109,10 @@ public class IntakeSubsystem extends WSubsystem {
                     case OPEN:
                         return 0.89;
                     default:
-                        return 0.0;
+                        return 0.45;
                 }
             default:
-                return 0.0;
+                return 0.5;
         }
     }
 

@@ -15,14 +15,14 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 public class DepositExtendCommand extends SequentialCommandGroup {
     public DepositExtendCommand(double angle, double pivot){
         super(
-                new WaitUntilCommand(()-> RobotHardware.getInstance().localizer.getPose().y < -24),
+                new WaitUntilCommand(()-> RobotHardware.getInstance().localizer.getPose().y < -12),
                 new ArmCommand(angle),
                 new ArmFloatCommand(false),
                 new WaitCommand(250),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
                 new PivotCommand(pivot),
-                new ExtensionCommand(150),
-                new WaitCommand(500)
+                new WaitCommand(500),
+                new ExtensionCommand(300)
         );
     }
 }

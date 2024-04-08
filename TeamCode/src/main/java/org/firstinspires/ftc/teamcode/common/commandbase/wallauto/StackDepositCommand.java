@@ -18,11 +18,10 @@ import org.firstinspires.ftc.teamcode.common.vision.Location;
 public class StackDepositCommand extends SequentialCommandGroup {
     public StackDepositCommand(int distance){
         super(
-                new WaitCommand(250),
                 new ExtensionCommand(distance),
-                new WaitCommand(500),
+                new WaitCommand(250),
                 new ClawCommand(IntakeSubsystem.ClawState.INTERMEDIATE, Globals.ALLIANCE == Location.RED ? ClawSide.LEFT : ClawSide.RIGHT),
-                new WaitCommand(500),
+                new WaitCommand(250),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.RED ? ClawSide.LEFT : ClawSide.RIGHT),
                 new WaitCommand(500),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),

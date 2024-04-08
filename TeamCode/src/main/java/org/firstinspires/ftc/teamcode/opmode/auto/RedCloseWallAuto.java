@@ -37,7 +37,7 @@ public class RedCloseWallAuto extends CommandOpMode {
 
     private final Pose INTAKE = new Pose(-38, 47, -0.2829);
     private final Pose INTAKE_2 = new Pose(-39, 47, -0.2829);
-    private final Pose INTAKE_3 = new Pose(-40, 47, -0.2829);
+    private final Pose INTAKE_3 = new Pose(-40.5, 47, -0.2829);
 
     private final Pose DEPOSIT = new Pose(-44.75, -39.5, 0);
 
@@ -122,7 +122,7 @@ public class RedCloseWallAuto extends CommandOpMode {
 
 
                         new PurePursuitCommand(intake)
-                                .alongWith(new StackSetupCommand(0.72, 0.52)),
+                                .alongWith(new StackSetupCommand(0.71, 0.52)),
 
                         new StackGrabCommand(),
                         new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
@@ -154,7 +154,7 @@ public class RedCloseWallAuto extends CommandOpMode {
                         new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
 
                         new PurePursuitCommand(deposit3)
-                                .alongWith(new DepositExtendCommand(2.675, 0.74)),
+                                .alongWith(new DepositExtendCommand(2.675, 0.72)),
 
                         new StackDepositCommand(423)
                 )

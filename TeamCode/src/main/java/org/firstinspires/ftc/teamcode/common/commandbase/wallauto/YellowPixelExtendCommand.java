@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.common.vision.Location;
 public class YellowPixelExtendCommand extends SequentialCommandGroup {
     public YellowPixelExtendCommand() {
         super(
-                new WaitCommand(500),
+                new WaitCommand(200),
                 new ArmCommand(2.92),
                 new WaitCommand(250),
                 new PivotStateCommand(IntakeSubsystem.PivotState.SCORING),

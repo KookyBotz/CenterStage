@@ -7,17 +7,16 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PositionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.drivecommand.PurePursuitCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.preloadautocommand.YellowPixelRetractCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.DepositExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.PurplePixelDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.PurplePixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.StackDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.StackGrabCommand;
+import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.StackSetupCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.YellowPixelDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.YellowPixelExtendCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Point;
@@ -35,7 +34,8 @@ public class RedCloseWallAuto extends CommandOpMode {
     private double loopTime = 0.0;
 
     private final Pose START = new Pose(-62.9375, -16.35, -Math.PI / 2);
-    private final Pose INTAKE = new Pose(-41.75, 47, -0.2829);
+    private final Pose INTAKE = new Pose(-38, 47, -0.2829);
+    private final Pose INTAKE_2 = new Pose(-39, 47, -0.2829);
     private final Pose DEPOSIT = new Pose(-44.75, -39.5, 0);
 
     private final Pose PURPLE = new Pose(-47.5, -16.35, -1.925);
@@ -63,31 +63,31 @@ public class RedCloseWallAuto extends CommandOpMode {
         }
 
         PurePursuitPath intake = new PurePursuitPath(
-                new Waypoint(YELLOW, 12),
-                new Waypoint(new Point(-58, -24), 12),
-                new Waypoint(new Point(-56, 36), 12),
-                new Waypoint(INTAKE, 12)
+                new Waypoint(YELLOW, 15),
+                new Waypoint(new Point(-58, -24), 15),
+                new Waypoint(new Point(-56, 36), 15),
+                new Waypoint(INTAKE, 15)
         );
 
         PurePursuitPath deposit = new PurePursuitPath(
-                new Waypoint(INTAKE, 12),
-                new Waypoint(new Pose(-60, 36, 0), 12),
-                new Waypoint(new Pose(-58, -24, 0), 12),
-                new Waypoint(DEPOSIT, 12)
+                new Waypoint(INTAKE, 15),
+                new Waypoint(new Pose(-60, 36, 0), 15),
+                new Waypoint(new Pose(-58, -24, 0), 15),
+                new Waypoint(DEPOSIT, 15)
         );
 
         PurePursuitPath intake2 = new PurePursuitPath(
-                new Waypoint(DEPOSIT, 12),
-                new Waypoint(new Point(-58, -24), 12),
-                new Waypoint(new Point(-58, 36), 12),
-                new Waypoint(INTAKE, 12)
+                new Waypoint(DEPOSIT, 15),
+                new Waypoint(new Point(-58, -24), 15),
+                new Waypoint(new Point(-56, 36), 15),
+                new Waypoint(INTAKE_2, 15)
         );
 
         PurePursuitPath deposit2 = new PurePursuitPath(
-                new Waypoint(INTAKE, 12),
-                new Waypoint(new Pose(-58, 36, 0), 12),
-                new Waypoint(new Pose(-58, -24, 0), 12),
-                new Waypoint(DEPOSIT, 12)
+                new Waypoint(INTAKE_2, 15),
+                new Waypoint(new Pose(-60, 36, 0), 15),
+                new Waypoint(new Pose(-58, -24, 0), 15),
+                new Waypoint(DEPOSIT, 15)
         );
 
 
@@ -103,37 +103,30 @@ public class RedCloseWallAuto extends CommandOpMode {
                                 .alongWith(new YellowPixelExtendCommand())
                                 .andThen(new YellowPixelDepositCommand()),
 
-                        
-                        new PurePursuitCommand(intake),
-                        
-                        new WaitCommand(500),
+
+                        new PurePursuitCommand(intake)
+                                .alongWith(new StackSetupCommand(0.71, 0.52)),
+
+                        new StackGrabCommand(),
                         new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
-                        new PositionCommand(INTAKE)
-                                .alongWith(new StackGrabCommand(0.71, 0.52)),
-                        
+
                         new PurePursuitCommand(deposit)
                                 .alongWith(new DepositExtendCommand(2.75, 0.76)),
-                        
-                        new WaitCommand(1250),
-                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
-                        new PositionCommand(DEPOSIT)
-                                .alongWith(new StackDepositCommand(360)),
 
-                        
-                        new PurePursuitCommand(intake2),
-                        
-                        new WaitCommand(500),
+                        new StackDepositCommand(365),
+
                         new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
-                        new PositionCommand(INTAKE)
-                                .alongWith(new StackGrabCommand(0.77, 0.51)),
-                        
+
+                        new PurePursuitCommand(intake2)
+                                .alongWith(new StackSetupCommand(0.77, 0.51)),
+
+                        new StackGrabCommand(),
+                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
+
                         new PurePursuitCommand(deposit2)
                                 .alongWith(new DepositExtendCommand(2.675, 0.73)),
-                        
-                        new WaitCommand(1250),
-                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
-                        new PositionCommand(DEPOSIT)
-                                .alongWith(new StackDepositCommand(410))
+
+                        new StackDepositCommand(420)
                 )
         );
 

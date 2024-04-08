@@ -75,26 +75,6 @@ public class PurePursuitCommand extends CommandBase {
         y_rotated = Range.clip(y_rotated, -MAX_TRANSLATIONAL_SPEED, MAX_TRANSLATIONAL_SPEED);
 
         drivetrain.set(new Pose(x_rotated * X_GAIN, y_rotated, hPower).scale(Math.min(accelLimit.seconds() / ACCEL_LIMIT, 1)));
-
-
-//        else {
-//            Pose delta = targetPose.subtract(robotPose);
-//            double y_rotated = delta.x * Math.cos(robotPose.heading) - delta.y * Math.sin(robotPose.heading);
-//            double x_rotated = delta.x * Math.sin(robotPose.heading) + delta.y * Math.cos(robotPose.heading);
-//
-//            double xPercentage = x_rotated / purePursuitPath.getRadius() * PurePursuitConfig.FOLLOW_SPEED;
-//            double yPercentage = y_rotated / purePursuitPath.getRadius() * PurePursuitConfig.FOLLOW_SPEED;
-//
-//            if(targetPose.heading - robotPose.heading > Math.PI) targetPose.heading -= 2 * Math.PI;
-//            if(targetPose.heading - robotPose.heading < -Math.PI) targetPose.heading += 2 * Math.PI;
-//            double hPower = -hController.calculate(robotPose.heading, targetPose.heading);
-//
-//            hPower = Range.clip(hPower, -MAX_ROTATIONAL_SPEED, MAX_ROTATIONAL_SPEED);
-//            xPercentage = Range.clip(xPercentage, -MAX_TRANSLATIONAL_SPEED / X_GAIN, MAX_TRANSLATIONAL_SPEED / X_GAIN);
-//            yPercentage = Range.clip(yPercentage, -MAX_TRANSLATIONAL_SPEED, MAX_TRANSLATIONAL_SPEED);
-//
-//            drivetrain.set(new Pose(xPercentage * X_GAIN, yPercentage, hPower));
-//        }
     }
 
     @Override

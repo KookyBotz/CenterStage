@@ -137,6 +137,7 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
     }
 
     public void setLateral(double x) {
+        System.out.println("x: " + x);
         Pose p = getPose();
         p.x = x;
         setPose(p);

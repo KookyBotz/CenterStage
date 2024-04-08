@@ -25,6 +25,7 @@ public class StackDepositCommand extends SequentialCommandGroup {
                 new WaitCommand(500),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.RED ? ClawSide.LEFT : ClawSide.RIGHT),
                 new WaitCommand(500),
+                new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                 new ArmCommand(0.2),
                 new ExtensionCommand(0),
                 new WaitCommand(100),

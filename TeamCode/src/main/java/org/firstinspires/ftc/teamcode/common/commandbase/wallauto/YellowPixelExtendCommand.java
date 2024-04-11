@@ -20,7 +20,7 @@ public class YellowPixelExtendCommand extends SequentialCommandGroup {
         super(
                 new WaitCommand(200),
                 new ArmCommand(2.97),
-                new WaitCommand(250),
+                new WaitCommand(500),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
                 new PivotCommand(0.82),
                 new WaitCommand(250),

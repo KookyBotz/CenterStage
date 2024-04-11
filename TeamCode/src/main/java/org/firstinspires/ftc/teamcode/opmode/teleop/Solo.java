@@ -56,7 +56,7 @@ public class Solo extends CommandOpMode {
 
         robot.init(hardwareMap);
 
-        robot.intakePivotActuator.setTargetPosition(0.03);
+        robot.intakePivotActuator.setTargetPosition(0.08);
         robot.intakePivotActuator.write();
 
         robot.drone.reset();
@@ -85,7 +85,7 @@ public class Solo extends CommandOpMode {
                                         new ClawDepositCommand(),
                                         new ConditionalCommand(
                                                 new IntakeRetractCommand(),
-                                                new IntakeExtendCommand(extendIntake ? 500 : 100),
+                                                new IntakeExtendCommand(extendIntake ? 400 : 125),
                                                 () -> Globals.IS_INTAKING
                                         ),
                                         () -> Globals.IS_SCORING

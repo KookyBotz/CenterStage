@@ -40,7 +40,7 @@ public class LocalizationTest extends CommandOpMode {
 
 
         robot.read();
-//        robot.startLocalizerThread(this, twoWheelLocalizer);
+//        robot.startIMUThread(this);
 
 
         robot.localizer.setPose(new Pose());
@@ -49,6 +49,8 @@ public class LocalizationTest extends CommandOpMode {
             telemetry.addLine("auto in init");
             telemetry.update();
         }
+
+        telemetry.setMsTransmissionInterval(25);
     }
 
     @Override

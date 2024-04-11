@@ -39,10 +39,12 @@ public class RedCloseWallAuto extends CommandOpMode {
     private final Pose INTAKE_2 = new Pose(-39, 47, -0.2829);
     private final Pose INTAKE_3 = new Pose(-40.5, 47, -0.2829);
 
+    private final Pose FINAL_INTAKE = new Pose(-42, 47, -0.2829);
+
     private final Pose DEPOSIT = new Pose(-44.75, -39.5, 0);
 
     private final Pose PURPLE = new Pose(-47.5, -16.35, -1.925);
-    private final Pose YELLOW = new Pose(-42.5, -39.5, -0.03);
+    private final Pose YELLOW = new Pose(-45.5, -39.5, -0.03);
 
     @Override
     public void initialize() {
@@ -122,36 +124,47 @@ public class RedCloseWallAuto extends CommandOpMode {
 
 
                         new PurePursuitCommand(intake)
-                                .alongWith(new StackSetupCommand(0.71, 0.52)),
+                                .alongWith(new StackSetupCommand(0.70, 0.55)),
+
+                        new WaitCommand(500),
+                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
+                        new PositionCommand(FINAL_INTAKE),
 
                         new StackGrabCommand(),
-                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
 
                         new PurePursuitCommand(deposit)
                                 .alongWith(new DepositExtendCommand(2.75, 0.76)),
 
-                        new StackDepositCommand(370),
+                        new StackDepositCommand(360),
 
+                        new WaitCommand(250),
                         new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
 
                         new PurePursuitCommand(intake2)
-                                .alongWith(new StackSetupCommand(0.77, 0.51)),
+                                .alongWith(new StackSetupCommand(0.76, 0.54)),
+
+                        new WaitCommand(500),
+                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
+                        new PositionCommand(FINAL_INTAKE),
 
                         new StackGrabCommand(),
-                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
 
                         new PurePursuitCommand(deposit2)
                                 .alongWith(new DepositExtendCommand(2.675, 0.74)),
 
                         new StackDepositCommand(423),
 
+                        new WaitCommand(250),
                         new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
 
                         new PurePursuitCommand(intake3)
-                                .alongWith(new StackSetupCommand(0.82, 0.51)),
+                                .alongWith(new StackSetupCommand(0.82, 0.54)),
+
+                        new WaitCommand(500),
+                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
+                        new PositionCommand(FINAL_INTAKE),
 
                         new StackGrabCommand(),
-                        new InstantCommand(() -> robot.localizer.setLateral(robot.localizer.distanceMeasurement)),
 
                         new PurePursuitCommand(deposit3)
                                 .alongWith(new DepositExtendCommand(2.675, 0.72)),

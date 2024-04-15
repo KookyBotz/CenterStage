@@ -158,13 +158,13 @@ public class RedFarCycleAuto extends LinearOpMode {
                         new FirstStackGrabCommand(),
 
 
-                        new WaitUntilCommand(()->timer.seconds() > 15),
+                        new WaitUntilCommand(() -> timer.seconds() > 15),
 
 
                         new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
 
                         new PurePursuitCommand(new PurePursuitPath(
-                                new Waypoint(new Pose(-14.95, 39.25, 0), 15),
+                                new Waypoint(new Pose(-15.5, 38.25, 0), 15),
                                 new Waypoint(new Pose(-14, -32, 0), 15)
                         )),
 

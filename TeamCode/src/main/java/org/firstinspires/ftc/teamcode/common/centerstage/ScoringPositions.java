@@ -10,10 +10,10 @@ public class ScoringPositions {
     public static final ScoringPosition[] YELLOW_PIXEL_POSITIONS = {
             new ScoringPosition(new Pose(43, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE LEFT LEFT
             new ScoringPosition(new Pose(38, -35.25, 0), extension, armAngle, ClawSide.BOTH),  // BLUE LEFT RIGHT
-            new ScoringPosition(new Pose(36.25, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE CENTER LEFT
-            new ScoringPosition(new Pose(32.25, -35.25, 0), extension, armAngle, ClawSide.BOTH),  // BLUE CENTER RIGHT
-            new ScoringPosition(new Pose(30.75, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE RIGHT LEFT
-            new ScoringPosition(new Pose(26.75, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE RIGHT RIGHT
+            new ScoringPosition(new Pose(37, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE CENTER LEFT
+            new ScoringPosition(new Pose(32, -35.25, 0), extension, armAngle, ClawSide.BOTH),  // BLUE CENTER RIGHT
+            new ScoringPosition(new Pose(31, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE RIGHT LEFT
+            new ScoringPosition(new Pose(26, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE RIGHT RIGHT
             new ScoringPosition(new Pose(-26, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED LEFT LEFT
             new ScoringPosition(new Pose(-31, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED LEFT RIGHT
             new ScoringPosition(new Pose(-32, -35.25, 0), extension, armAngle, ClawSide.BOTH), // RED CENTER LEFT

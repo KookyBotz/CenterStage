@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.common.commandbase.cycleautocommand.RelocalizeCommand;
@@ -23,6 +24,7 @@ import org.firstinspires.ftc.teamcode.common.util.logging.CSVInterface;
 import org.firstinspires.ftc.teamcode.common.util.logging.LogType;
 import org.firstinspires.ftc.teamcode.common.util.logging.Logger;
 
+@Disabled
 @Autonomous(name = "Pure Pursuit Test")
 public class PurePursuitTest extends CommandOpMode {
 

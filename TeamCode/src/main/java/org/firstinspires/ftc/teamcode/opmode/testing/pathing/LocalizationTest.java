@@ -81,6 +81,7 @@ public class LocalizationTest extends CommandOpMode {
         telemetry.addData("x", robot.localizer.distanceMeasurement);
         telemetry.addData("h", robot.getAngle());
         telemetry.addData("left-right", robot.localizer.positionLeft.getAsDouble()-robot.localizer.positionRight.getAsDouble());
+        telemetry.addData("front", robot.localizer.positionFront.getAsDouble());
         telemetry.update();
 
 //        if (gamepad1.a && flag) {

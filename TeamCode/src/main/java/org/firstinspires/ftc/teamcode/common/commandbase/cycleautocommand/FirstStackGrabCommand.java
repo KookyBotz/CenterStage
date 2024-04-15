@@ -17,7 +17,7 @@ public class FirstStackGrabCommand extends SequentialCommandGroup {
     public FirstStackGrabCommand() {
         super(
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
-                new PivotCommand(0.51),
+                new PivotCommand(0.52),
                 new ExtensionCommand(550),
                 new WaitCommand(500),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, Globals.ALLIANCE == Location.BLUE ? ClawSide.RIGHT : ClawSide.LEFT),

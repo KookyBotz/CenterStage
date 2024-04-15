@@ -31,7 +31,7 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
     public static double WHEEL_RADIUS = 0.689;
     public static double GEAR_RATIO = 1;
 
-    public static double TRACK_WIDTH =   10.67769;
+    public static double TRACK_WIDTH =   10.68950;
     public static double FORWARD_OFFSET = 4.32780;
 
     public final DoubleSupplier positionLeft, positionRight, positionFront;
@@ -97,12 +97,12 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
 
         // imu shenanigans
         // throttle to save loop times
-        if (IMUTimer.milliseconds() > 500) {
-            IMUTimer.reset();
-            robot.readIMU();
+//        if (IMUTimer.milliseconds() > 250) {
+//            IMUTimer.reset();
+//            robot.readIMU();
 //            setHeading(robot.getAngle());
-            robotPose = getPose();
-        }
+//            robotPose = getPose();
+//        }
 
         distanceMeasurement = 0;
         if (robotPose.x >= 0) {

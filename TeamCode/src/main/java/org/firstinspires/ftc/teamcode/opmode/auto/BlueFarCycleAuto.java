@@ -98,10 +98,25 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.update();
         }
 
+        double delay = 15;
+
+        boolean pA = false;
+        boolean pY = false;
+
         while (opModeInInit()) {
             telemetry.addLine("ready");
             telemetry.addData("position", propPipeline.getLocation());
+            telemetry.addData("delay", delay);
             telemetry.update();
+
+            boolean a = gamepad1.a;
+            boolean y = gamepad1.y;
+
+            if (a && !pA) delay -= 0.25;
+            if (y && !pY) delay += 0.25;
+
+            pA = a;
+            pY = y;
         }
 
         randomization = propPipeline.getLocation();
@@ -138,6 +153,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
         }
 
 
+        double finalDelay = delay;
         CommandScheduler.getInstance().schedule(
                 new SequentialCommandGroup(
                         new InstantCommand(timer::reset),
@@ -149,20 +165,20 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         new ConditionalCommand(
                                 new PositionCommand(new Pose(15.5, 37.25, Math.PI / 2)),
-                                new PositionCommand(new Pose(15.5, 38.25, Math.PI / 2)),
+                                new PositionCommand(new Pose(15.5, 39.25, Math.PI / 2)),
                                 () -> Globals.RANDOMIZATION == Location.RIGHT)
                                 .alongWith(new FirstStackSetupCommand()),
-                        new PositionCommand(new Pose(15.5, 38.25, 0)),
+                        new PositionCommand(new Pose(15.5, 39.25, 0)),
 
                         new FirstStackGrabCommand(),
 
-                        new WaitUntilCommand(() -> timer.seconds() > 15),
+                        new WaitUntilCommand(() -> timer.seconds() > finalDelay),
 
                         new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
 
 
                         new PurePursuitCommand(new PurePursuitPath(
-                                new Waypoint(new Pose(15.5, 38.25, 0), 15),
+                                new Waypoint(new Pose(15.5, 39.25, 0), 15),
                                 new Waypoint(new Pose(14, -32, 0), 15)
                         )),
 

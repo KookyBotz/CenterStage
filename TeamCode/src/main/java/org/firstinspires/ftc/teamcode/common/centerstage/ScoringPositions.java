@@ -14,12 +14,12 @@ public class ScoringPositions {
             new ScoringPosition(new Pose(32.75, -35.25, 0), extension, armAngle, ClawSide.BOTH),  // BLUE CENTER RIGHT
             new ScoringPosition(new Pose(30.5, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE RIGHT LEFT
             new ScoringPosition(new Pose(26.75, -35.25, 0), extension, armAngle, ClawSide.LEFT),  // BLUE RIGHT RIGHT
-            new ScoringPosition(new Pose(-26.75, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED LEFT LEFT
-            new ScoringPosition(new Pose(-30.5, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED LEFT RIGHT
-            new ScoringPosition(new Pose(-32.75, -35.25, 0), extension, armAngle, ClawSide.BOTH), // RED CENTER LEFT
-            new ScoringPosition(new Pose(-36.5, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED CENTER RIGHT
-            new ScoringPosition(new Pose(-38.75, -35.25, 0), extension, armAngle, ClawSide.BOTH), // RED RIGHT LEFT
-            new ScoringPosition(new Pose(-42.5, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED RIGHT RIGHT
+            new ScoringPosition(new Pose(-25.25, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED LEFT LEFT
+            new ScoringPosition(new Pose(-29.5, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED LEFT RIGHT
+            new ScoringPosition(new Pose(-31.25, -35.25, 0), extension, armAngle, ClawSide.BOTH), // RED CENTER LEFT
+            new ScoringPosition(new Pose(-35.5, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED CENTER RIGHT
+            new ScoringPosition(new Pose(-37.25, -35.25, 0), extension, armAngle, ClawSide.BOTH), // RED RIGHT LEFT
+            new ScoringPosition(new Pose(-41.5, -35.25, 0), extension, armAngle, ClawSide.LEFT), // RED RIGHT RIGHT
     };
 
     public final ScoringPosition[] WHITE_PIXEL_POSITIONS = {

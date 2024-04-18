@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.commandbase.drivecommand;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,13 +16,13 @@ public class PositionCommand extends CommandBase {
     Drivetrain drivetrain;
     public Pose targetPose;
 
-    public static double xP = 0.07;
-    public static double xD = 0.012;
+    public static double xP = 0.09;
+    public static double xD = 0.011;
 
-    public static double yP = 0.07;
-    public static double yD = 0.012;
+    public static double yP = 0.09;
+    public static double yD = 0.011;
 
-    public static double hP = 1;
+    public static double hP = 1.1;
     public static double hD = 0.045;
 
     public static PIDFController xController = new PIDFController(xP, 0.0, xD, 0);
@@ -41,7 +42,7 @@ public class PositionCommand extends CommandBase {
 
     private final double  MAX_TRANSLATIONAL_SPEED = 0.5;
     private final double  MAX_ROTATIONAL_SPEED = 0.4;
-    private final double X_GAIN = 1.85;
+    private final double X_GAIN = 2.00;
 
     public PositionCommand(Pose targetPose) {
         this.drivetrain = robot.drivetrain;
@@ -73,6 +74,7 @@ public class PositionCommand extends CommandBase {
     public boolean isFinished() {
         Pose robotPose = robot.localizer.getPose();
         Pose delta = targetPose.subtract(robotPose);
+        Pose2d velocity = robot.localizer.getPoseVelocity();
 
         if (delta.toVec2D().magnitude() > ALLOWED_TRANSLATIONAL_ERROR
                 || Math.abs(delta.heading) > ALLOWED_HEADING_ERROR) {

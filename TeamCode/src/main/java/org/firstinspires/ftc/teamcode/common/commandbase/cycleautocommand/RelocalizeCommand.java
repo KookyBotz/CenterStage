@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
@@ -31,7 +32,7 @@ public class RelocalizeCommand extends SequentialCommandGroup {
         Pose pose = new Pose();
         int i = 0;
         for (Pose p : poses) {
-            if (p != null) {
+            if (p != null && Math.abs(AngleUnit.normalizeRadians(RobotHardware.getInstance().localizer.getPose().heading - p.heading)) < 0.2) {
                 pose = pose.add(p);
                 i++;
             }

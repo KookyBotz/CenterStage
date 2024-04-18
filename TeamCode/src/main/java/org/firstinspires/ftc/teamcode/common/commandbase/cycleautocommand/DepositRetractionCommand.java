@@ -16,7 +16,7 @@ public class DepositRetractionCommand extends SequentialCommandGroup {
         super(
                 new ExtensionCommand(25),
                 new WaitCommand(50),
-                new ArmCommand(0.2),
+                new ArmCommand(0.1),
                 new ArmLiftCommand(0.3),
                 new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
                 new PivotStateCommand(IntakeSubsystem.PivotState.STORED)

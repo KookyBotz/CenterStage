@@ -87,22 +87,22 @@ public class BlueClosePreloadAuto extends LinearOpMode {
 
         Pose yellowScorePos = new Pose();
         Pose purpleScorePos = new Pose();
-        Pose parkPos = new Pose(-31, 6, 3 * Math.PI / 2);
+        Pose parkPos = new Pose(-31, 4, 3 * Math.PI / 2);
 
 
         // 0.3, 300
 
         switch (randomization) {
             case LEFT:
-                yellowScorePos = new Pose(-24, 21.5, Math.PI / 2);
+                yellowScorePos = new Pose(-24, 21.5, Math.PI / 2 -0.02);
                 purpleScorePos = new Pose(-25, 26, Math.PI / 2);
                 break;
             case CENTER:
-                yellowScorePos = new Pose(-24, 27.75, Math.PI / 2);
+                yellowScorePos = new Pose(-24, 27.75, Math.PI / 2-0.02);
                 purpleScorePos = new Pose(-18, 36, Math.PI / 2);
                 break;
             case RIGHT:
-                yellowScorePos = new Pose(-24, 34.25, Math.PI / 2);
+                yellowScorePos = new Pose(-24, 34.25, Math.PI / 2-0.02);
                 purpleScorePos = new Pose(-4, 25, Math.PI / 2);
                 break;
             default:

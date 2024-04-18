@@ -43,7 +43,8 @@ public class LocalizationTest extends CommandOpMode {
 //        robot.startIMUThread(this);
 
 
-        robot.localizer.setPose(new Pose());
+        robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
+
 
         while (!isStarted()) {
             telemetry.addLine("auto in init");
@@ -90,7 +91,7 @@ public class LocalizationTest extends CommandOpMode {
 ////            localizer.setPose(globalTagPosition);
 //        }
 
-        if (gamepad1.a) robot.localizer.setLateral(robot.localizer.distanceMeasurement);
+        if (gamepad1.a) robot.localizer.setPose(globalTagPosition);
 //
         robot.write();
 

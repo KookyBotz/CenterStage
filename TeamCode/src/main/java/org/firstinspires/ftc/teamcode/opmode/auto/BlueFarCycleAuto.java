@@ -98,7 +98,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
             telemetry.update();
         }
 
-        double delay = 15;
+        double delay = 5;
 
         boolean pA = false;
         boolean pY = false;
@@ -129,10 +129,10 @@ public class BlueFarCycleAuto extends LinearOpMode {
         if (Globals.ROUTE == Location.STAGEDOOR) {
             switch (randomization) {
                 case LEFT:
-                    purplePixelPose = new Pose(49.25, 36.25, 2.16);
+                    purplePixelPose = new Pose(51.25, 36.25, 2.16);
                     break;
                 case RIGHT:
-                    purplePixelPose = new Pose(53, 40, 1.17);
+                    purplePixelPose = new Pose(54, 40, 1.17);
                     break;
                 default:
                     purplePixelPose = new Pose(42.5, 36.5, 1.88);
@@ -165,10 +165,10 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
                         new ConditionalCommand(
                                 new PositionCommand(new Pose(15.5, 37.25, Math.PI / 2)),
-                                new PositionCommand(new Pose(15.5, 39.25, Math.PI / 2)),
+                                new PositionCommand(new Pose(15.5, 40, Math.PI / 2)),
                                 () -> Globals.RANDOMIZATION == Location.RIGHT)
                                 .alongWith(new FirstStackSetupCommand()),
-                        new PositionCommand(new Pose(15.5, 39.25, 0)),
+                        new PositionCommand(new Pose(15.5, 40, -0.01)),
 
                         new FirstStackGrabCommand(),
 
@@ -178,7 +178,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
 
 
                         new PurePursuitCommand(new PurePursuitPath(
-                                new Waypoint(new Pose(15.5, 39.25, 0), 15),
+                                new Waypoint(new Pose(15.5, 40, 0), 15),
                                 new Waypoint(new Pose(14, -32, 0), 15)
                         )),
 

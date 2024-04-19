@@ -20,7 +20,7 @@ public class IntakeExtendCommand extends SequentialCommandGroup {
                 new InstantCommand(Globals::startIntaking),
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
                 new ExtensionCommand(target),
-                new PivotCommand(0.525),
+                new PivotCommand(target < 200? 0.535:0.545),
                 new WaitCommand(100),
                 new ArmFloatCommand(true),
                 new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.BOTH)

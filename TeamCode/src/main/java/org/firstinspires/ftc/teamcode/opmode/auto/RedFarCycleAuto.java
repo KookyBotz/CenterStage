@@ -134,7 +134,7 @@ public class RedFarCycleAuto extends LinearOpMode {
                     purplePixelPose = new Pose(-53, 40, -1.17);
                     break;
                 default:
-                    purplePixelPose = new Pose(-42.5, 36.5, -1.88);
+                    purplePixelPose = new Pose(-43, 36.5, -1.88);
                     break;
             }
         } else {
@@ -165,11 +165,11 @@ public class RedFarCycleAuto extends LinearOpMode {
 
                         new ConditionalCommand(
                                 new PositionCommand(new Pose(-15.5, 37.25, -Math.PI / 2)),
-                                new PositionCommand(new Pose(-15.5, 39.25, -Math.PI / 2)),
+                                new PositionCommand(new Pose(-15.5, 39, -Math.PI / 2)),
                                 () -> Globals.RANDOMIZATION == Location.LEFT)
                                 .alongWith(new FirstStackSetupCommand()),
 
-                        new PositionCommand(new Pose(-15.5, 39.25, 0)),
+                        new PositionCommand(new Pose(-15.5, 39, 0)),
 
                         new FirstStackGrabCommand(),
 
@@ -180,7 +180,7 @@ public class RedFarCycleAuto extends LinearOpMode {
                         new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
 
                         new PurePursuitCommand(new PurePursuitPath(
-                                new Waypoint(new Pose(-15.5, 39.25, 0), 15),
+                                new Waypoint(new Pose(-15.5, 39, 0), 15),
                                 new Waypoint(new Pose(-14, -32, 0), 15)
                         )),
 

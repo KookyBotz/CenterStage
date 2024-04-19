@@ -208,7 +208,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                                 new WaitCommand(250)
 
                         )
-                                .alongWith(new PositionCommand(new Pose(36.25, -35.25, 0))),
+                                .alongWith(new PositionCommand(new Pose(29, -35.25, 0))),
                         new DepositRetractionCommand(),
 
 //

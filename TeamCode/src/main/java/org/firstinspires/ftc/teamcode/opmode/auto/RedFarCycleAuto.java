@@ -210,7 +210,7 @@ public class RedFarCycleAuto extends LinearOpMode {
                                 new WaitCommand(250)
 
                         )
-                                .alongWith(new PositionCommand(new Pose(-36.25, -35.25, 0))),
+                                .alongWith(new PositionCommand(new Pose(-29, -35.25, 0))),
                         new DepositRetractionCommand(),
 
                         new PositionCommand(new Pose(-12, -50, 0))

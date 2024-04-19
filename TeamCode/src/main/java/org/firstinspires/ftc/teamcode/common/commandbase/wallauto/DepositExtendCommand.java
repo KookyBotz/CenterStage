@@ -13,7 +13,11 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 
 public class DepositExtendCommand extends SequentialCommandGroup {
+
     public DepositExtendCommand(double angle, double pivot){
+        this(angle, pivot, 300);
+    }
+    public DepositExtendCommand(double angle, double pivot, int dist){
         super(
                 new WaitUntilCommand(()-> RobotHardware.getInstance().localizer.getPose().y < -12),
                 new ArmCommand(angle),
@@ -22,7 +26,7 @@ public class DepositExtendCommand extends SequentialCommandGroup {
                 new PivotStateCommand(IntakeSubsystem.PivotState.FLAT),
                 new PivotCommand(pivot),
                 new WaitCommand(500),
-                new ExtensionCommand(300)
+                new ExtensionCommand(dist)
         );
     }
 }

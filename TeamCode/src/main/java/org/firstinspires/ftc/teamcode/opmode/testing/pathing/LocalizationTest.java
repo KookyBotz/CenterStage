@@ -43,7 +43,7 @@ public class LocalizationTest extends CommandOpMode {
 //        robot.startIMUThread(this);
 
 
-        robot.localizer.setPose(new Pose(-62.9375, -16.35, -Math.PI / 2));
+        robot.localizer.setPose(new Pose(-63.65, 39.35, -Math.PI / 2));
 
 
         while (!isStarted()) {

@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class PurePursuitConfig {
-    public static double xP = 0.09;
+    public static double xP = 0.095;
     public static double xD = 0.011;
 
     public static double yP = 0.09;

@@ -41,7 +41,7 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
     private final ElapsedTime IMUTimer;
     private final ElapsedTime DTimer;
 
-    private final Pose SENSOR_POSE = new Pose(2, 4.5, 0);
+    private static final Pose SENSOR_POSE = new Pose(2, 4.5, 0);
 
     public FusedLocalizer() {
         super(Arrays.asList(
@@ -119,7 +119,7 @@ public class FusedLocalizer extends ThreeTrackingWheelLocalizer {
 //        }
     }
 
-    public double calculateDistance(double v, double h) {
+    public static double calculateDistance(double v, double h) {
         double VOLTAGE_TO_INCHES = 73.529411;
         double dist = (v * VOLTAGE_TO_INCHES) + SENSOR_POSE.y;
         double cosd = Math.cos(h) * dist;

@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -47,6 +48,7 @@ import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
+@Disabled
 @Autonomous(name = "🔴 Red Far Cycle Auto")
 public class RedFarCycleAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();

@@ -49,8 +49,6 @@ import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-import java.util.Stack;
-
 @Config
 @Autonomous(name = "🔴 Red Far Wall Auto")
 public class RedFarWallAuto extends LinearOpMode {
@@ -143,11 +141,11 @@ public class RedFarWallAuto extends LinearOpMode {
                 break;
         }
 
-        Pose INTAKE = new Pose(-43.25, 47, -0.27);
+        Pose INTAKE = new Pose(-43.5, 47, -0.27);
         Pose INTAKE_2 = new Pose(-43.25, 47, -0.27);
 
         Pose DEPOSIT_1 = new Pose(-42.5, -35.25, 0);
-        Pose DEPOSIT_2 = new Pose(-42.5, -35.25, 0);
+        Pose DEPOSIT_2 = new Pose(-60, -35.25, 0);
 
 
         double finalDelay = delay;
@@ -161,18 +159,22 @@ public class RedFarWallAuto extends LinearOpMode {
                         new PurplePixelDepositCommand(),
 
                         new PositionCommand(INTAKE)
-                                .alongWith(new StackSetupCommand(0.68, 0.53)),
+                                .alongWith(new StackSetupCommand(0.7, 0.53)),
 
                         
 
-                        new WaitCommand(750),
+                        new WaitCommand(520),
                         new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
+
+                        new WaitCommand(230),
 
                         new PositionCommand(INTAKE),
 
                         
 
                         new StackGrabCommand(),
+
+
 
                         new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
 
@@ -192,7 +194,7 @@ public class RedFarWallAuto extends LinearOpMode {
                         new FirstDepositExtendCommand(),
                         new FirstDepositCommand(),
 
-                        new InstantCommand(()->PositionCommand.DEAD_MS = 1000),
+                        new InstantCommand(() -> PositionCommand.DEAD_MS = 1000),
                         new SequentialCommandGroup(
                                 new ExtensionCommand(300),
                                 new WaitCommand(250),
@@ -210,7 +212,7 @@ public class RedFarWallAuto extends LinearOpMode {
                                 .alongWith(new WaitCommand(250).andThen(new PositionCommand(new Pose(-40, -35.25, 0)))),
                         new DepositRetractionCommand(),
 
-                        new InstantCommand(()->PositionCommand.DEAD_MS = 2520),
+                        new InstantCommand(() -> PositionCommand.DEAD_MS = 2520),
 
 
                         new PurePursuitCommand(new PurePursuitPath(
@@ -221,12 +223,14 @@ public class RedFarWallAuto extends LinearOpMode {
 
                         
 
-                        new WaitCommand(750),
+                        new WaitCommand(520),
 
                         new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
 
+                        new WaitCommand(230),
+
                         new PositionCommand(INTAKE_2)
-                                .alongWith(new StackSetupCommand(0.725, 0.54)),
+                                .alongWith(new StackSetupCommand(0.74, 0.54)),
 
                         
 
@@ -256,10 +260,11 @@ public class RedFarWallAuto extends LinearOpMode {
 
                         
 
-
-                        new WaitCommand(750),
+                        new WaitCommand(520),
 
                         new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
+
+                        new WaitCommand(230),
 
                         new PositionCommand(INTAKE_2)
                                 .alongWith(new StackSetupCommand(0.3, 0.54)),
@@ -278,11 +283,18 @@ public class RedFarWallAuto extends LinearOpMode {
                         new RelocalizeCommand(),
 
                         new PositionCommand(DEPOSIT_2)
-                                .alongWith(new DepositExtendCommand(2.7, 0.775, 300)),
+                                .alongWith(new DepositExtendCommand(3.14, 0.6, 0)),
 
-                        new StackDepositCommand(465)
-                                .alongWith(new WaitCommand(1000)
-                                        .andThen(new PositionCommand(new Pose(-48, -44, -Math.PI/4)))),
+                        new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.RED ? ClawSide.LEFT : ClawSide.RIGHT),
+
+                        new PositionCommand(new Pose(-48, -44, -Math.PI / 4))
+                                .alongWith(new SequentialCommandGroup(
+                                        new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+                                        new ArmCommand(0.2),
+                                        new ExtensionCommand(0),
+                                        new WaitCommand(100),
+                                        new PivotStateCommand(IntakeSubsystem.PivotState.STORED)
+                                )),
 
                         new InstantCommand(() -> endTime = timer.seconds()),
                         new InstantCommand(robot::closeCamera)
@@ -303,6 +315,7 @@ public class RedFarWallAuto extends LinearOpMode {
 //            telemetry.addData("CORRECTION", -stackPipeline.getStrafeCorrection());
             telemetry.addData("BACKDROP", RobotHardware.getInstance().preloadDetectionPipeline.getPreloadedZone());
             telemetry.addData("INDEX", Globals.getTargetIndex());
+            telemetry.addData("IMU", robot.getAngle());
 //            telemetry.addData("TARGET POSE", )
 //            telemetry.addData("arm pos", robot.extensionActuator.getPosition());
 //            telemetry.addLine("TAPE POSE (" + stackPipeline.getClosestTapeContour().x + " " + stackPipeline.getClosestTapeContour().y);

@@ -10,6 +10,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -31,6 +32,7 @@ import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
+@Disabled
 @Autonomous(name = "🔵 Blue Close Preload Auto")
 public class BlueClosePreloadAuto extends LinearOpMode {
 

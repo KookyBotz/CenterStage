@@ -9,20 +9,30 @@ import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
 public class RelocalizeCommand extends SequentialCommandGroup {
+    private final RobotHardware robot = RobotHardware.getInstance();
     private Pose a, b, c;
 
     public RelocalizeCommand() {
         super.addCommands(
                 // don't ask
                 new WaitCommand(50),
-                new InstantCommand(() -> a = RobotHardware.getInstance().getAprilTagPosition()),
+                new InstantCommand(() -> a = robot.getAprilTagPosition()),
                 new WaitCommand(50),
-                new InstantCommand(() -> b = RobotHardware.getInstance().getAprilTagPosition()),
+                new InstantCommand(() -> b = robot.getAprilTagPosition()),
                 new WaitCommand(50),
                 new InstantCommand(() -> {
-                    c = RobotHardware.getInstance().getAprilTagPosition();
-                    if (avg(a, b, c) != null) RobotHardware.getInstance().localizer.setPose(avg(a, b, c));
-                    System.out.println("atag" + RobotHardware.getInstance().localizer.getPose());
+                    c = robot.getAprilTagPosition();
+
+                    Pose avg = avg(a, b, c);
+                    if (avg != null) {
+                        robot.localizer.setPose(avg);
+                        robot.readIMU();
+                        double imuAngle = robot.getAngle();
+
+                        robot.imuOffset += AngleUnit.normalizeRadians(imuAngle - avg.heading);
+
+                        System.out.println("atag" + robot.localizer.getPose());
+                    }
                 }),
                 new WaitCommand(50)
         );
@@ -32,7 +42,7 @@ public class RelocalizeCommand extends SequentialCommandGroup {
         Pose pose = new Pose();
         int i = 0;
         for (Pose p : poses) {
-            if (p != null && Math.abs(AngleUnit.normalizeRadians(RobotHardware.getInstance().localizer.getPose().heading - p.heading)) < 0.2) {
+            if (p != null && Math.abs(AngleUnit.normalizeRadians(robot.localizer.getPose().heading - p.heading)) < 0.2) {
                 pose = pose.add(p);
                 i++;
             }

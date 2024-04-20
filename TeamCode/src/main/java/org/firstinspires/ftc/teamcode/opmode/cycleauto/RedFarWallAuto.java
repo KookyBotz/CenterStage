@@ -143,8 +143,8 @@ public class RedFarWallAuto extends LinearOpMode {
                 break;
         }
 
-        Pose INTAKE = new Pose(-43.5, 47, -0.27);
-        Pose INTAKE_2 = new Pose(-43.5, 47, -0.27);
+        Pose INTAKE = new Pose(-43.25, 47, -0.27);
+        Pose INTAKE_2 = new Pose(-43.25, 47, -0.27);
 
         Pose DEPOSIT_1 = new Pose(-42.5, -35.25, 0);
         Pose DEPOSIT_2 = new Pose(-42.5, -35.25, 0);
@@ -161,12 +161,16 @@ public class RedFarWallAuto extends LinearOpMode {
                         new PurplePixelDepositCommand(),
 
                         new PositionCommand(INTAKE)
-                                .alongWith(new StackSetupCommand(0.69, 0.53)),
+                                .alongWith(new StackSetupCommand(0.68, 0.53)),
 
-                        new WaitCommand(500),
+                        
+
+                        new WaitCommand(750),
                         new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
 
                         new PositionCommand(INTAKE),
+
+                        
 
                         new StackGrabCommand(),
 
@@ -206,7 +210,7 @@ public class RedFarWallAuto extends LinearOpMode {
                                 .alongWith(new WaitCommand(250).andThen(new PositionCommand(new Pose(-40, -35.25, 0)))),
                         new DepositRetractionCommand(),
 
-                        new InstantCommand(()->PositionCommand.DEAD_MS = 2500),
+                        new InstantCommand(()->PositionCommand.DEAD_MS = 2520),
 
 
                         new PurePursuitCommand(new PurePursuitPath(
@@ -215,18 +219,22 @@ public class RedFarWallAuto extends LinearOpMode {
                                 new Waypoint(INTAKE_2, 15)
                         )),
 
-                        new WaitCommand(500),
+                        
+
+                        new WaitCommand(750),
 
                         new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
 
                         new PositionCommand(INTAKE_2)
-                                .alongWith(new StackSetupCommand(0.735, 0.54)),
+                                .alongWith(new StackSetupCommand(0.725, 0.54)),
+
+                        
 
                         new StackGrabCommand(),
 
                         new PurePursuitCommand(new PurePursuitPath(
                                 new Waypoint(INTAKE_2, 15),
-                                new Waypoint(new Point(-60, 24), 15),
+                                new Waypoint(new Point(-60, 28), 15),
                                 new Waypoint(new Pose(-58, -18, 0), 15),
                                 new Waypoint(DEPOSIT_1, 15))
                         ),
@@ -234,7 +242,7 @@ public class RedFarWallAuto extends LinearOpMode {
                         new RelocalizeCommand(),
 
                         new PositionCommand(DEPOSIT_1)
-                                .alongWith(new DepositExtendCommand(2.82, 0.74, 300)),
+                                .alongWith(new DepositExtendCommand(2.82, 0.755, 300)),
 
                         new StackDepositCommand(465),
 
@@ -246,18 +254,23 @@ public class RedFarWallAuto extends LinearOpMode {
                                 new Waypoint(INTAKE_2, 15)
                         )),
 
-                        new WaitCommand(500),
+                        
+
+
+                        new WaitCommand(750),
 
                         new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
 
                         new PositionCommand(INTAKE_2)
                                 .alongWith(new StackSetupCommand(0.3, 0.54)),
 
+                        
+
                         new StackGrabCommand(),
 
                         new PurePursuitCommand(new PurePursuitPath(
                                 new Waypoint(INTAKE_2, 15),
-                                new Waypoint(new Point(-60, 24), 15),
+                                new Waypoint(new Point(-60, 28), 15),
                                 new Waypoint(new Pose(-58, -18, 0), 15),
                                 new Waypoint(DEPOSIT_2, 15))
                         ),
@@ -265,9 +278,11 @@ public class RedFarWallAuto extends LinearOpMode {
                         new RelocalizeCommand(),
 
                         new PositionCommand(DEPOSIT_2)
-                                .alongWith(new DepositExtendCommand(2.82, 0.74, 300)),
+                                .alongWith(new DepositExtendCommand(2.7, 0.775, 300)),
 
-                        new StackDepositCommand(465),
+                        new StackDepositCommand(465)
+                                .alongWith(new WaitCommand(1000)
+                                        .andThen(new PositionCommand(new Pose(-48, -44, -Math.PI/4)))),
 
                         new InstantCommand(() -> endTime = timer.seconds()),
                         new InstantCommand(robot::closeCamera)

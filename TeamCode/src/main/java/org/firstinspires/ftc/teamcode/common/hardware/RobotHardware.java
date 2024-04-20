@@ -118,7 +118,7 @@ public class RobotHardware {
     public BNO055IMU imu;
     private Thread imuThread;
     private double imuAngle = 0;
-    private double imuOffset = 0;
+    public double imuOffset = 0;
     private double startOffset = 0;
     public FusedLocalizer localizer;
 

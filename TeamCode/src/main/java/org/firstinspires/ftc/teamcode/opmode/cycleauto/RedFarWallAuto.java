@@ -142,7 +142,7 @@ public class RedFarWallAuto extends LinearOpMode {
         }
 
         Pose INTAKE = new Pose(-43.5, 47, -0.27);
-        Pose INTAKE_2 = new Pose(-43.25, 47, -0.27);
+        Pose INTAKE_2 = new Pose(-43.5, 47, -0.27);
 
         Pose DEPOSIT_1 = new Pose(-42.5, -35.25, 0);
         Pose DEPOSIT_2 = new Pose(-60, -35.25, 0);
@@ -215,86 +215,87 @@ public class RedFarWallAuto extends LinearOpMode {
                         new InstantCommand(() -> PositionCommand.DEAD_MS = 2520),
 
 
-                        new PurePursuitCommand(new PurePursuitPath(
-                                new Waypoint(new Pose(-60, -12, 0), 15),
-                                new Waypoint(new Point(-58, 28), 15),
-                                new Waypoint(INTAKE_2, 15)
-                        )),
+//                        new PurePursuitCommand(new PurePursuitPath(
+//                                new Waypoint(new Pose(-60, -12, 0), 15),
+//                                new Waypoint(new Point(-58, 28), 15),
+//                                new Waypoint(INTAKE_2, 15)
+//                        )),
+//
+//
+//
+//                        new WaitCommand(520),
+//
+//                        new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
+//
+//                        new WaitCommand(230),
+//
+//                        new InstantCommand(()-> System.out.println("heading correction: " + (INTAKE_2.heading - (robot.getAngle() - INTAKE_2.heading)))),
+//                        new PositionCommand(INTAKE_2)
+//                                .alongWith(new StackSetupCommand(0.74, 0.54)),
+//
+//
+//
+//                        new StackGrabCommand(),
+//
+//                        new PurePursuitCommand(new PurePursuitPath(
+//                                new Waypoint(INTAKE_2, 15),
+//                                new Waypoint(new Point(-60, 28), 15),
+//                                new Waypoint(new Pose(-58, -18, 0), 15),
+//                                new Waypoint(DEPOSIT_1, 15))
+//                        ),
+//
+//                        new RelocalizeCommand(),
+//
+//                        new PositionCommand(DEPOSIT_1)
+//                                .alongWith(new DepositExtendCommand(2.82, 0.755, 300)),
+//
+//                        new StackDepositCommand(465),
+//
+//                        // CYCLE TWO
+//
+//                        new PurePursuitCommand(new PurePursuitPath(
+//                                new Waypoint(new Pose(-60, -12, 0), 15),
+//                                new Waypoint(new Point(-58, 28), 15),
+//                                new Waypoint(INTAKE_2, 15)
+//                        )),
+//
+//
+//
+//                        new WaitCommand(520),
+//
+//                        new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
+//
+//                        new WaitCommand(230),
+//
+//                        new PositionCommand(INTAKE_2)
+//                                .alongWith(new StackSetupCommand(0.3, 0.54)),
+//
+//
+//
+//                        new StackGrabCommand(),
+//
+//                        new PurePursuitCommand(new PurePursuitPath(
+//                                new Waypoint(INTAKE_2, 15),
+//                                new Waypoint(new Point(-60, 28), 15),
+//                                new Waypoint(new Pose(-58, -18, 0), 15),
+//                                new Waypoint(DEPOSIT_2, 15))
+//                        ),
+//
+//                        new RelocalizeCommand(),
+//
+//                        new PositionCommand(DEPOSIT_2)
+//                                .alongWith(new DepositExtendCommand(3.14, 0.6, 0)),
+//
+//                        new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.RED ? ClawSide.LEFT : ClawSide.RIGHT),
 
-                        
-
-                        new WaitCommand(520),
-
-                        new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
-
-                        new WaitCommand(230),
-
-                        new PositionCommand(INTAKE_2)
-                                .alongWith(new StackSetupCommand(0.74, 0.54)),
-
-                        
-
-                        new StackGrabCommand(),
-
-                        new PurePursuitCommand(new PurePursuitPath(
-                                new Waypoint(INTAKE_2, 15),
-                                new Waypoint(new Point(-60, 28), 15),
-                                new Waypoint(new Pose(-58, -18, 0), 15),
-                                new Waypoint(DEPOSIT_1, 15))
-                        ),
-
-                        new RelocalizeCommand(),
-
-                        new PositionCommand(DEPOSIT_1)
-                                .alongWith(new DepositExtendCommand(2.82, 0.755, 300)),
-
-                        new StackDepositCommand(465),
-
-                        // CYCLE TWO
-
-                        new PurePursuitCommand(new PurePursuitPath(
-                                new Waypoint(new Pose(-60, -12, 0), 15),
-                                new Waypoint(new Point(-58, 28), 15),
-                                new Waypoint(INTAKE_2, 15)
-                        )),
-
-                        
-
-                        new WaitCommand(520),
-
-                        new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
-
-                        new WaitCommand(230),
-
-                        new PositionCommand(INTAKE_2)
-                                .alongWith(new StackSetupCommand(0.3, 0.54)),
-
-                        
-
-                        new StackGrabCommand(),
-
-                        new PurePursuitCommand(new PurePursuitPath(
-                                new Waypoint(INTAKE_2, 15),
-                                new Waypoint(new Point(-60, 28), 15),
-                                new Waypoint(new Pose(-58, -18, 0), 15),
-                                new Waypoint(DEPOSIT_2, 15))
-                        ),
-
-                        new RelocalizeCommand(),
-
-                        new PositionCommand(DEPOSIT_2)
-                                .alongWith(new DepositExtendCommand(3.14, 0.6, 0)),
-
-                        new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.RED ? ClawSide.LEFT : ClawSide.RIGHT),
-
-                        new PositionCommand(new Pose(-48, -44, -Math.PI / 4))
-                                .alongWith(new SequentialCommandGroup(
-                                        new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-                                        new ArmCommand(0.2),
-                                        new ExtensionCommand(0),
-                                        new WaitCommand(100),
-                                        new PivotStateCommand(IntakeSubsystem.PivotState.STORED)
-                                )),
+                        new PositionCommand(new Pose(-48, -44, -Math.PI / 4)),
+//                                .alongWith(new SequentialCommandGroup(
+//                                        new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
+//                                        new ArmCommand(0.2),
+//                                        new ExtensionCommand(0),
+//                                        new WaitCommand(100),
+//                                        new PivotStateCommand(IntakeSubsystem.PivotState.STORED)
+//                                )),
 
                         new InstantCommand(() -> endTime = timer.seconds()),
                         new InstantCommand(robot::closeCamera)

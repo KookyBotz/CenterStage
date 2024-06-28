@@ -11,9 +11,7 @@ import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -34,8 +32,6 @@ import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ArmLift
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ClawCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.ExtensionCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.subsytemcommand.PivotStateCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.DepositExtendCommand;
-import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.StackDepositCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.StackGrabCommand;
 import org.firstinspires.ftc.teamcode.common.commandbase.wallauto.StackSetupCommand;
 import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Point;
@@ -51,9 +47,8 @@ import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Disabled
-@Autonomous(name = "🔵 Red Far Wall Auto")
-public class RedFarWallAuto extends LinearOpMode {
+@Autonomous(name = "🔵 Blue Far Wall Auto")
+public class BlueFarWallAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private final ElapsedTime timer = new ElapsedTime();
     private double loopTime = 0.0;
@@ -69,7 +64,7 @@ public class RedFarWallAuto extends LinearOpMode {
         CommandScheduler.getInstance().reset();
 
         Globals.IS_AUTO = true;
-        Globals.ALLIANCE = Location.RED;
+        Globals.ALLIANCE = Location.BLUE;
         Globals.SIDE = Location.FAR;
         Globals.ROUTE = Location.STAGEDOOR;
 
@@ -79,8 +74,8 @@ public class RedFarWallAuto extends LinearOpMode {
 
         robot.intake.updateState(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH);
 
-        robot.localizer.setPose(new Pose(-63.65, 39.35, -Math.PI / 2));
-        robot.setIMUStartOffset(-Math.PI / 2);
+        robot.localizer.setPose(new Pose(63.65, 39.35, Math.PI / 2));
+        robot.setIMUStartOffset(Math.PI / 2);
 
         propPipeline = new PropPipeline();
 
@@ -104,7 +99,7 @@ public class RedFarWallAuto extends LinearOpMode {
             telemetry.update();
         }
 
-        double delay = 15;
+        double delay = 5;
 
         boolean pA = false;
         boolean pY = false;
@@ -126,29 +121,31 @@ public class RedFarWallAuto extends LinearOpMode {
         }
 
         randomization = propPipeline.getLocation();
+//        randomization = Location.RIGHT;
         Globals.RANDOMIZATION = randomization;
         RobotHardware.getInstance().preloadDetectionPipeline.setTargetAprilTagID(randomization);
 
         Pose purplePixelPose;
 
         switch (randomization) {
-            case RIGHT:
-                purplePixelPose = new Pose(-49.25, 36.25, -2.16);
-                break;
             case LEFT:
-                purplePixelPose = new Pose(-52.5, 40, -1.17);
+                purplePixelPose = new Pose(49.25, 36.25, 2.16);
+                break;
+            case RIGHT:
+                purplePixelPose = new Pose(52.5, 40, 1.17);
                 break;
             default:
-                purplePixelPose = new Pose(-43.5, 36.5, -1.88);
+                purplePixelPose = new Pose(43.5, 36.5, 1.88);
                 break;
         }
 
-        Pose INTAKE = new Pose(-43.5, 47, -0.27);
-        Pose INTAKE_2 = new Pose(-43.5, 47, -0.27);
+        Pose INTAKE = new Pose(44.75, 47.5, 0.25);
+        Pose INTAKE_2 = new Pose(44.75, 48, 0.25);
 
-        Pose DEPOSIT_1 = new Pose(-42.5, -35.25, 0);
-        Pose DEPOSIT_2 = new Pose(-60, -35.25, 0);
+        Pose INTERMEDIATE = new Pose(48, 40, 0);
 
+        Pose DEPOSIT_1 = new Pose(42.5, -35.25, 0);
+        Pose DEPOSIT_2 = new Pose(42.5, -35.25, 0);
 
         double finalDelay = delay;
         CommandScheduler.getInstance().schedule(
@@ -163,27 +160,24 @@ public class RedFarWallAuto extends LinearOpMode {
                         new PositionCommand(INTAKE)
                                 .alongWith(new StackSetupCommand(0.7, 0.53)),
 
-                        
 
                         new WaitCommand(520),
                         new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
+//                        new InstantCommand(() -> robot.localizer.setHeading(robot.getAngle())),
 
                         new WaitCommand(230),
 
                         new PositionCommand(INTAKE),
 
-                        
 
                         new StackGrabCommand(),
-
-
 
                         new InstantCommand(() -> robot.setProcessorEnabled(robot.preloadDetectionPipeline, true)),
 
                         new PurePursuitCommand(new PurePursuitPath(
                                 new Waypoint(INTAKE, 15),
-                                new Waypoint(new Point(-60, 24), 15),
-                                new Waypoint(new Pose(-58, -24, 0), 15))
+                                new Waypoint(new Point(60, 24), 15),
+                                new Waypoint(new Pose(58, -24, 0), 15))
                         ),
 
                         new PreloadDetectionCommand(),
@@ -211,38 +205,42 @@ public class RedFarWallAuto extends LinearOpMode {
                                 new WaitCommand(250)
 
                         )
-                                .alongWith(new WaitCommand(250).andThen(new PositionCommand(new Pose(-40, -35.25, 0)))),
+                                .alongWith(new WaitCommand(250).andThen(new PositionCommand(new Pose(40, -35.25, 0)))),
                         new DepositRetractionCommand(),
+
+                        new ExtensionCommand(0),
 
                         new InstantCommand(() -> PositionCommand.DEAD_MS = 2520),
 
 
 //                        new PurePursuitCommand(new PurePursuitPath(
-//                                new Waypoint(new Pose(-60, -12, 0), 15),
-//                                new Waypoint(new Point(-58, 28), 15),
-//                                new Waypoint(INTAKE_2, 15)
+//                                new Waypoint(new Pose(60, -12, 0), 15),
+//                                new Waypoint(new Point(58, 32), 15),
+//                                new Waypoint(INTERMEDIATE, 15)
 //                        )),
 //
-//
+//                        
 //
 //                        new WaitCommand(520),
 //
 //                        new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
+//                        new InstantCommand(()->robot.localizer.setHeading(robot.getAngle())),
+//
 //
 //                        new WaitCommand(230),
 //
-//                        new InstantCommand(()-> System.out.println("heading correction: " + (INTAKE_2.heading - (robot.getAngle() - INTAKE_2.heading)))),
+//                        new InstantCommand(() -> System.out.println("heading correction: " + (INTAKE_2.heading - (robot.getAngle() - INTAKE_2.heading)))),
 //                        new PositionCommand(INTAKE_2)
 //                                .alongWith(new StackSetupCommand(0.74, 0.54)),
 //
-//
+//                        
 //
 //                        new StackGrabCommand(),
 //
 //                        new PurePursuitCommand(new PurePursuitPath(
 //                                new Waypoint(INTAKE_2, 15),
-//                                new Waypoint(new Point(-60, 28), 15),
-//                                new Waypoint(new Pose(-58, -18, 0), 15),
+//                                new Waypoint(new Point(60, 28), 15),
+//                                new Waypoint(new Pose(58, -18, 0), 15),
 //                                new Waypoint(DEPOSIT_1, 15))
 //                        ),
 //
@@ -256,51 +254,50 @@ public class RedFarWallAuto extends LinearOpMode {
 //                        // CYCLE TWO
 //
 //                        new PurePursuitCommand(new PurePursuitPath(
-//                                new Waypoint(new Pose(-60, -12, 0), 15),
-//                                new Waypoint(new Point(-58, 28), 15),
-//                                new Waypoint(INTAKE_2, 15)
+//                                new Waypoint(new Pose(60, -12, 0), 15),
+//                                new Waypoint(new Point(58, 32), 15),
+//                                new Waypoint(INTERMEDIATE, 15)
 //                        )),
 //
+//                        
 //
 //
 //                        new WaitCommand(520),
 //
 //                        new InstantCommand(() -> robot.localizer.setLateral(getDistanceMeasurement())),
+//                        new InstantCommand(()->robot.localizer.setHeading(robot.getAngle())),
+//
 //
 //                        new WaitCommand(230),
 //
 //                        new PositionCommand(INTAKE_2)
-//                                .alongWith(new StackSetupCommand(0.3, 0.54)),
+//                                .alongWith(new StackSetupCommand(0.3, 0.53)),
 //
+//                        
 //
 //
 //                        new StackGrabCommand(),
 //
 //                        new PurePursuitCommand(new PurePursuitPath(
 //                                new Waypoint(INTAKE_2, 15),
-//                                new Waypoint(new Point(-60, 28), 15),
-//                                new Waypoint(new Pose(-58, -18, 0), 15),
+//                                new Waypoint(new Point(60, 28), 15),
+//                                new Waypoint(new Pose(58, -18, 0), 15),
 //                                new Waypoint(DEPOSIT_2, 15))
 //                        ),
 //
 //                        new RelocalizeCommand(),
 //
 //                        new PositionCommand(DEPOSIT_2)
-//                                .alongWith(new DepositExtendCommand(3.14, 0.6, 0)),
+//                                .alongWith(new DepositExtendCommand(2.82, 0.755, 300)),
 //
-//                        new ClawCommand(IntakeSubsystem.ClawState.OPEN, Globals.ALLIANCE == Location.RED ? ClawSide.LEFT : ClawSide.RIGHT),
+//                        new StackDepositCommand(475),
 
-                        new PositionCommand(new Pose(-48, -44, -Math.PI / 4)),
-//                                .alongWith(new SequentialCommandGroup(
-//                                        new ClawCommand(IntakeSubsystem.ClawState.CLOSED, ClawSide.BOTH),
-//                                        new ArmCommand(0.2),
-//                                        new ExtensionCommand(0),
-//                                        new WaitCommand(100),
-//                                        new PivotStateCommand(IntakeSubsystem.PivotState.STORED)
-//                                )),
+                        new PositionCommand(new Pose(48, -44, Math.PI / 4)),
+
 
                         new InstantCommand(() -> endTime = timer.seconds()),
-                        new InstantCommand(robot::closeCamera)
+                        new InstantCommand(robot::closeCamera),
+                        new InstantCommand(this::requestOpModeStop)
                 )
         );
 
@@ -326,6 +323,8 @@ public class RedFarWallAuto extends LinearOpMode {
             telemetry.update();
 
             loopTime = loop;
+
+            if (gamepad1.b) robot.readIMU();
         }
 
 //        portal.setProcessorEnabled(stackPipeline, false);
@@ -336,8 +335,8 @@ public class RedFarWallAuto extends LinearOpMode {
     public double getDistanceMeasurement() {
         robot.readIMU();
         double heading = robot.getAngle();
-        double voltage = robot.leftDistSensor.getVoltage();
+        double voltage = robot.rightDistSensor.getVoltage();
 
-        return calculateDistance(voltage, heading) - 70.5;
+        return 70.5 - calculateDistance(voltage, heading);
     }
 }

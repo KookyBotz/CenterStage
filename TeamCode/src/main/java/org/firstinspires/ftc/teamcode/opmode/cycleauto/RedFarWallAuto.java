@@ -52,7 +52,7 @@ import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
 @Disabled
-@Autonomous(name = "🔵 Red Far Wall Auto")
+@Autonomous(name = "🔴 Red Far Wall Auto")
 public class RedFarWallAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private final ElapsedTime timer = new ElapsedTime();

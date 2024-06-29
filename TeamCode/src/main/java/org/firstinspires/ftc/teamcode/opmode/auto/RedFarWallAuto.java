@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode.cycleauto;
+package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import static org.firstinspires.ftc.teamcode.common.drive.localizer.FusedLocalizer.calculateDistance;
 
@@ -51,7 +51,6 @@ import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Disabled
 @Autonomous(name = "🔴 Red Far Wall Auto")
 public class RedFarWallAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();

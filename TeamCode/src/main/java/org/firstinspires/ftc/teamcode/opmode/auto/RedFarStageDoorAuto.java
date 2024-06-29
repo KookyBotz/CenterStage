@@ -48,9 +48,8 @@ import org.firstinspires.ftc.teamcode.common.vision.StackPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Disabled
-@Autonomous(name = "🔴 Red Far Cycle Auto")
-public class RedFarCycleAuto extends LinearOpMode {
+@Autonomous(name = "🔴 Red Far Stage Door Auto")
+public class RedFarStageDoorAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private final ElapsedTime timer = new ElapsedTime();
     private double loopTime = 0.0;

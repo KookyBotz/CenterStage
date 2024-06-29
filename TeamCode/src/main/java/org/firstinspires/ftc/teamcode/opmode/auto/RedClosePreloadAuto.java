@@ -32,7 +32,6 @@ import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Disabled
 @Autonomous(name = "🔴 Red Close Preload Auto")
 public class RedClosePreloadAuto extends LinearOpMode {
 

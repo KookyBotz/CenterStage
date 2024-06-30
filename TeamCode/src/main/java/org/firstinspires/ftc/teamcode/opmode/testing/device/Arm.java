@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode.testing.device;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,28 +13,27 @@ import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 @TeleOp(name = "arm")
 @Disabled
 public class Arm extends OpMode {
-    public AbsoluteAnalogEncoder extensionPitchEncoder;
-    public AnalogInput extensionPitchEnc;
 
     public WEncoder extensionEncoder;
+    AnalogInput armPitchEnc;
+    AbsoluteAnalogEncoder armPitchEncoder;
 
     @Override
     public void init() {
 
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
-        extensionEncoder = new WEncoder(new MotorEx(hardwareMap, "dtFrontLeftMotor").encoder);
-
-//        this.extensionPitchEnc = hardwareMap.get(AnalogInput.class, "extensionPitchEncoder");
-//        this.extensionPitchEncoder = new AbsoluteAnalogEncoder(extensionPitchEnc);
-//        extensionPitchEncoder.zero(2.086);
-//        extensionPitchEncoder.setInverted(true);
-//        extensionPitchEncoder.setWraparound(true);
+        armPitchEnc = hardwareMap.get(AnalogInput.class, "extensionPitchEncoder");
+        armPitchEncoder = new AbsoluteAnalogEncoder(armPitchEnc);
+        armPitchEncoder.zero(2.086);
+        armPitchEncoder.setInverted(true);
+        armPitchEncoder.setWraparound(true);
     }
 
     @Override
     public void loop() {
 //        telemetry.addData("position", extensionPitchEncoder.getCurrentPosition());
-        telemetry.addData("position 2", extensionEncoder.getPosition());
+        telemetry.addData("arm position", armPitchEncoder.getCurrentPosition());
+        telemetry.addData("arm position", armPitchEncoder.getVoltage());
         telemetry.update();
     }
 

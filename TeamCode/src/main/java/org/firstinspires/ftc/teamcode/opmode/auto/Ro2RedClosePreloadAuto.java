@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Config
-@Autonomous(name = "🔴 Red Close Preload Auto")
+@Autonomous(name = "🔴 Ro2 Red Close Preload Auto")
 public class Ro2RedClosePreloadAuto extends LinearOpMode {
 
     private final RobotHardware robot = RobotHardware.getInstance();
@@ -88,7 +88,7 @@ public class Ro2RedClosePreloadAuto extends LinearOpMode {
 
         Pose yellowScorePos = new Pose();
         Pose purpleScorePos = new Pose();
-        Pose parkPos = new Pose(31, 6, -3 * Math.PI / 2);
+        Pose parkPos = new Pose(31, 3, -3 * Math.PI / 2);
 
 
         // 0.3, 300
@@ -116,7 +116,7 @@ public class Ro2RedClosePreloadAuto extends LinearOpMode {
                 new SequentialCommandGroup(
                         // go to yellow pixel scoring pos
                         new PositionCommand(yellowScorePos)
-                                .alongWith(new YellowPixelExtendCommand()),
+                                .alongWith(new WaitCommand(1000).andThen(new YellowPixelExtendCommand())),
 
                         // score yellow pixel
                         new ClawCommand(IntakeSubsystem.ClawState.INTERMEDIATE, ClawSide.LEFT),
@@ -126,11 +126,13 @@ public class Ro2RedClosePreloadAuto extends LinearOpMode {
                         new YellowPixelRetractCommand(),
 
                         // go to purple pixel scoring pos
+                        new InstantCommand(()->PositionCommand.DEAD_MS=1250),
                         new PositionCommand(purpleScorePos)
                                 .alongWith(new PurplePixelExtendCommand()),
+                        new InstantCommand(()->PositionCommand.DEAD_MS=2500),
 
                         // score purple pixel
-                        new WaitCommand(500),
+                        new WaitCommand(100),
                         new ClawCommand(IntakeSubsystem.ClawState.OPEN, ClawSide.RIGHT),
                         new WaitCommand(350),
 

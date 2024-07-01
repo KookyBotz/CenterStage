@@ -58,7 +58,7 @@ public class Duo extends CommandOpMode {
 
         robot.init(hardwareMap);
 
-        robot.intakePivotActuator.setTargetPosition(0.08);
+        robot.intakePivotActuator.setTargetPosition(0.045);
         robot.intakePivotActuator.write();
 
         robot.drone.reset();

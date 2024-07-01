@@ -68,7 +68,7 @@ public class IntakeSubsystem extends WSubsystem {
 //            double targetAngle = ((pos) - ((((pos < Math.PI / 2) ? 0 : 1) * Math.PI)));
 //            robot.intakePivotActuator.setTargetPosition(MathUtils.clamp(MathUtils.map(targetAngle, 0, Math.PI / 2 - 0.35, 0.5, 0.93) + 0.03, 0.03, 0.97));
         } else if (pivotState == PivotState.STORED) {
-            robot.intakePivotActuator.setTargetPosition(0.08);
+            robot.intakePivotActuator.setTargetPosition(0.045);
         }
     }
 

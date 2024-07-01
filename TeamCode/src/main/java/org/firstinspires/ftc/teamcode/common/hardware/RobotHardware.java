@@ -202,8 +202,8 @@ public class RobotHardware {
 
         this.intakePivotLeftServo = new WServo(hardwareMap.get(Servo.class, "servo3"));
         this.intakePivotRightServo = new WServo(hardwareMap.get(Servo.class, "servo4"));
-        intakePivotRightServo.setOffset(0.03);
-//        intakePivotRightServo.setOffset(0.01);
+        intakePivotRightServo.setOffset(-0.03);
+        intakePivotLeftServo.setOffset(-0.045);
         intakePivotRightServo.setDirection(Servo.Direction.REVERSE);
 
         this.intakePivotActuator = new WActuatorGroup(intakePivotLeftServo, intakePivotRightServo);

@@ -40,7 +40,7 @@ public class ExtensionSubsystem extends WSubsystem {
 
     @Override
     public void periodic() {
-        double kG = 0.18; // TODO empirically tune this
+        double kG = 0.18;
         double dist_cog_cor_max = 10.161;
         double arm_reference_angle = robot.armActuator.getTargetPosition();
 

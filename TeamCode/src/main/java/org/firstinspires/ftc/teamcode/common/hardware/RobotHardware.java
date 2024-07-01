@@ -216,7 +216,6 @@ public class RobotHardware {
 
         this.droneTrigger = new WServo(hardwareMap.get(Servo.class, "drone"));
 
-        // TODO: Configure config names
         this.leftHang = hardwareMap.get(CRServoImplEx.class, "left");
         this.leftHang.setPwmRange(new PwmControl.PwmRange(500, 2500));
         this.rightHang = hardwareMap.get(CRServoImplEx.class, "right");

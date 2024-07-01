@@ -79,7 +79,7 @@ public class AsymmetricMotionProfile {
             position = finalPosition;
         }
 
-        // TODO fix later since something went so fucking wrong here
+        // lol
         if (time <= totalTime) {
             if (flipped) {
                 state.x = originalPos - position;
